@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="MosqAware Public Awareness — Dengue symptoms, prevention tips, testing centers, and emergency contacts in Odia, Hindi, and English." />
+  <title>Public Awareness — MosqAware</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Rajdhani:wght@500;600;700&display=swap" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    #sidebar-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:99; backdrop-filter:blur(4px); }
+    #sidebar-overlay.show { display:block; }
+    .symptom-checker-card {
+      background: var(--bg-glass);
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+    }
+    .checker-toggle {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      margin-bottom: 10px;
+      transition: all 0.2s;
+      user-select: none;
+    }
+    .checker-toggle:hover { border-color: rgba(0,212,255,0.2); }
+    .checker-toggle.selected { background: rgba(0,212,255,0.08); border-color: rgba(0,212,255,0.3); }
+    .checker-toggle input[type=checkbox] { width:18px; height:18px; accent-color: var(--accent-cyan); cursor:pointer; }
+    .checker-toggle-label { font-size:13px; color:var(--text-secondary); cursor:pointer; }
+    .risk-result {
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      text-align: center;
+      border: 2px solid;
+      margin-top: 16px;
+      display: none;
+    }
+    .risk-result.show { display: block; animation: fadeInUp 0.4s ease; }
+    .center-card {
+      background: var(--bg-glass);
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius-md);
+      padding: 16px 18px;
+      margin-bottom: 10px;
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+      transition: all 0.2s;
+    }
+    .center-card:hover { border-color: rgba(0,212,255,0.2); }
+    .center-icon {
+      width: 40px; height: 40px;
+      border-radius: 12px;
+      background: rgba(0,212,255,0.1);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px; flex-shrink: 0;
+    }
+    .emergency-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+    .emergency-item {
+      background: var(--bg-glass);
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius-md);
+      padding: 18px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .emergency-item:hover {
+      border-color: rgba(255,107,107,0.3);
+      background: rgba(255,107,107,0.05);
+    }
+    .emergency-number {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 32px;
+      font-weight: 700;
+      color: var(--accent-coral);
+    }
+    .alert-area-card {
+      background: rgba(255,68,68,0.05);
+      border: 1px solid rgba(255,68,68,0.2);
+      border-radius: var(--radius-md);
+      padding: 14px 18px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+  </style>
+</head>
+<body>
+<div id="sidebar-overlay"></div>
+<div class="app-layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <a class="brand-logo" href="index.html">
+        <div class="brand-icon">🦟</div>
+        <div class="brand-text">
+          <div class="brand-name">MosqAware</div>
+          <div class="brand-sub">Odisha State</div>
+        </div>
+      </a>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section-label">Main</div>
+      <a class="nav-item" href="index.html"><span class="nav-icon"><i class="fa-solid fa-gauge-high"></i></span><span>Dashboard</span></a>
+      <a class="nav-item" href="prediction.html"><span class="nav-icon"><i class="fa-solid fa-brain"></i></span><span>AI Prediction</span></a>
+      <a class="nav-item" href="analytics.html"><span class="nav-icon"><i class="fa-solid fa-chart-line"></i></span><span>Analytics</span></a>
+      <div class="nav-section-label">Tools</div>
+      <a class="nav-item" href="breeding.html"><span class="nav-icon"><i class="fa-solid fa-mosquito"></i></span><span>Breeding Index</span></a>
+      <a class="nav-item active" href="awareness.html"><span class="nav-icon"><i class="fa-solid fa-bullhorn"></i></span><span>Public Awareness</span></a>
+      <a class="nav-item" href="reports.html"><span class="nav-icon"><i class="fa-solid fa-file-pdf"></i></span><span>Reports</span></a>
+
+      <a class="nav-item" href="forecast2027.html"><span class="nav-icon"><i class="fa-solid fa-calendar-days"></i></span><span>2027 Forecast</span><span class="nav-badge" style="background:rgba(255,107,107,0.85);">NEW</span></a>
+      <a class="nav-item" href="directory.html" id="nav-directory"><span class="nav-icon"><i class="fa-solid fa-sitemap"></i></span><span>Village Directory</span><span class="nav-badge" style="background:var(--accent-cyan); color:#000;">51k</span></a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="lang-switcher">
+        <button class="lang-btn active" data-lang="en">EN</button>
+        <button class="lang-btn" data-lang="hi">HI</button>
+        <button class="lang-btn" data-lang="or">OR</button>
+      </div>
+      <div class="system-status"><div class="status-dot"></div><span>Public health portal active</span></div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main-content">
+    <header class="top-header">
+      <div style="display:flex; align-items:center; gap:12px;">
+        <button class="menu-toggle" id="menu-toggle"><i class="fa-solid fa-bars"></i></button>
+        <div class="header-title">
+          <div class="page-title" data-i18n="awareness.title">Public Awareness Portal</div>
+          <div class="page-subtitle">Dengue Prevention · Symptoms · Testing Centers · Emergency Contacts</div>
+        </div>
+      </div>
+      <div class="header-actions">
+        <div class="header-badge"><i class="fa-solid fa-language"></i> Odia · Hindi · English</div>
+      </div>
+    </header>
+
+    <main class="page-content">
+
+      <!-- Hero Banner -->
+      <div style="background:linear-gradient(135deg,rgba(0,212,255,0.05),rgba(168,85,247,0.05)); border:1px solid rgba(0,212,255,0.15); border-radius:var(--radius-xl); padding:28px 32px; display:flex; align-items:center; gap:24px; margin-bottom:28px;" class="animate-fadeInUp">
+        <div style="font-size:64px; flex-shrink:0; filter:drop-shadow(0 0 20px rgba(0,212,255,0.3));">🦟</div>
+        <div>
+          <div style="font-family:'Rajdhani',sans-serif; font-size:28px; font-weight:700; color:var(--text-primary); margin-bottom:8px;">
+            Beat Dengue. Protect Your Family.
+          </div>
+          <div style="font-size:14px; color:var(--text-secondary); max-width:500px; line-height:1.7;">
+            Dengue is preventable. Recognizing symptoms early and eliminating mosquito breeding sites near your home can save lives.
+            MosqAware provides real-time guidance in your language.
+          </div>
+          <div style="margin-top:14px; display:flex; gap:10px; flex-wrap:wrap;">
+            <a href="tel:104" class="btn btn-primary btn-sm"><i class="fa-solid fa-phone"></i> Helpline: 104</a>
+            <a href="tel:108" class="btn btn-outline btn-sm"><i class="fa-solid fa-ambulance"></i> Ambulance: 108</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Active Alert Areas -->
+      <div class="card animate-fadeInUp" style="margin-bottom:24px;">
+        <div class="section-header">
+          <div class="section-title">
+            <div class="section-title-icon">⚠️</div>
+            Active High-Risk Alert Areas (Jul 2026)
+          </div>
+          <span style="font-size:12px; color:var(--text-muted);">Check before traveling</span>
+        </div>
+        <div class="alert-area-card">
+          <span style="font-size:20px;">🔴</span>
+          <div>
+            <div style="font-size:13px; font-weight:600; color:var(--accent-coral);">Patia, Bhubaneswar (Khordha)</div>
+            <div style="font-size:11px; color:var(--text-muted);">HIGH — 8 cases reported this week · Fogging scheduled</div>
+          </div>
+        </div>
+        <div class="alert-area-card">
+          <span style="font-size:20px;">🟠</span>
+          <div>
+            <div style="font-size:13px; font-weight:600; color:var(--accent-orange);">Balasore Municipal Area</div>
+            <div style="font-size:11px; color:var(--text-muted);">MODERATE — Increased surveillance. Avoid stagnant water areas.</div>
+          </div>
+        </div>
+        <div style="padding:14px; background:rgba(0,229,160,0.04); border:1px solid rgba(0,229,160,0.15); border-radius:10px; margin-top:10px; font-size:12px; color:var(--text-muted);">
+          ✅ <strong style="color:var(--accent-green);">28 districts</strong> are currently at LOW risk. State-wide risk score: 22/100.
+        </div>
+      </div>
+
+      <!-- Main Grid -->
+      <div class="grid-2" style="margin-bottom:24px;">
+
+        <!-- Symptom Checker -->
+        <div class="card animate-fadeInUp">
+          <div class="section-header">
+            <div class="section-title">
+              <div class="section-title-icon">🩺</div>
+              <span data-i18n="awareness.symptoms">Symptom Self-Checker</span>
+            </div>
+            <span style="font-size:11px; color:var(--accent-coral);">Not a medical diagnosis</span>
+          </div>
+          <div style="font-size:12px; color:var(--text-muted); margin-bottom:14px;">
+            Select all symptoms you're experiencing for a preliminary risk assessment:
+          </div>
+
+          <label class="checker-toggle" id="toggle-fever">
+            <input type="checkbox" id="chk-fever" onchange="updateSymptomCheck()" />
+            <span style="font-size:20px;">🌡️</span>
+            <span class="checker-toggle-label">High fever (>38°C / 100.4°F) for 2+ days</span>
+          </label>
+
+          <label class="checker-toggle" id="toggle-headache">
+            <input type="checkbox" id="chk-headache" onchange="updateSymptomCheck()" />
+            <span style="font-size:20px;">🤕</span>
+            <span class="checker-toggle-label">Severe headache / pain behind eyes</span>
+          </label>
+
+          <label class="checker-toggle" id="toggle-joint">
+            <input type="checkbox" id="chk-joint" onchange="updateSymptomCheck()" />
+            <span style="font-size:20px;">🦴</span>
+            <span class="checker-toggle-label">Joint and muscle pain (breakbone fever)</span>
+          </label>
+
+          <label class="checker-toggle" id="toggle-rash">
+            <input type="checkbox" id="chk-rash" onchange="updateSymptomCheck()" />
+            <span style="font-size:20px;">🔴</span>
+            <span class="checker-toggle-label">Skin rash (2-5 days after fever onset)</span>
+          </label>
+
+          <label class="checker-toggle" id="toggle-bleed">
+            <input type="checkbox" id="chk-bleed" onchange="updateSymptomCheck()" />
+            <span style="font-size:20px;">🩸</span>
+            <span class="checker-toggle-label">Bleeding — nose, gums, or blood in urine</span>
+          </label>
+
+          <label class="checker-toggle" id="toggle-nausea">
+            <input type="checkbox" id="chk-nausea" onchange="updateSymptomCheck()" />
+            <span style="font-size:20px;">🤢</span>
+            <span class="checker-toggle-label">Nausea, vomiting, loss of appetite</span>
+          </label>
+
+          <!-- Risk Result -->
+          <div id="symptom-result" class="risk-result">
+            <div id="result-icon" style="font-size:40px; margin-bottom:10px;"></div>
+            <div id="result-level" style="font-family:'Rajdhani',sans-serif; font-size:24px; font-weight:700; margin-bottom:8px;"></div>
+            <div id="result-advice" style="font-size:13px; color:var(--text-secondary);"></div>
+            <div style="margin-top:14px;">
+              <a href="tel:104" class="btn btn-primary btn-sm"><i class="fa-solid fa-phone"></i> Call 104 Helpline</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Prevention Tips -->
+        <div class="card animate-fadeInUp">
+          <div class="section-header">
+            <div class="section-title">
+              <div class="section-title-icon">🛡️</div>
+              <span data-i18n="awareness.prevention">Prevention Tips</span>
+            </div>
+          </div>
+          <div id="prevention-list"></div>
+          <div style="margin-top:16px; padding:14px; background:rgba(0,229,160,0.05); border-radius:10px; border:1px solid rgba(0,229,160,0.15);">
+            <div style="font-size:13px; font-weight:600; color:var(--accent-green); margin-bottom:6px;">🌞 Join the Dry Day Drive!</div>
+            <div style="font-size:12px; color:var(--text-secondary);">
+              Every Sunday, empty and scrub all water-holding containers in your home.
+              BMC's dry-day campaign has contributed to a <strong>73% reduction in cases</strong> in 2025.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Symptoms List + Testing Centers -->
+      <div class="grid-2" style="margin-bottom:24px;">
+
+        <!-- Know the Symptoms -->
+        <div class="card animate-fadeInUp">
+          <div class="section-header">
+            <div class="section-title">
+              <div class="section-title-icon">🏥</div>
+              <span data-i18n="awareness.symptoms">Know the Symptoms</span>
+            </div>
+            <span style="font-size:11px; color:var(--accent-coral);">Seek care if symptoms appear</span>
+          </div>
+          <div id="symptom-list"></div>
+          <div style="margin-top:14px; padding:12px; background:rgba(255,107,107,0.05); border-radius:10px; border:1px solid rgba(255,107,107,0.15);">
+            <div style="font-size:12px; color:var(--text-muted);">
+              ⚠️ <strong style="color:var(--accent-coral);">Warning Signs (Severe Dengue):</strong>
+              Abdominal pain, persistent vomiting, rapid breathing, bleeding, extreme fatigue, restlessness.
+              <strong style="color:var(--accent-coral);">Go to hospital immediately.</strong>
+            </div>
+          </div>
+        </div>
+
+        <!-- Nearby Testing Centers -->
+        <div class="card animate-fadeInUp">
+          <div class="section-header">
+            <div class="section-title">
+              <div class="section-title-icon">🔬</div>
+              <span data-i18n="awareness.testing">Testing Centers — Bhubaneswar</span>
+            </div>
+            <span style="font-size:12px; color:var(--accent-cyan); cursor:pointer;">View All →</span>
+          </div>
+          <div id="testing-centers"></div>
+        </div>
+      </div>
+
+      <!-- Emergency Contacts -->
+      <div class="card animate-fadeInUp">
+        <div class="section-header">
+          <div class="section-title">
+            <div class="section-title-icon">📞</div>
+            <span data-i18n="awareness.emergency">Emergency Contacts</span>
+          </div>
+        </div>
+        <div class="emergency-grid">
+          <div class="emergency-item" onclick="window.location.href='tel:104'">
+            <div style="font-size:24px; margin-bottom:8px;">📞</div>
+            <div class="emergency-number">104</div>
+            <div style="font-size:12px; color:var(--text-muted); margin-top:6px;">State Health Helpline</div>
+            <div style="font-size:11px; color:var(--text-secondary); margin-top:4px;">24×7 Free</div>
+          </div>
+          <div class="emergency-item" onclick="window.location.href='tel:108'">
+            <div style="font-size:24px; margin-bottom:8px;">🚑</div>
+            <div class="emergency-number">108</div>
+            <div style="font-size:12px; color:var(--text-muted); margin-top:6px;">Emergency Ambulance</div>
+            <div style="font-size:11px; color:var(--text-secondary); margin-top:4px;">Free Emergency</div>
+          </div>
+          <div class="emergency-item" onclick="window.location.href='tel:06742392516'">
+            <div style="font-size:24px; margin-bottom:8px;">🏛️</div>
+            <div class="emergency-number" style="font-size:20px;">BMC</div>
+            <div style="font-size:12px; color:var(--text-muted); margin-top:6px;">0674-2392516</div>
+            <div style="font-size:11px; color:var(--text-secondary); margin-top:4px;">Bhubaneswar MC</div>
+          </div>
+          <div class="emergency-item" onclick="window.location.href='tel:18003456977'">
+            <div style="font-size:24px; margin-bottom:8px;">🏥</div>
+            <div class="emergency-number" style="font-size:18px;">NHM</div>
+            <div style="font-size:12px; color:var(--text-muted); margin-top:6px;">1800-345-6977</div>
+            <div style="font-size:11px; color:var(--text-secondary); margin-top:4px;">National Health Mission</div>
+          </div>
+        </div>
+        <div style="margin-top:16px; padding:12px 16px; background:var(--bg-glass); border-radius:10px; border:1px solid var(--border-glass); font-size:12px; color:var(--text-muted); text-align:center;">
+          <i class="fa-solid fa-circle-info" style="color:var(--accent-cyan);"></i>
+          Dengue has <strong style="color:var(--accent-coral);">no vaccine</strong> currently approved for public use in India (ICMR 2025).
+          Prevention and early detection remain the best tools.
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="data.js"></script>
+<script src="i18n.js"></script>
+<script src="app.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  renderSymptomList('symptom-list');
+  renderPreventionList('prevention-list');
+
+  // Testing Centers
+  const centers = [
+    { name: 'AIIMS Bhubaneswar', type: 'Government Hospital', address: 'Sijua, Dumuduma', time: '24×7', free: true },
+    { name: 'SCB Medical College, Cuttack', type: 'Government Hospital', address: 'Mangalabag, Cuttack', time: '8AM–8PM', free: true },
+    { name: 'Capital Hospital, BBSR', type: 'Government Hospital', address: 'Unit-6, Bhubaneswar', time: '9AM–6PM', free: true },
+    { name: 'Kalinga Hospital', type: 'Private', address: 'Chandrasekharpur', time: '8AM–9PM', free: false },
+    { name: 'Hi-Tech Medical College', type: 'Private', address: 'Rourkela', time: '7AM–8PM', free: false },
+  ];
+
+  document.getElementById('testing-centers').innerHTML = centers.map(c => `
+    <div class="center-card">
+      <div class="center-icon">${c.free ? '🆓' : '🏥'}</div>
+      <div>
+        <div style="font-size:13px; font-weight:600; color:var(--text-primary);">${c.name}</div>
+        <div style="font-size:11px; color:var(--text-muted);">${c.address}</div>
+        <div style="font-size:11px; color:var(--text-secondary); margin-top:4px;">
+          <i class="fa-solid fa-clock" style="font-size:10px;"></i> ${c.time}
+          ${c.free ? '<span style="margin-left:8px; color:var(--accent-green); font-weight:600;">FREE</span>' : ''}
+        </div>
+      </div>
+    </div>
+  `).join('');
+});
+
+// Symptom checker logic
+function updateSymptomCheck() {
+  const checks = ['fever','headache','joint','rash','bleed','nausea'];
+  const weights = { fever:30, headache:15, joint:15, rash:20, bleed:35, nausea:10 };
+  let score = 0;
+  let selected = 0;
+
+  checks.forEach(id => {
+    const el = document.getElementById('chk-' + id);
+    const toggle = document.getElementById('toggle-' + id);
+    if (el.checked) {
+      score += weights[id];
+      selected++;
+      toggle.classList.add('selected');
+    } else {
+      toggle.classList.remove('selected');
+    }
+  });
+
+  const resultEl = document.getElementById('symptom-result');
+  const iconEl = document.getElementById('result-icon');
+  const levelEl = document.getElementById('result-level');
+  const adviceEl = document.getElementById('result-advice');
+
+  if (selected === 0) {
+    resultEl.classList.remove('show');
+    return;
+  }
+
+  resultEl.classList.add('show');
+
+  if (score >= 50) {
+    resultEl.style.background = 'rgba(255,68,68,0.06)';
+    resultEl.style.borderColor = 'rgba(255,68,68,0.3)';
+    iconEl.textContent = '🔴';
+    levelEl.textContent = 'HIGH RISK — Seek Medical Care Now';
+    levelEl.style.color = '#ff4444';
+    adviceEl.textContent = 'Your symptoms suggest possible dengue. Visit a hospital immediately. Request NS1 antigen / IgM ELISA test. Avoid Ibuprofen/Aspirin — use Paracetamol only.';
+  } else if (score >= 25) {
+    resultEl.style.background = 'rgba(255,159,67,0.06)';
+    resultEl.style.borderColor = 'rgba(255,159,67,0.3)';
+    iconEl.textContent = '🟠';
+    levelEl.textContent = 'MODERATE RISK — Monitor Closely';
+    levelEl.style.color = '#ff9f43';
+    adviceEl.textContent = 'You may have a dengue-like illness. Rest, drink ORS/water. Monitor for worsening symptoms. Visit a doctor if fever persists beyond 3 days.';
+  } else {
+    resultEl.style.background = 'rgba(255,214,102,0.06)';
+    resultEl.style.borderColor = 'rgba(255,214,102,0.3)';
+    iconEl.textContent = '🟡';
+    levelEl.textContent = 'LOW RISK — Stay Vigilant';
+    levelEl.style.color = '#ffd666';
+    adviceEl.textContent = 'Symptoms are mild. Stay hydrated, use mosquito repellent, monitor temperature. Call 104 if symptoms worsen or fever spikes above 39°C.';
+  }
+}
+</script>
+<script src="assistant.js"></script>
+</body>
+</html>

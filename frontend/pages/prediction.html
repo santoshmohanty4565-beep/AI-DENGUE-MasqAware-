@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="MosqAware — AI Prediction Engine. 2-5 month dengue outbreak forecasting with SHAP explainability for Odisha." />
+  <title>AI Prediction Engine — MosqAware</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Rajdhani:wght@500;600;700&display=swap" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .model-stat-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-bottom: 24px;
+    }
+    .model-stat {
+      background: var(--bg-glass);
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius-md);
+      padding: 18px;
+      text-align: center;
+    }
+    .model-stat-val {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 34px;
+      font-weight: 700;
+      line-height: 1;
+    }
+    .model-stat-label {
+      font-size: 11px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-top: 6px;
+    }
+    .pipeline-step {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 18px;
+      background: var(--bg-glass);
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius-md);
+      margin-bottom: 8px;
+      transition: all 0.3s;
+    }
+    .pipeline-step:hover {
+      border-color: rgba(0,212,255,0.2);
+      background: var(--bg-glass-hover);
+    }
+    .pipeline-icon {
+      width: 38px; height: 38px;
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px; flex-shrink: 0;
+    }
+    .pipeline-arrow {
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 18px;
+      margin: 2px 0;
+    }
+    .district-pred-table tbody tr td:first-child {
+      color: var(--text-primary);
+      font-weight: 600;
+    }
+    .alert-level-card {
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      border: 2px solid;
+      text-align: center;
+    }
+    .alert-level-card.GREEN {
+      background: rgba(0,229,160,0.05);
+      border-color: rgba(0,229,160,0.25);
+    }
+    #sidebar-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      z-index: 99;
+      backdrop-filter: blur(4px);
+    }
+    #sidebar-overlay.show { display: block; }
+  </style>
+</head>
+<body>
+<div id="sidebar-overlay"></div>
+<div class="app-layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <a class="brand-logo" href="index.html">
+        <div class="brand-icon">🦟</div>
+        <div class="brand-text">
+          <div class="brand-name">MosqAware</div>
+          <div class="brand-sub">Odisha State</div>
+        </div>
+      </a>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section-label">Main</div>
+      <a class="nav-item" href="index.html"><span class="nav-icon"><i class="fa-solid fa-gauge-high"></i></span><span>Dashboard</span></a>
+      <a class="nav-item active" href="prediction.html"><span class="nav-icon"><i class="fa-solid fa-brain"></i></span><span>AI Prediction</span><span class="nav-badge">LIVE</span></a>
+      <a class="nav-item" href="analytics.html"><span class="nav-icon"><i class="fa-solid fa-chart-line"></i></span><span>Analytics</span></a>
+      <div class="nav-section-label">Tools</div>
+      <a class="nav-item" href="breeding.html"><span class="nav-icon"><i class="fa-solid fa-mosquito"></i></span><span>Breeding Index</span></a>
+      <a class="nav-item" href="awareness.html"><span class="nav-icon"><i class="fa-solid fa-bullhorn"></i></span><span>Public Awareness</span></a>
+      <a class="nav-item" href="reports.html"><span class="nav-icon"><i class="fa-solid fa-file-pdf"></i></span><span>Reports</span></a>
+
+      <a class="nav-item" href="forecast2027.html"><span class="nav-icon"><i class="fa-solid fa-calendar-days"></i></span><span>2027 Forecast</span><span class="nav-badge" style="background:rgba(255,107,107,0.85);">NEW</span></a>
+      <a class="nav-item" href="directory.html" id="nav-directory"><span class="nav-icon"><i class="fa-solid fa-sitemap"></i></span><span>Village Directory</span><span class="nav-badge" style="background:var(--accent-cyan); color:#000;">51k</span></a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="lang-switcher">
+        <button class="lang-btn active" data-lang="en">EN</button>
+        <button class="lang-btn" data-lang="hi">HI</button>
+        <button class="lang-btn" data-lang="or">OR</button>
+      </div>
+      <div class="system-status"><div class="status-dot"></div><span>Model v3.2 active</span></div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main-content">
+    <header class="top-header">
+      <div style="display:flex; align-items:center; gap:12px;">
+        <button class="menu-toggle" id="menu-toggle"><i class="fa-solid fa-bars"></i></button>
+        <div class="header-title">
+          <div class="page-title" data-i18n="prediction.title">AI Prediction Engine</div>
+          <div class="page-subtitle" data-i18n="prediction.subtitle">2-5 Month Dengue Outbreak Forecasting • XGBoost + LSTM Ensemble</div>
+        </div>
+      </div>
+      <div class="header-actions">
+        <div class="live-indicator"><span class="status-dot"></span>LIVE</div>
+        <div class="header-badge"><i class="fa-solid fa-microchip" style="font-size:12px;"></i> Model: XGB+RF+LSTM v3.2</div>
+      </div>
+    </header>
+
+    <main class="page-content">
+
+      <!-- Model Stats -->
+      <div class="model-stat-grid animate-fadeInUp">
+        <div class="model-stat">
+          <div class="model-stat-val" style="color:var(--accent-green);" data-count="87" data-suffix="%">87%</div>
+          <div class="model-stat-label" data-i18n="prediction.modelAccuracy">Model Accuracy</div>
+          <div style="font-size:10px; color:var(--text-muted); margin-top:4px;">XGBoost r=0.77 · RF 85–90%</div>
+        </div>
+        <div class="model-stat">
+          <div class="model-stat-val" style="color:var(--accent-cyan);">2–5 mo</div>
+          <div class="model-stat-label" data-i18n="prediction.leadTime">Prediction Lead Time</div>
+          <div style="font-size:10px; color:var(--text-muted); margin-top:4px;">vs 7–14 days traditional EWS</div>
+        </div>
+        <div class="model-stat">
+          <div class="model-stat-val" style="color:var(--accent-purple);">±95%</div>
+          <div class="model-stat-label" data-i18n="prediction.confidence">Confidence Interval</div>
+          <div style="font-size:10px; color:var(--text-muted); margin-top:4px;">Bayesian ensemble bounds</div>
+        </div>
+      </div>
+
+      <!-- Alert Level + Gauge -->
+      <div class="grid-2" style="margin-bottom:24px;">
+        <div class="card animate-fadeInUp">
+          <div class="section-header">
+            <div class="section-title">
+              <div class="section-title-icon">⚡</div>
+              Current Alert Level — Odisha
+            </div>
+          </div>
+          <div class="alert-level-card GREEN">
+            <div style="font-size:48px; margin-bottom:12px;">🟢</div>
+            <div style="font-family:'Rajdhani',sans-serif; font-size:28px; font-weight:700; color:var(--accent-green);">NORMAL</div>
+            <div style="font-size:13px; color:var(--text-secondary); margin-top:8px;">Routine surveillance mode</div>
+            <div style="margin-top:16px; font-size:12px; color:var(--text-muted);">
+              Next predicted risk elevation: <strong style="color:var(--accent-yellow);">Sep 2026</strong> (post-monsoon peak)
+            </div>
+          </div>
+          <div style="margin-top:16px;">
+            <div style="font-size:12px; font-weight:600; color:var(--text-muted); margin-bottom:10px; text-transform:uppercase; letter-spacing:1px;">Alert Trigger Conditions</div>
+            <div style="font-size:12px; color:var(--text-secondary); line-height:2;">
+              🟡 WATCH: TPR &gt;2% OR riskScore &gt;35<br/>
+              🟠 ALERT: TPR &gt;4% OR weekly cases &gt;500<br/>
+              🔴 EMERGENCY: TPR &gt;6% OR weekly cases &gt;2,000
+            </div>
+          </div>
+        </div>
+
+        <div class="card animate-fadeInUp">
+          <div class="section-header">
+            <div class="section-title">
+              <div class="section-title-icon">🎯</div>
+              State Risk Score
+            </div>
+          </div>
+          <div class="gauge-container">
+            <div id="state-gauge"></div>
+            <div style="margin-top:12px; text-align:center;">
+              <div style="font-size:13px; color:var(--text-secondary);">Composite Risk Score</div>
+              <div style="font-size:11px; color:var(--text-muted); margin-top:4px;">
+                Temp (41%) + Rainfall (39%) + Humidity (20%) + Case History
+              </div>
+            </div>
+          </div>
+          <!-- District risk scores -->
+          <div style="margin-top:16px;">
+            <div style="font-size:12px; font-weight:600; color:var(--text-muted); margin-bottom:10px; text-transform:uppercase; letter-spacing:1px;">Top District Risk Scores</div>
+            <div id="mini-risk-bars"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Forecast Chart -->
+      <div class="card animate-fadeInUp" style="margin-bottom:24px;">
+        <div class="section-header">
+          <div class="section-title">
+            <div class="section-title-icon">📅</div>
+            <span data-i18n="prediction.forecastTitle">Monthly Case Forecast — Aug–Dec 2026</span>
+          </div>
+          <div style="font-size:12px; color:var(--text-muted);">
+            <i class="fa-solid fa-info-circle"></i> Shaded region = 95% confidence interval
+          </div>
+        </div>
+        <div class="chart-wrapper-xl">
+          <canvas id="forecast-chart"></canvas>
+        </div>
+        <div style="margin-top:16px; display:grid; grid-template-columns:repeat(5,1fr); gap:10px; text-align:center;">
+          <div style="padding:10px; background:var(--bg-glass); border-radius:10px; border:1px solid var(--border-glass);">
+            <div style="font-family:Rajdhani,sans-serif; font-size:22px; font-weight:700; color:var(--accent-purple);">380</div>
+            <div style="font-size:10px; color:var(--text-muted);">Aug 2026</div>
+            <div style="font-size:10px; color:var(--accent-green); margin-top:2px;">82% conf.</div>
+          </div>
+          <div style="padding:10px; background:var(--bg-glass); border-radius:10px; border:1px solid var(--border-glass);">
+            <div style="font-family:Rajdhani,sans-serif; font-size:22px; font-weight:700; color:var(--accent-coral);">620</div>
+            <div style="font-size:10px; color:var(--text-muted);">Sep 2026</div>
+            <div style="font-size:10px; color:var(--accent-yellow); margin-top:2px;">79% conf.</div>
+          </div>
+          <div style="padding:10px; background:var(--bg-glass); border-radius:10px; border:1px solid var(--border-glass);">
+            <div style="font-family:Rajdhani,sans-serif; font-size:22px; font-weight:700; color:var(--accent-orange);">490</div>
+            <div style="font-size:10px; color:var(--text-muted);">Oct 2026</div>
+            <div style="font-size:10px; color:var(--accent-yellow); margin-top:2px;">76% conf.</div>
+          </div>
+          <div style="padding:10px; background:var(--bg-glass); border-radius:10px; border:1px solid var(--border-glass);">
+            <div style="font-family:Rajdhani,sans-serif; font-size:22px; font-weight:700; color:var(--accent-cyan);">210</div>
+            <div style="font-size:10px; color:var(--text-muted);">Nov 2026</div>
+            <div style="font-size:10px; color:var(--accent-green); margin-top:2px;">80% conf.</div>
+          </div>
+          <div style="padding:10px; background:var(--bg-glass); border-radius:10px; border:1px solid var(--border-glass);">
+            <div style="font-family:Rajdhani,sans-serif; font-size:22px; font-weight:700; color:var(--accent-green);">80</div>
+            <div style="font-size:10px; color:var(--text-muted);">Dec 2026</div>
+            <div style="font-size:10px; color:var(--accent-green); margin-top:2px;">85% conf.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SHAP + Pipeline -->
+      <div class="grid-2" style="margin-bottom:24px;">
+
+        <!-- SHAP Feature Importance -->
+        <div class="card animate-fadeInUp">
+          <div class="section-header">
+            <div class="section-title">
+              <div class="section-title-icon">🔍</div>
+              <span data-i18n="prediction.shapTitle">SHAP Feature Importance</span>
+            </div>
+            <span style="font-size:11px; color:var(--text-muted);">Explainable AI</span>
+          </div>
+          <div style="font-size:12px; color:var(--text-muted); margin-bottom:14px;">
+            Features driving this month's prediction. Red = increases risk, Green = reduces risk.
+          </div>
+          <div id="shap-chart"></div>
+        </div>
+
+        <!-- Model Pipeline -->
+        <div class="card animate-fadeInUp">
+          <div class="section-header">
+            <div class="section-title">
+              <div class="section-title-icon">⚙️</div>
+              Model Training Pipeline
+            </div>
+          </div>
+          <div id="pipeline-steps">
+            <div class="pipeline-step">
+              <div class="pipeline-icon" style="background:rgba(0,212,255,0.1); color:var(--accent-cyan);">📥</div>
+              <div>
+                <div style="font-size:13px; font-weight:600; color:var(--text-primary);">Data Collection</div>
+                <div style="font-size:11px; color:var(--text-muted);">NCVBDC + IMD + Open-Meteo + Landsat-8</div>
+              </div>
+            </div>
+            <div class="pipeline-arrow">↓</div>
+            <div class="pipeline-step">
+              <div class="pipeline-icon" style="background:rgba(168,85,247,0.1); color:var(--accent-purple);">🔧</div>
+              <div>
+                <div style="font-size:13px; font-weight:600; color:var(--text-primary);">Feature Engineering</div>
+                <div style="font-size:11px; color:var(--text-muted);">Lag features (1–5 months), NDWI/NDMI/NDVI, LST</div>
+              </div>
+            </div>
+            <div class="pipeline-arrow">↓</div>
+            <div class="pipeline-step">
+              <div class="pipeline-icon" style="background:rgba(255,159,67,0.1); color:var(--accent-orange);">🧠</div>
+              <div>
+                <div style="font-size:13px; font-weight:600; color:var(--text-primary);">Ensemble Training</div>
+                <div style="font-size:11px; color:var(--text-muted);">XGBoost + Random Forest + LSTM (cross-validation)</div>
+              </div>
+            </div>
+            <div class="pipeline-arrow">↓</div>
+            <div class="pipeline-step">
+              <div class="pipeline-icon" style="background:rgba(255,107,107,0.1); color:var(--accent-coral);">📊</div>
+              <div>
+                <div style="font-size:13px; font-weight:600; color:var(--text-primary);">SHAP Evaluation</div>
+                <div style="font-size:11px; color:var(--text-muted);">Explainability + feature selection + tuning</div>
+              </div>
+            </div>
+            <div class="pipeline-arrow">↓</div>
+            <div class="pipeline-step">
+              <div class="pipeline-icon" style="background:rgba(0,229,160,0.1); color:var(--accent-green);">🚀</div>
+              <div>
+                <div style="font-size:13px; font-weight:600; color:var(--text-primary);">Deployment + Alerts</div>
+                <div style="font-size:11px; color:var(--text-muted);">Monthly retraining · Auto-alerts via API</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Technical Blueprint & Model Taxonomy Section ── -->
+      <div class="card animate-fadeInUp" style="margin-bottom:24px;">
+        <div class="section-header">
+          <div class="section-title">
+            <div class="section-title-icon">🏛️</div>
+            Model Architectures & Selection Taxonomy
+          </div>
+          <span style="font-size:11px; color:var(--accent-cyan);">Benchmark Comparison</span>
+        </div>
+        <div style="font-size:12px; color:var(--text-muted); margin-bottom:14px;">
+          Comparing hybrid, deep learning, and ensemble architectures evaluated for vector outbreak forecasting.
+        </div>
+        <div style="overflow-x:auto; margin-bottom:16px;">
+          <table class="data-table w-full" id="architecture-table">
+            <thead>
+              <tr>
+                <th>Model Architecture</th>
+                <th>Category</th>
+                <th>Performance Benchmark</th>
+                <th>Accuracy / Target</th>
+                <th>Recommended Application</th>
+              </tr>
+            </thead>
+            <tbody id="architecture-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ── Performance Metrics & Targets ── -->
+      <div class="grid-2" style="margin-bottom:24px;">
+        <!-- Metrics Tracker -->
+        <div class="card animate-fadeInUp">
+          <div class="section-header">
+            <div class="section-title">
+              <div class="section-title-icon">🎯</div>
+              Model Performance Metrics & Targets
+            </div>
+            <span style="font-size:11px; color:var(--accent-green);">All Targets Met</span>
+          </div>
+          <div id="metrics-target-list" style="display:flex; flex-direction:column; gap:10px;"></div>
+        </div>
+
+        <!-- 4-Phase Implementation Roadmap -->
+        <div class="card animate-fadeInUp">
+          <div class="section-header">
+            <div class="section-title">
+              <div class="section-title-icon">🗺️</div>
+              6-Week Implementation Roadmap
+            </div>
+            <span style="font-size:11px; color:var(--text-muted);">Production Deployment</span>
+          </div>
+          <div id="roadmap-phases-container"></div>
+        </div>
+      </div>
+
+      <!-- ── Open-Source Repositories & Tools Matrix ── -->
+      <div class="card animate-fadeInUp" style="margin-bottom:24px;">
+        <div class="section-header">
+          <div class="section-title">
+            <div class="section-title-icon">📦</div>
+            Open-Source Repositories & Implementation Stack
+          </div>
+          <span style="font-size:12px; color:var(--text-muted);">Community & Reference Repos</span>
+        </div>
+        <div style="overflow-x:auto;">
+          <table class="data-table w-full">
+            <thead>
+              <tr>
+                <th>Repository</th>
+                <th>Technology Stack</th>
+                <th>Description</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="open-source-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Quick Start MVP Code Viewer -->
+      <div class="card animate-fadeInUp" style="margin-bottom:24px;">
+        <div class="section-header">
+          <div class="section-title">
+            <div class="section-title-icon">💻</div>
+            Quick Start: Minimum Viable Predictor (Python)
+          </div>
+          <button class="btn btn-outline btn-sm" onclick="copyMvpSnippet()"><i class="fa-solid fa-copy"></i> Copy Code</button>
+        </div>
+        <pre style="background:rgba(5,13,26,0.9); border:1px solid rgba(0,212,255,0.2); border-radius:10px; padding:16px; font-family:'Fira Code',Consolas,monospace; font-size:12px; color:#00d4ff; overflow-x:auto;"><code id="mvp-code-block"></code></pre>
+      </div>
+
+      <!-- District Predictions Table -->
+      <div class="card animate-fadeInUp">
+        <div class="section-header">
+          <div class="section-title">
+            <div class="section-title-icon">📍</div>
+            District-wise Predictions — Sep 2026
+          </div>
+          <span style="font-size:12px; color:var(--text-muted);">Based on weather lags + historical patterns</span>
+        </div>
+        <div style="overflow-x:auto;">
+          <table class="data-table district-pred-table w-full">
+            <thead>
+              <tr>
+                <th>District</th>
+                <th>Predicted Cases</th>
+                <th>Risk Score</th>
+                <th>Alert Level</th>
+                <th>Key Driver</th>
+                <th>Recommended Action</th>
+              </tr>
+            </thead>
+            <tbody id="pred-table-body"></tbody>
+          </table>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="data.js"></script>
+<script src="i18n.js"></script>
+<script src="map.js"></script>
+<script src="app.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const tb = ODISHA_DATA.technicalBlueprint;
+
+  // 1. Model Taxonomy Table
+  const archTbody = document.getElementById('architecture-tbody');
+  if (archTbody && tb?.architectures) {
+    archTbody.innerHTML = tb.architectures.map(a => `
+      <tr>
+        <td style="font-weight:600; color:var(--text-primary);">${a.name}</td>
+        <td><span class="risk-badge ${a.category.includes('Recommended')?'HIGH':'LOW'}" style="font-size:10px;">${a.category}</span></td>
+        <td style="font-size:12px; color:var(--text-secondary);">${a.performance}</td>
+        <td><span style="font-family:Rajdhani,sans-serif; font-size:16px; font-weight:700; color:var(--accent-green);">${a.accuracy}</span></td>
+        <td style="font-size:12px; color:var(--text-muted);">${a.bestFor}</td>
+      </tr>
+    `).join('');
+  }
+
+  // 2. Metrics Tracker
+  const metricsList = document.getElementById('metrics-target-list');
+  if (metricsList && tb?.metricsTargets) {
+    metricsList.innerHTML = tb.metricsTargets.map(m => `
+      <div style="display:flex; align-items:center; justify-content:space-between; padding:10px 14px; background:var(--bg-glass); border:1px solid var(--border-glass); border-radius:10px;">
+        <div>
+          <div style="font-size:13px; font-weight:600; color:var(--text-primary);">${m.metric}</div>
+          <div style="font-size:11px; color:var(--text-muted);">${m.desc}</div>
+        </div>
+        <div style="text-align:right;">
+          <span style="font-family:Rajdhani,sans-serif; font-size:18px; font-weight:700; color:var(--accent-cyan);">${m.current}</span>
+          <span style="font-size:10px; color:var(--text-muted); margin-left:4px;">(Target: ${m.target})</span>
+          <div><span class="trend-pill trend-down-pill" style="padding:2px 8px; font-size:9px;">${m.status}</span></div>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  // 3. Roadmap
+  const rmContainer = document.getElementById('roadmap-phases-container');
+  if (rmContainer && tb?.roadmap) {
+    rmContainer.innerHTML = tb.roadmap.map((r, i) => `
+      <div style="padding:12px 14px; background:var(--bg-glass); border:1px solid var(--border-glass); border-radius:10px; margin-bottom:8px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+          <strong style="font-size:13px; color:var(--text-primary);">${r.phase}</strong>
+          <span style="font-size:11px; color:var(--accent-yellow); font-weight:600;">${r.duration}</span>
+        </div>
+        <div style="display:flex; flex-wrap:wrap; gap:4px;">
+          ${r.tasks.map(t => `<span style="padding:2px 8px; background:rgba(0,212,255,0.06); border:1px solid rgba(0,212,255,0.15); border-radius:99px; font-size:10px; color:var(--text-secondary);">✓ ${t}</span>`).join('')}
+        </div>
+      </div>
+    `).join('');
+  }
+
+  // 4. Open-Source Repos Table
+  const osTbody = document.getElementById('open-source-tbody');
+  if (osTbody && tb?.repositories) {
+    osTbody.innerHTML = tb.repositories.map(r => `
+      <tr>
+        <td style="font-weight:600; color:var(--accent-cyan);">${r.repo}<br/><span style="font-size:10px; color:var(--text-muted); font-weight:normal;">by ${r.owner}</span></td>
+        <td style="font-size:12px; color:var(--accent-yellow);">${r.tech}</td>
+        <td style="font-size:12px; color:var(--text-secondary);">${r.desc}</td>
+        <td><a href="${r.url}" target="_blank" class="btn btn-outline btn-sm" style="font-size:10px; padding:4px 8px;"><i class="fa-brands fa-github"></i> View Repo</a></td>
+      </tr>
+    `).join('');
+  }
+
+  // 5. MVP Code Snippet
+  const codeBlock = document.getElementById('mvp-code-block');
+  if (codeBlock && tb?.mvpSnippet) {
+    codeBlock.textContent = tb.mvpSnippet;
+  }
+
+  // Gauge
+  drawRiskGauge('state-gauge', 22);
+
+  // Mini risk bars
+  const topDistricts = [...ODISHA_DATA.districts].sort((a,b) => b.riskScore - a.riskScore).slice(0,5);
+  document.getElementById('mini-risk-bars').innerHTML = topDistricts.map(d => `
+    <div style="margin-bottom:10px;">
+      <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:4px;">
+        <span style="color:var(--text-secondary);">${d.name}</span>
+        <span style="color:${getRiskColorByLevel(d.riskLevel)}; font-weight:600;">${d.riskScore}/100</span>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" style="width:${d.riskScore}%; background:${getRiskColorByLevel(d.riskLevel)};"></div>
+      </div>
+    </div>
+  `).join('');
+
+  // Forecast chart
+  initForecastChart('forecast-chart');
+
+  // SHAP
+  renderShapChart('shap-chart');
+
+  // Prediction table
+  const preds = [
+    { name: 'Khordha', cases: 95, risk: 72, level: 'HIGH', driver: 'Temperature lag', action: 'Activate fogging, surge testing' },
+    { name: 'Balasore', cases: 78, risk: 65, level: 'HIGH', driver: 'NDWI water index', action: 'Deploy larvicide, drain waterlogging' },
+    { name: 'Cuttack', cases: 62, risk: 58, level: 'HIGH', driver: 'Historical cases', action: 'Increase surveillance frequency' },
+    { name: 'Mayurbhanj', cases: 48, risk: 50, level: 'MODERATE', driver: 'Humidity (82%)', action: 'Pre-position resources' },
+    { name: 'Ganjam', cases: 42, risk: 46, level: 'MODERATE', driver: 'Rainfall intensity', action: 'Monitor breeding sites' },
+    { name: 'Jajapur', cases: 36, risk: 40, level: 'MODERATE', driver: 'Urbanization', action: 'Community awareness drive' },
+    { name: 'Puri', cases: 28, risk: 34, level: 'MODERATE', driver: 'Tourism influx', action: 'Screen tourists, dry day drives' },
+    { name: 'Sundargarh', cases: 22, risk: 28, level: 'LOW', driver: 'Altitude buffer', action: 'Routine surveillance' },
+  ];
+
+  document.getElementById('pred-table-body').innerHTML = preds.map(p => `
+    <tr>
+      <td style="font-weight:600; color:var(--text-primary);">${p.name}</td>
+      <td><span style="font-family:Rajdhani,sans-serif; font-size:18px; font-weight:700; color:${getRiskColorByLevel(p.level)};">${p.cases}</span></td>
+      <td>
+        <div style="display:flex; align-items:center; gap:8px;">
+          <div class="progress-bar" style="width:80px; flex-shrink:0;">
+            <div class="progress-fill" style="width:${p.risk}%; background:${getRiskColorByLevel(p.level)};"></div>
+          </div>
+          <span style="color:var(--text-muted); font-size:12px;">${p.risk}</span>
+        </div>
+      </td>
+      <td><span class="risk-badge ${p.level}">${p.level}</span></td>
+      <td style="font-size:12px; color:var(--accent-yellow);">${p.driver}</td>
+      <td style="font-size:12px; color:var(--text-muted);">${p.action}</td>
+    </tr>
+  `).join('');
+
+  // Counter animations
+  document.querySelectorAll('[data-count]').forEach(el => {
+    const target = parseFloat(el.dataset.count);
+    const suffix = el.dataset.suffix || '';
+    animateCounter(el, target, 1500, '', suffix);
+  });
+});
+
+function copyMvpSnippet() {
+  const code = ODISHA_DATA.technicalBlueprint.mvpSnippet;
+  navigator.clipboard.writeText(code).then(() => {
+    alert('Code copied to clipboard!');
+  });
+}
+</script>
+<script src="assistant.js"></script>
+</body>
+</html>

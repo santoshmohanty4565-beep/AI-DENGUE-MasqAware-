@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="MosqAware — Complete Odisha Village, Block, and District Administrative Directory & Dengue Risk Repository. Data for 51,313 villages, 311 CD blocks, 464 tahasils across 30 districts." />
+  <title>Administrative Directory — MosqAware</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Rajdhani:wght@500;600;700&display=swap" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="style.css" />
+
+  <style>
+    #sidebar-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:99; backdrop-filter:blur(4px); }
+    #sidebar-overlay.show { display:block; }
+
+    .stat-hero-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .stat-hero-card {
+      background: var(--bg-glass);
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius-md);
+      padding: 16px 14px;
+      text-align: center;
+      transition: all 0.3s;
+    }
+    .stat-hero-card:hover {
+      border-color: rgba(0,212,255,0.25);
+      transform: translateY(-2px);
+    }
+    .stat-hero-val {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 32px;
+      font-weight: 700;
+      line-height: 1;
+    }
+    .stat-hero-label {
+      font-size: 10px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin-top: 6px;
+    }
+
+    .facility-bar-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 14px;
+      background: var(--bg-glass);
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius-md);
+      margin-bottom: 8px;
+    }
+
+    .density-pill {
+      padding: 3px 10px;
+      border-radius: 99px;
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .filter-bar {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .search-input {
+      flex: 1;
+      min-width: 220px;
+      padding: 10px 16px;
+      background: rgba(5,13,26,0.8);
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius-md);
+      color: var(--text-primary);
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+    }
+    .search-input:focus {
+      outline: none;
+      border-color: var(--accent-cyan);
+    }
+
+    @media (max-width: 900px) {
+      .stat-hero-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+    @media (max-width: 600px) {
+      .stat-hero-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+<div id="sidebar-overlay"></div>
+<div class="app-layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <a class="brand-logo" href="index.html">
+        <div class="brand-icon">🦟</div>
+        <div class="brand-text">
+          <div class="brand-name">MosqAware</div>
+          <div class="brand-sub">Odisha State</div>
+        </div>
+      </a>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section-label">Main</div>
+      <a class="nav-item" href="index.html"><span class="nav-icon"><i class="fa-solid fa-gauge-high"></i></span><span>Dashboard</span></a>
+      <a class="nav-item" href="prediction.html"><span class="nav-icon"><i class="fa-solid fa-brain"></i></span><span>AI Prediction</span></a>
+      <a class="nav-item" href="analytics.html"><span class="nav-icon"><i class="fa-solid fa-chart-line"></i></span><span>Analytics</span></a>
+      <div class="nav-section-label">Tools & Data</div>
+      <a class="nav-item" href="breeding.html"><span class="nav-icon"><i class="fa-solid fa-mosquito"></i></span><span>Breeding Index</span></a>
+      <a class="nav-item" href="awareness.html"><span class="nav-icon"><i class="fa-solid fa-bullhorn"></i></span><span>Public Awareness</span></a>
+      <a class="nav-item" href="reports.html"><span class="nav-icon"><i class="fa-solid fa-file-pdf"></i></span><span>Reports</span></a>
+      <a class="nav-item" href="forecast2027.html"><span class="nav-icon"><i class="fa-solid fa-calendar-days"></i></span><span>2027 Forecast</span><span class="nav-badge" style="background:rgba(255,107,107,0.85);">NEW</span></a>
+      <a class="nav-item active" href="directory.html"><span class="nav-icon"><i class="fa-solid fa-sitemap"></i></span><span>Village Directory</span><span class="nav-badge" style="background:var(--accent-cyan); color:#000;">51k</span></a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="lang-switcher">
+        <button class="lang-btn active" data-lang="en">EN</button>
+        <button class="lang-btn" data-lang="hi">HI</button>
+        <button class="lang-btn" data-lang="or">OR</button>
+      </div>
+      <div class="system-status"><div class="status-dot"></div><span>Census Data Active</span></div>
+      <div style="font-size:10px; color:var(--text-muted); margin-top:6px;">51,313 Villages · 311 Blocks</div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main-content">
+    <header class="top-header">
+      <div style="display:flex; align-items:center; gap:12px;">
+        <button class="menu-toggle" id="menu-toggle"><i class="fa-solid fa-bars"></i></button>
+        <div class="header-title">
+          <div class="page-title">Village, Block & City Data Repository</div>
+          <div class="page-subtitle">51,313 Villages · 464 Tahasils · 311 CD Blocks · 5,531 Gram Panchayats · Odisha</div>
+        </div>
+      </div>
+      <div class="header-actions">
+        <div class="header-badge"><i class="fa-solid fa-database" style="color:var(--accent-cyan);"></i> Indian Village Directory</div>
+        <a href="reports.html" class="btn btn-primary btn-sm"><i class="fa-solid fa-download"></i> Export Data</a>
+      </div>
+    </header>
+
+    <main class="page-content">
+
+      <!-- Hero Overview Grid -->
+      <div class="stat-hero-grid animate-fadeInUp">
+        <div class="stat-hero-card">
+          <div style="font-size:24px; margin-bottom:6px;">🏡</div>
+          <div class="stat-hero-val" style="color:var(--accent-cyan);" data-count="51313">51,313</div>
+          <div class="stat-hero-label">Total Villages</div>
+          <div style="font-size:10px; color:var(--accent-green); margin-top:4px;">47,677 Inhabited (93%)</div>
+        </div>
+        <div class="stat-hero-card">
+          <div style="font-size:24px; margin-bottom:6px;">🏢</div>
+          <div class="stat-hero-val" style="color:var(--accent-yellow);" data-count="311">311</div>
+          <div class="stat-hero-label">CD Blocks</div>
+          <div style="font-size:10px; color:var(--text-muted); margin-top:4px;">464 Revenue Tahasils</div>
+        </div>
+        <div class="stat-hero-card">
+          <div style="font-size:24px; margin-bottom:6px;">🏛️</div>
+          <div class="stat-hero-val" style="color:var(--accent-purple);" data-count="5531">5,531</div>
+          <div class="stat-hero-label">Gram Panchayats</div>
+          <div style="font-size:10px; color:var(--text-muted); margin-top:4px;">Across 30 Districts</div>
+        </div>
+        <div class="stat-hero-card">
+          <div style="font-size:24px; margin-bottom:6px;">👨‍👩‍👧‍👦</div>
+          <div class="stat-hero-val" style="color:var(--accent-green);" data-count="34970562">34.97M</div>
+          <div class="stat-hero-label">Total Population</div>
+          <div style="font-size:10px; color:var(--text-muted); margin-top:4px;">8,089,987 Households</div>
+        </div>
+        <div class="stat-hero-card">
+          <div style="font-size:24px; margin-bottom:6px;">📐</div>
+          <div class="stat-hero-val" style="color:var(--accent-coral);" data-count="11573788">11.57M</div>
+          <div class="stat-hero-label">Area (Hectares)</div>
+          <div style="font-size:10px; color:var(--text-muted); margin-top:4px;">30 District Administrations</div>
+        </div>
+      </div>
+
+      <!-- Infrastructure & Facility Coverage Row -->
+      <div class="grid-2" style="margin-bottom:24px;">
+
+        <!-- Facility Coverage -->
+        <div class="card animate-fadeInUp">
+          <div class="section-header">
+            <div class="section-title">
+              <div class="section-title-icon">🏫</div>
+              Village Infrastructure & Facility Coverage
+            </div>
+            <span style="font-size:11px; color:var(--text-muted);">% of 51,313 Villages</span>
+          </div>
+          <div id="facility-coverage-list"></div>
+        </div>
+
+        <!-- Postal & Banking Infrastructure -->
+        <div class="card animate-fadeInUp">
+          <div class="section-header">
+            <div class="section-title">
+              <div class="section-title-icon">🏦</div>
+              Postal & Banking Access Data
+            </div>
+            <span style="font-size:11px; color:var(--text-muted);">Financial Infrastructure</span>
+          </div>
+          <div style="display:grid; grid-template-columns:repeat(2,1fr); gap:12px; margin-bottom:16px;">
+            <div style="padding:14px; background:var(--bg-glass); border:1px solid var(--border-glass); border-radius:10px; text-align:center;">
+              <div style="font-family:'Rajdhani',sans-serif; font-size:32px; font-weight:700; color:var(--accent-cyan);">8,915</div>
+              <div style="font-size:11px; color:var(--text-muted); margin-top:4px;">Post Offices</div>
+            </div>
+            <div style="padding:14px; background:var(--bg-glass); border:1px solid var(--border-glass); border-radius:10px; text-align:center;">
+              <div style="font-family:'Rajdhani',sans-serif; font-size:32px; font-weight:700; color:var(--accent-yellow);">943</div>
+              <div style="font-size:11px; color:var(--text-muted); margin-top:4px;">Unique PIN Codes</div>
+            </div>
+            <div style="padding:14px; background:var(--bg-glass); border:1px solid var(--border-glass); border-radius:10px; text-align:center;">
+              <div style="font-family:'Rajdhani',sans-serif; font-size:32px; font-weight:700; color:var(--accent-green);">7,133</div>
+              <div style="font-size:11px; color:var(--text-muted); margin-top:4px;">ATM / CDM / CRM Records</div>
+            </div>
+            <div style="padding:14px; background:var(--bg-glass); border:1px solid var(--border-glass); border-radius:10px; text-align:center;">
+              <div style="font-family:'Rajdhani',sans-serif; font-size:32px; font-weight:700; color:var(--accent-purple);">40</div>
+              <div style="font-size:11px; color:var(--text-muted); margin-top:4px;">Active Bank Networks</div>
+            </div>
+          </div>
+          <div style="padding:12px; background:rgba(0,212,255,0.05); border:1px solid rgba(0,212,255,0.15); border-radius:10px; font-size:12px; color:var(--text-muted);">
+            <strong style="color:var(--accent-cyan);">State Bank of India</strong> leads banking presence with <strong>3,091 records (43% share)</strong>, followed by HDFC (7.5%) and PNB (5.2%).
+          </div>
+        </div>
+      </div>
+
+      <!-- District Master Repository & Density Risk Table -->
+      <div class="card animate-fadeInUp" style="margin-bottom:24px;">
+        <div class="section-header">
+          <div class="section-title">
+            <div class="section-title-icon">📊</div>
+            District Master Directory & Dengue Population Density Correlation
+          </div>
+          <div style="display:flex; gap:8px;">
+            <select class="select-input" id="district-sort" style="font-size:11px; padding:5px 10px;" onchange="sortDistrictTable(this.value)">
+              <option value="density">Sort by Density (Highest First)</option>
+              <option value="villages">Sort by Villages Count</option>
+              <option value="population">Sort by Population</option>
+              <option value="name">Sort by Name</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="filter-bar">
+          <input type="text" id="district-search" class="search-input" placeholder="🔍 Search district name or division..." onkeyup="filterDistrictTable(this.value)" />
+        </div>
+
+        <div style="overflow-x:auto;">
+          <table class="data-table w-full" id="district-master-table">
+            <thead>
+              <tr>
+                <th>District</th>
+                <th>Census Code</th>
+                <th>Division</th>
+                <th>Villages</th>
+                <th>Inhabited %</th>
+                <th>Population</th>
+                <th>Households</th>
+                <th>Area (Ha)</th>
+                <th>Density (Pop/km²)</th>
+                <th>Dengue Risk</th>
+              </tr>
+            </thead>
+            <tbody id="district-master-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Largest Villages by Population & Area -->
+      <div class="grid-2" style="margin-bottom:24px;">
+
+        <!-- Top Villages by Population -->
+        <div class="card animate-fadeInUp">
+          <div class="section-header">
+            <div class="section-title">
+              <div class="section-title-icon">👥</div>
+              Largest Villages by Population (High Risk)
+            </div>
+          </div>
+          <div style="overflow-x:auto;">
+            <table class="data-table w-full">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Village Name</th>
+                  <th>District</th>
+                  <th>Population</th>
+                  <th>Households</th>
+                  <th>Nearest Town</th>
+                </tr>
+              </thead>
+              <tbody id="top-pop-villages-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Top Villages by Area -->
+        <div class="card animate-fadeInUp">
+          <div class="section-header">
+            <div class="section-title">
+              <div class="section-title-icon">🗺️</div>
+              Largest Villages by Land Area
+            </div>
+          </div>
+          <div style="overflow-x:auto;">
+            <table class="data-table w-full">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Village Name</th>
+                  <th>District</th>
+                  <th>Area (Ha)</th>
+                  <th>Population</th>
+                  <th>Density</th>
+                </tr>
+              </thead>
+              <tbody id="top-area-villages-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Distance Bands & Banking Infrastructure -->
+      <div class="grid-2" style="margin-bottom:24px;">
+
+        <!-- Nearest Town Distance Bands -->
+        <div class="card animate-fadeInUp">
+          <div class="section-header">
+            <div class="section-title">
+              <div class="section-title-icon">🚗</div>
+              Facility Coverage by Distance to Nearest Town
+            </div>
+            <span style="font-size:11px; color:var(--text-muted);">Avg distance: 31.9 km</span>
+          </div>
+          <div id="distance-bands-list" style="display:flex; flex-direction:column; gap:10px;"></div>
+          <div style="margin-top:14px; padding:12px; background:rgba(255,214,102,0.05); border:1px solid rgba(255,214,102,0.15); border-radius:10px; font-size:12px; color:var(--text-muted);">
+            ⚠️ <strong>51.2% of villages (26,261)</strong> are located over 25 km from the nearest town, requiring mobile vector surveillance teams and decentralized testing.
+          </div>
+        </div>
+
+        <!-- Top Districts by Banking / ATM Access -->
+        <div class="card animate-fadeInUp">
+          <div class="section-header">
+            <div class="section-title">
+              <div class="section-title-icon">💳</div>
+              Top Districts by Banking & ATM Infrastructure
+            </div>
+          </div>
+          <div style="overflow-x:auto;">
+            <table class="data-table w-full">
+              <thead>
+                <tr>
+                  <th>District</th>
+                  <th>ATMs</th>
+                  <th>CRMs</th>
+                  <th>CDMs</th>
+                  <th>Banks</th>
+                  <th>Total Records</th>
+                </tr>
+              </thead>
+              <tbody id="banking-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<!-- Scripts -->
+<script src="data.js"></script>
+<script src="i18n.js"></script>
+<script src="app.js"></script>
+<script>
+let masterDistrictsData = [];
+
+document.addEventListener('DOMContentLoaded', () => {
+  const admin = ODISHA_DATA.administrativeData;
+  masterDistrictsData = [...admin.districtMaster];
+
+  // 1. Facility Coverage
+  document.getElementById('facility-coverage-list').innerHTML = admin.facilityCoverage.map(f => `
+    <div class="facility-bar-row">
+      <div style="width:140px; font-size:13px; font-weight:600; color:var(--text-primary);">${f.facility}</div>
+      <div style="flex:1;">
+        <div class="progress-bar">
+          <div class="progress-fill" style="width:${f.pct}%; background:var(--accent-cyan);"></div>
+        </div>
+      </div>
+      <div style="width:100px; text-align:right;">
+        <span style="font-family:Rajdhani,sans-serif; font-size:16px; font-weight:700; color:var(--accent-cyan);">${f.pct}%</span>
+        <div style="font-size:10px; color:var(--text-muted);">${f.count.toLocaleString()} villages</div>
+      </div>
+    </div>
+  `).join('');
+
+  // 2. Render District Master Table
+  renderDistrictMasterTable(masterDistrictsData);
+
+  // 3. Top Villages by Pop
+  document.getElementById('top-pop-villages-tbody').innerHTML = admin.largestVillagesByPop.map(v => `
+    <tr>
+      <td style="color:var(--text-muted);">${v.rank}</td>
+      <td style="font-weight:600; color:var(--text-primary);">${v.name}</td>
+      <td>${v.district}</td>
+      <td><span style="font-family:Rajdhani,sans-serif; font-size:16px; font-weight:700; color:var(--accent-coral);">${v.population.toLocaleString()}</span></td>
+      <td>${v.households.toLocaleString()}</td>
+      <td style="font-size:12px; color:var(--text-muted);">${v.nearestTown} (${v.distKm} km)</td>
+    </tr>
+  `).join('');
+
+  // 4. Top Villages by Area
+  document.getElementById('top-area-villages-tbody').innerHTML = admin.largestVillagesByArea.map(v => `
+    <tr>
+      <td style="color:var(--text-muted);">${v.rank}</td>
+      <td style="font-weight:600; color:var(--text-primary);">${v.name}</td>
+      <td>${v.district}</td>
+      <td><span style="font-family:Rajdhani,sans-serif; font-size:16px; font-weight:700; color:var(--accent-yellow);">${v.areaHa.toLocaleString()}</span></td>
+      <td>${v.population.toLocaleString()}</td>
+      <td style="font-size:12px; color:var(--text-muted);">${v.density} pop/km²</td>
+    </tr>
+  `).join('');
+
+  // 5. Distance Bands
+  document.getElementById('distance-bands-list').innerHTML = admin.townDistanceBands.map(b => `
+    <div style="display:flex; align-items:center; justify-content:space-between; padding:12px 14px; background:var(--bg-glass); border:1px solid var(--border-glass); border-radius:10px;">
+      <div style="font-size:13px; font-weight:600; color:var(--text-primary);">${b.band}</div>
+      <div style="text-align:right;">
+        <span style="font-family:Rajdhani,sans-serif; font-size:18px; font-weight:700; color:var(--accent-cyan);">${b.pct}%</span>
+        <span style="font-size:11px; color:var(--text-muted); margin-left:6px;">(${b.villages.toLocaleString()} villages)</span>
+      </div>
+    </div>
+  `).join('');
+
+  // 6. Banking Tbody
+  document.getElementById('banking-tbody').innerHTML = admin.bankingAccessByDistrict.map(b => `
+    <tr>
+      <td style="font-weight:600; color:var(--text-primary);">${b.district}</td>
+      <td><span style="font-family:Rajdhani,sans-serif; font-size:16px; font-weight:700; color:var(--accent-cyan);">${b.atms}</span></td>
+      <td>${b.crms}</td>
+      <td>${b.cdms}</td>
+      <td>${b.banks}</td>
+      <td><strong style="color:var(--accent-yellow);">${b.totalRecords}</strong></td>
+    </tr>
+  `).join('');
+
+  // Counter animations
+  document.querySelectorAll('[data-count]').forEach(el => {
+    const target = parseFloat(el.dataset.count);
+    animateCounter(el, target, 1500, '', '');
+  });
+});
+
+function renderDistrictMasterTable(data) {
+  const tbody = document.getElementById('district-master-tbody');
+  tbody.innerHTML = data.map(d => {
+    const denCol = d.density >= 550 ? '#ff4444' : d.density >= 450 ? '#ff9f43' : d.density >= 300 ? '#ffd666' : '#00e5a0';
+    return `
+      <tr>
+        <td style="font-weight:600; color:var(--text-primary);">${d.district}</td>
+        <td style="font-size:12px; color:var(--text-muted);">${d.censusCode}</td>
+        <td><span style="font-size:11px; color:var(--text-secondary); padding:2px 8px; background:var(--bg-glass); border-radius:4px; border:1px solid var(--border-glass);">${d.division}</span></td>
+        <td>${d.villages.toLocaleString()}</td>
+        <td>${d.inhabitedPct}%</td>
+        <td>${d.population.toLocaleString()}</td>
+        <td>${d.households.toLocaleString()}</td>
+        <td>${d.areaHa.toLocaleString()}</td>
+        <td>
+          <span class="density-pill" style="background:${denCol}15; color:${denCol}; border:1px solid ${denCol}40;">
+            ${d.density}
+          </span>
+        </td>
+        <td><span class="risk-badge ${d.riskLevel}">${d.riskLevel}</span></td>
+      </tr>
+    `;
+  }).join('');
+}
+
+function sortDistrictTable(key) {
+  let sorted = [...masterDistrictsData];
+  if (key === 'density') sorted.sort((a,b) => b.density - a.density);
+  else if (key === 'villages') sorted.sort((a,b) => b.villages - a.villages);
+  else if (key === 'population') sorted.sort((a,b) => b.population - a.population);
+  else if (key === 'name') sorted.sort((a,b) => a.district.localeCompare(b.district));
+  renderDistrictMasterTable(sorted);
+}
+
+function filterDistrictTable(q) {
+  const query = q.toLowerCase();
+  const filtered = masterDistrictsData.filter(d =>
+    d.district.toLowerCase().includes(query) || d.division.toLowerCase().includes(query) || String(d.censusCode).includes(query)
+  );
+  renderDistrictMasterTable(filtered);
+}
+</script>
+<script src="assistant.js"></script>
+</body>
+</html>

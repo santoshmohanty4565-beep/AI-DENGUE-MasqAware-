@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description"
+    content="MosqAware — Odisha State Dengue Prediction and Early Warning System. Real-time risk heatmap, case analytics, and AI-powered forecasting for all 30 districts." />
+  <meta name="theme-color" content="#050d1a" />
+  <link rel="manifest" href="manifest.json" />
+  <title>MosqAware — Odisha Dengue Surveillance Dashboard</title>
+
+  <!-- Fonts & Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Rajdhani:wght@500;600;700&display=swap" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
+
+  <!-- App CSS -->
+  <link rel="stylesheet" href="style.css" />
+
+  <style>
+    /* ── Page-specific overrides ── */
+    .hero-alert {
+      background: linear-gradient(135deg, rgba(0, 229, 160, 0.06), rgba(0, 212, 255, 0.06));
+      border: 1px solid rgba(0, 229, 160, 0.2);
+      border-radius: 14px;
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 24px;
+    }
+
+    .hero-alert-icon {
+      font-size: 24px;
+    }
+
+    .hero-alert-text {
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+
+    .hero-alert-text strong {
+      color: var(--accent-green);
+    }
+
+    .hero-alert-badge {
+      margin-left: auto;
+      padding: 6px 14px;
+      border-radius: 999px;
+      background: rgba(0, 229, 160, 0.1);
+      color: var(--accent-green);
+      font-size: 12px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .map-section {
+      margin-bottom: 24px;
+    }
+
+    .serotype-banner {
+      background: rgba(255, 107, 107, 0.05);
+      border: 1px solid rgba(255, 107, 107, 0.2);
+      border-radius: var(--radius-md);
+      padding: 14px 18px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-top: 12px;
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    .map-controls {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .district-select {
+      flex: 1;
+      min-width: 140px;
+      max-width: 220px;
+    }
+
+    #sidebar-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.6);
+      z-index: 99;
+      backdrop-filter: blur(4px);
+    }
+
+    #sidebar-overlay.show {
+      display: block;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Sidebar backdrop for mobile tap-to-close -->
+  <div class="sidebar-backdrop" id="sidebar-backdrop" onclick="closeSidebarMobile()"></div>
+
+  <div class="app-layout">
+
+    <!-- ═══ SIDEBAR ════════════════════════════════════════════════ -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-brand">
+        <a class="brand-logo" href="index.html">
+          <div class="brand-icon">🦟</div>
+          <div class="brand-text">
+            <div class="brand-name" data-i18n="appName">MosqAware</div>
+            <div class="brand-sub">Odisha State</div>
+          </div>
+        </a>
+      </div>
+
+      <nav class="sidebar-nav">
+        <div class="nav-section-label">Main</div>
+
+        <a class="nav-item active" href="index.html" id="nav-dashboard">
+          <span class="nav-icon"><i class="fa-solid fa-gauge-high"></i></span>
+          <span data-i18n="nav.dashboard">Dashboard</span>
+        </a>
+
+        <a class="nav-item" href="prediction.html" id="nav-prediction">
+          <span class="nav-icon"><i class="fa-solid fa-brain"></i></span>
+          <span data-i18n="nav.prediction">AI Prediction</span>
+          <span class="nav-badge">LIVE</span>
+        </a>
+
+        <a class="nav-item" href="analytics.html" id="nav-analytics">
+          <span class="nav-icon"><i class="fa-solid fa-chart-line"></i></span>
+          <span data-i18n="nav.analytics">Analytics</span>
+        </a>
+
+        <div class="nav-section-label">Tools</div>
+
+        <a class="nav-item" href="breeding.html" id="nav-breeding">
+          <span class="nav-icon"><i class="fa-solid fa-mosquito"></i></span>
+          <span data-i18n="nav.breeding">Breeding Index</span>
+        </a>
+
+        <a class="nav-item" href="awareness.html" id="nav-awareness">
+          <span class="nav-icon"><i class="fa-solid fa-bullhorn"></i></span>
+          <span data-i18n="nav.awareness">Public Awareness</span>
+        </a>
+
+        <a class="nav-item" href="reports.html" id="nav-reports">
+          <span class="nav-icon"><i class="fa-solid fa-file-pdf"></i></span>
+          <span data-i18n="nav.reports">Reports</span>
+        </a>
+
+        <a class="nav-item" href="forecast2027.html" id="nav-forecast2027">
+          <span class="nav-icon"><i class="fa-solid fa-calendar-days"></i></span>
+          <span>2027 Forecast</span>
+          <span class="nav-badge" style="background:rgba(255,107,107,0.85);">NEW</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <!-- Language Switcher -->
+        <div
+          style="font-size:11px; color:var(--text-muted); margin-bottom:8px; font-weight:600; text-transform:uppercase; letter-spacing:1px;">
+          Language</div>
+        <div class="lang-switcher">
+          <button class="lang-btn active" data-lang="en">EN</button>
+          <button class="lang-btn" data-lang="hi">HI</button>
+          <button class="lang-btn" data-lang="or">OR</button>
+        </div>
+
+        <!-- System Status -->
+        <div class="system-status">
+          <div class="status-dot"></div>
+          <span>All systems operational</span>
+        </div>
+        <div style="font-size:10px; color:var(--text-muted); margin-top:6px;">
+          Data: NCVBDC · IMD · Open-Meteo
+        </div>
+      </div>
+    </aside>
+
+    <!-- ═══ MAIN CONTENT ════════════════════════════════════════════ -->
+    <div class="main-content">
+
+      <!-- Top Header -->
+      <header class="top-header">
+        <div style="display:flex; align-items:center; gap:12px;">
+          <button class="menu-toggle" id="menu-toggle"><i class="fa-solid fa-bars"></i></button>
+          <div class="header-title">
+            <div class="page-title" data-i18n="dashboard.title">Dengue Surveillance Dashboard</div>
+            <div class="page-subtitle">Odisha State — 30 Districts · Real-Time</div>
+          </div>
+        </div>
+        <div class="header-actions" style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+          <button class="btn btn-outline btn-sm" onclick="toggleTheme()" id="theme-toggle-btn" title="Toggle Light/Dark Theme">
+            🌙 Theme
+          </button>
+          <button class="btn btn-outline btn-sm" onclick="openModal('symptom-modal')" style="border-color:rgba(168,85,247,0.4); color:#d8b4fe;">
+            🧪 Symptom Checker
+          </button>
+          <button class="btn btn-outline btn-sm" onclick="openModal('detector-modal')" style="border-color:rgba(0,212,255,0.4); color:#00d4ff;">
+            📷 Mosquito Detector
+          </button>
+          <button class="btn btn-outline btn-sm" onclick="openModal('quiz-modal')" style="border-color:rgba(255,214,102,0.4); color:#ffd666;">
+            🏆 Health Quiz
+          </button>
+        </div>
+      </header>
+
+      <!-- Page Content -->
+      <main class="page-content">
+
+        <!-- AI Real-Time Health Alert System Banner -->
+        <div class="ai-alert-banner animate-fadeInUp">
+          <div style="display:flex; align-items:center; gap:12px;">
+            <div style="font-size:24px; animation: mosquitoFloat 2s infinite;">⚠️</div>
+            <div>
+              <div style="font-size:14px; font-weight:800; color:#ff6b6b;">
+                AI EARLY WARNING ALERT: Baramunda & Sikharchandi Hotspots Risk +28%
+              </div>
+              <div style="font-size:11px; color:#8b9cc8; margin-top:2px;">
+                Predictive Model detected high larval breeding surge post-rainfall. Immediate anti-larval spraying & community fogging recommended.
+              </div>
+            </div>
+          </div>
+          <div style="display:flex; gap:8px;">
+            <button class="btn btn-primary btn-sm" onclick="searchMapLocation('Baramunda')" style="background:#ff4444; border:none;">
+              📍 Zoom to Alert Site
+            </button>
+          </div>
+        </div>
+
+        <!-- ── KPI Cards ─────────────────────────────────────── -->
+        <div class="kpi-grid">
+
+          <div class="kpi-card kpi-cyan animate-fadeInUp delay-1">
+            <div class="kpi-icon"><i class="fa-solid fa-virus"></i></div>
+            <div class="kpi-label">Total Cases (2026, Provisional)</div>
+            <div class="kpi-value" data-count="3300" data-prefix="">3,300+</div>
+            <div class="kpi-trend">
+              <span class="trend-up">▲ Resurgence</span>
+              <span>vs 2,635 full-year 2025</span>
+            </div>
+          </div>
+
+          <div class="kpi-card kpi-coral animate-fadeInUp delay-2">
+            <div class="kpi-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
+            <div class="kpi-label">Khordha Cases (Jul 2026)</div>
+            <div class="kpi-value" data-count="1154">1,154</div>
+            <div class="kpi-trend">
+              <span class="trend-up">▲ 35%</span>
+              <span>of state total</span>
+            </div>
+          </div>
+
+          <div class="kpi-card kpi-yellow animate-fadeInUp delay-3">
+            <div class="kpi-icon"><i class="fa-solid fa-percent"></i></div>
+            <div class="kpi-label" data-i18n="dashboard.tpr">Test Positivity Rate</div>
+            <div class="kpi-value" data-count="0.98" data-suffix="%">0.98%</div>
+            <div class="kpi-trend">
+              <span class="trend-down">▼ from 1.83%</span>
+              <span>in 2025</span>
+            </div>
+          </div>
+
+          <div class="kpi-card kpi-green animate-fadeInUp delay-4">
+            <div class="kpi-icon"><i class="fa-solid fa-shield-virus"></i></div>
+            <div class="kpi-label" data-i18n="dashboard.riskLevel">State Risk Level</div>
+            <div class="kpi-value" style="font-size:24px;">🟡 WATCH</div>
+            <div class="kpi-trend">
+              <span class="trend-up">2027 forecast:</span>
+              <span>10k–15k cases</span>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- ── Risk Heatmap ──────────────────────────────────── -->
+        <section class="map-section card animate-fadeInUp">
+          <div class="section-header">
+            <div class="section-title">
+              <div class="section-title-icon">🗺️</div>
+              District Risk Heatmap — Odisha
+            </div>
+            <div style="display:flex; gap:8px;">
+              <button class="btn btn-outline btn-sm" onclick="resetMapView()">
+                <i class="fa-solid fa-compress"></i> Reset
+              </button>
+              <button class="btn btn-outline btn-sm" onclick="if(dengueMap) dengueMap.setZoom(dengueMap.getZoom()+1)">
+                <i class="fa-solid fa-search-plus"></i> Zoom+
+              </button>
+            </div>
+          </div>
+
+          <div class="map-controls" style="display:flex; flex-direction:column; gap:10px; margin-bottom:12px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+              <!-- Layer Toggles -->
+              <div class="map-layer-toggles">
+                <button class="map-layer-btn active" data-layer="all" onclick="setMapLayer('all')">🌐 ALL DATA</button>
+                <button class="map-layer-btn" data-layer="district" onclick="setMapLayer('district')">📍 Districts
+                  (30)</button>
+                <button class="map-layer-btn" data-layer="city" onclick="setMapLayer('city')">🏢 Cities (35+)</button>
+                <button class="map-layer-btn" data-layer="block" onclick="setMapLayer('block')">🏛️ CD Blocks
+                  (314)</button>
+                <button class="map-layer-btn" data-layer="village" onclick="setMapLayer('village')">🏡 All Villages (51,349)</button>
+                <button class="map-layer-btn" data-layer="hotspot" onclick="setMapLayer('hotspot')">🔥 Hotspots</button>
+              </div>
+
+              <!-- Search & District Jump -->
+              <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+                <div class="map-search-wrapper" id="map-search-wrapper">
+                  <span class="search-icon-inside"><i class="fa-solid fa-magnifying-glass"></i></span>
+                  <input type="text" id="map-search" class="map-search-input"
+                    placeholder="Search 50,000+ Odisha Cities, Blocks, Villages..."
+                    autocomplete="off">
+                  <div id="map-search-dropdown" class="map-search-dropdown"></div>
+                </div>
+                <button class="mic-voice-btn" id="voice-search-btn" onclick="startVoiceSearch()" title="Click for Voice Search">
+                  <i class="fa-solid fa-microphone"></i>
+                </button>
+                <select id="district-jump" class="select-input district-select" onchange="focusDistrict(this.value)">
+                  <option value="">— Jump to District —</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="map-filter-row">
+              <div class="map-filter-group">
+                <label>Risk Level</label>
+                <select id="filter-risk" class="select-input">
+                  <option value="all">All Risks</option>
+                  <option value="LOW">Low</option>
+                  <option value="MODERATE">Moderate</option>
+                  <option value="HIGH">High</option>
+                  <option value="CRITICAL">Critical</option>
+                </select>
+              </div>
+              <div class="map-filter-group">
+                <label>District</label>
+                <select id="filter-district" class="select-input">
+                  <option value="all">All Districts</option>
+                </select>
+              </div>
+              <div class="map-filter-group">
+                <label>Serotype</label>
+                <select id="filter-serotype" class="select-input">
+                  <option value="all">All Serotypes</option>
+                  <option value="DENV1">DENV-1</option>
+                  <option value="DENV2">DENV-2</option>
+                  <option value="DENV3">DENV-3</option>
+                  <option value="DENV4">DENV-4</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="map-time-slider-row">
+              <div style="display:flex; gap:12px; align-items:center; flex-wrap:wrap; width:100%;">
+                <div style="font-size:12px; color:var(--text-secondary);">Time view:</div>
+                <div class="slider-label">Jan</div>
+                <input id="map-time-slider" type="range" min="0" max="11" value="6" step="1" onchange="updateMapTime(this.value)" />
+                <div class="slider-label" id="map-time-label">Jul</div>
+              </div>
+            </div>
+
+            <!-- Stats Bar -->
+            <div id="map-stats-bar"
+              style="font-size:12px; color:var(--text-muted); background:rgba(255,255,255,0.02); padding:6px 12px; border-radius:6px; border:1px solid var(--border-glass);">
+              Showing: <b style="color:#00d4ff;">30</b> Districts · <b style="color:#ffd666;">38</b> Cities · <b
+                style="color:#ff9f43;">314</b> Blocks · <b style="color:#00e5a0;">250+</b> Villages/Wards
+            </div>
+          </div>
+
+          <div class="map-container" style="position:relative;">
+            <div id="odisha-map"></div>
+
+            <!-- Legend -->
+            <div class="map-legend">
+              <div class="legend-title">Risk Level</div>
+              <div class="legend-item">
+                <div class="legend-dot" style="background:#00e5a0;"></div>
+                <span>Low (0–30)</span>
+              </div>
+              <div class="legend-item">
+                <div class="legend-dot" style="background:#ffd666;"></div>
+                <span>Moderate (31–55)</span>
+              </div>
+              <div class="legend-item">
+                <div class="legend-dot" style="background:#ff9f43;"></div>
+                <span>High (56–75)</span>
+              </div>
+              <div class="legend-item">
+                <div class="legend-dot" style="background:#ff4444;"></div>
+                <span>Critical (76+)</span>
+              </div>
+              <div style="margin-top:10px; padding-top:10px; border-top:1px solid rgba(255,255,255,0.06);">
+                <div class="legend-title">Hotspots</div>
+                <div class="legend-item">
+                  <div class="legend-dot" style="width:8px; height:8px; background:#ff4444; border-radius:50%;"></div>
+                  <span>Bhubaneswar</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="serotype-banner">
+            <span style="font-size:18px;">🧬</span>
+            <div>
+              <strong style="color:var(--accent-coral);">DENV-2 Dominant</strong> — Prevalent in 13/18 surveyed
+              districts.
+              Associated with severe DHF. Enhanced surveillance recommended.
+            </div>
+            <div style="margin-left:auto; font-size:12px; color:var(--text-muted);">67% of isolates</div>
+          </div>
+        </section>
+
+        <!-- ── HACKATHON AI DECISION SUPPORT PANEL ────────────────── -->
+        <div class="grid-2" style="margin-bottom:24px;">
+
+          <!-- Explainable AI (XAI / SHAP Factor Attribution) -->
+          <div class="card animate-fadeInUp">
+            <div class="section-header">
+              <div class="section-title">
+                <div class="section-title-icon">🧠</div>
+                Explainable AI (XAI Risk Breakdown)
+              </div>
+              <span class="ai-badge-header">SHAP Factor Attribution</span>
+            </div>
+
+            <div style="font-size:12px; color:var(--text-muted); margin-bottom:14px;">
+              Why is <strong style="color:var(--accent-coral);">Baramunda & Khordha at 88/100 Risk Score?</strong> AI risk factor attribution:
+            </div>
+
+            <div class="xai-factor-card">
+              <div style="display:flex; justify-content:space-between; font-size:12px; font-weight:700; color:#f0f4ff;">
+                <span>🌧️ Heavy Rainfall & Humidity Lag (0-2 mo)</span>
+                <span style="color:#ff6b6b;">+28 Risk Pts (39%)</span>
+              </div>
+              <div class="xai-bar-track"><div class="xai-bar-fill" style="width:72%; background:#ff6b6b;"></div></div>
+            </div>
+
+            <div class="xai-factor-card">
+              <div style="display:flex; justify-content:space-between; font-size:12px; font-weight:700; color:#f0f4ff;">
+                <span>🦟 Mosquito Larval Breeding Density</span>
+                <span style="color:#ffd666;">+24 Risk Pts (31%)</span>
+              </div>
+              <div class="xai-bar-track"><div class="xai-bar-fill" style="width:62%; background:#ffd666;"></div></div>
+            </div>
+
+            <div class="xai-factor-card">
+              <div style="display:flex; justify-content:space-between; font-size:12px; font-weight:700; color:#f0f4ff;">
+                <span>👥 Population & Settlement Density</span>
+                <span style="color:#00d4ff;">+18 Risk Pts (18%)</span>
+              </div>
+              <div class="xai-bar-track"><div class="xai-bar-fill" style="width:48%; background:#00d4ff;"></div></div>
+            </div>
+
+            <div class="xai-factor-card">
+              <div style="display:flex; justify-content:space-between; font-size:12px; font-weight:700; color:#f0f4ff;">
+                <span>📈 Historical Case Momentum</span>
+                <span style="color:#00e5a0;">+16 Risk Pts (12%)</span>
+              </div>
+              <div class="xai-bar-track"><div class="xai-bar-fill" style="width:40%; background:#00e5a0;"></div></div>
+            </div>
+          </div>
+
+          <!-- AI Resource Allocation Engine -->
+          <div class="card animate-fadeInUp">
+            <div class="section-header">
+              <div class="section-title">
+                <div class="section-title-icon">🎯</div>
+                AI Smart Resource Allocation
+              </div>
+              <span class="ai-badge-header" style="background:rgba(0,212,255,0.15); color:#00d4ff; border-color:rgba(0,212,255,0.3);">Predict → Prevent → Protect</span>
+            </div>
+
+            <div style="font-size:12px; color:var(--text-muted); margin-bottom:14px;">
+              Real-time AI recommendations for government intervention deployment:
+            </div>
+
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+              <div class="resource-alloc-card">
+                <div class="resource-alloc-icon" style="background:rgba(255,107,107,0.15); color:#ff6b6b;">🌫️</div>
+                <div>
+                  <div style="font-size:14px; font-weight:800; color:#f0f4ff;">12 Vehicles</div>
+                  <div style="font-size:10px; color:#8b9cc8;">Fogging Sprayers</div>
+                  <div style="font-size:10px; color:#ff6b6b; font-weight:600; margin-top:2px;">📍 Priority: Baramunda & Sikharchandi</div>
+                </div>
+              </div>
+
+              <div class="resource-alloc-card">
+                <div class="resource-alloc-icon" style="background:rgba(0,212,255,0.15); color:#00d4ff;">👨‍⚕️</div>
+                <div>
+                  <div style="font-size:14px; font-weight:800; color:#f0f4ff;">8 Rapid Teams</div>
+                  <div style="font-size:10px; color:#8b9cc8;">Medical Doctors</div>
+                  <div style="font-size:10px; color:#00d4ff; font-weight:600; margin-top:2px;">📍 Priority: Khordha & Cuttack SCB</div>
+                </div>
+              </div>
+
+              <div class="resource-alloc-card">
+                <div class="resource-alloc-icon" style="background:rgba(255,214,102,0.15); color:#ffd666;">🚑</div>
+                <div>
+                  <div style="font-size:14px; font-weight:800; color:#f0f4ff;">6 Ambulances</div>
+                  <div style="font-size:10px; color:#8b9cc8;">Emergency Transport</div>
+                  <div style="font-size:10px; color:#ffd666; font-weight:600; margin-top:2px;">📍 Pre-positioned: Capital Hospital</div>
+                </div>
+              </div>
+
+              <div class="resource-alloc-card">
+                <div class="resource-alloc-icon" style="background:rgba(0,229,160,0.15); color:#00e5a0;">💊</div>
+                <div>
+                  <div style="font-size:14px; font-weight:800; color:#f0f4ff;">2,500 Kits</div>
+                  <div style="font-size:10px; color:#8b9cc8;">Dengue Test & ORS</div>
+                  <div style="font-size:10px; color:#00e5a0; font-weight:600; margin-top:2px;">📍 Dispatched to PHC Sub-Centers</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- ── Charts Row ────────────────────────────────────── -->
+        <div class="grid-2" style="margin-bottom:24px;">
+
+          <!-- Weekly Trend -->
+          <div class="card animate-fadeInUp">
+            <div class="section-header">
+              <div class="section-title">
+                <div class="section-title-icon">📈</div>
+                <span data-i18n="dashboard.weeklyTrend">Monthly Case Trend</span>
+              </div>
+              <select class="select-input" style="font-size:11px; padding:5px 10px;" id="trend-year-select"
+                onchange="switchTrendYear(this.value)">
+                <option value="both">2024 vs 2025</option>
+                <option value="2024">2024 Only</option>
+                <option value="2025">2025 Only</option>
+              </select>
+            </div>
+            <div class="chart-wrapper-lg">
+              <canvas id="trend-chart"></canvas>
+            </div>
+          </div>
+
+          <!-- Weather Correlation -->
+          <div class="card animate-fadeInUp">
+            <div class="section-header">
+              <div class="section-title">
+                <div class="section-title-icon">🌡️</div>
+                <span data-i18n="dashboard.weatherCorr">Weather × Cases Correlation</span>
+              </div>
+              <span style="font-size:11px; color:var(--text-muted);">2024 data</span>
+            </div>
+            <div class="chart-wrapper-lg">
+              <canvas id="weather-chart"></canvas>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- ── Weather + Serotype Row ─────────────────────────── -->
+        <div class="grid-1-2" style="margin-bottom:24px;">
+
+          <!-- Live Weather -->
+          <div class="card animate-fadeInUp" id="live-weather">
+            <div class="section-header">
+              <div class="section-title">
+                <div class="section-title-icon">🌤️</div>
+                Live Weather — Bhubaneswar
+              </div>
+              <span class="live-indicator" style="font-size:11px; padding:4px 10px;">LIVE</span>
+            </div>
+            <div class="weather-grid">
+              <div class="weather-metric">
+                <span class="weather-icon">🌡️</span>
+                <div class="weather-value" id="w-temp">—</div>
+                <div class="weather-label">Temperature</div>
+                <div style="margin-top:6px; font-size:10px; color:var(--accent-coral);">
+                  ⚠️ >27°C = Risk
+                </div>
+              </div>
+              <div class="weather-metric">
+                <span class="weather-icon">💧</span>
+                <div class="weather-value" id="w-humidity">—</div>
+                <div class="weather-label">Humidity</div>
+                <div style="margin-top:6px; font-size:10px; color:var(--accent-yellow);">
+                  60–78% = Optimal
+                </div>
+              </div>
+              <div class="weather-metric">
+                <span class="weather-icon">🌧️</span>
+                <div class="weather-value" id="w-rain">—</div>
+                <div class="weather-label">Rainfall (24h)</div>
+                <div style="margin-top:6px; font-size:10px; color:var(--text-muted);">
+                  Moderate = ↑ Risk
+                </div>
+              </div>
+              <div class="weather-metric">
+                <span class="weather-icon">🌬️</span>
+                <div class="weather-value" id="w-wind">—</div>
+                <div class="weather-label">Wind Speed</div>
+                <div style="margin-top:6px; font-size:10px; color:var(--text-muted);">
+                  Affects dispersal
+                </div>
+              </div>
+            </div>
+            <div
+              style="margin-top:16px; padding:12px; background:rgba(0,229,160,0.05); border-radius:10px; border:1px solid rgba(0,229,160,0.15);">
+              <div style="font-size:12px; color:var(--text-muted);">
+                <i class="fa-solid fa-info-circle" style="color:var(--accent-green);"></i>
+                Weather data from <strong style="color:var(--text-secondary);">Open-Meteo API</strong>.
+                Temperature (41% weight) + Rainfall (39%) + Humidity (20%) drive outbreak risk.
+              </div>
+            </div>
+          </div>
+
+          <!-- Serotype Chart -->
+          <div class="card animate-fadeInUp">
+            <div class="section-header">
+              <div class="section-title">
+                <div class="section-title-icon">🧬</div>
+                Dengue Serotype Distribution
+              </div>
+              <span style="font-size:11px; color:var(--text-muted);">Odisha 2024</span>
+            </div>
+            <div class="chart-wrapper" style="height:200px;">
+              <canvas id="serotype-chart"></canvas>
+            </div>
+            <div
+              style="margin-top:12px; padding:10px 14px; background:rgba(255,107,107,0.05); border-radius:8px; border:1px solid rgba(255,107,107,0.15);">
+              <div style="font-size:12px; color:var(--text-muted);">
+                <strong style="color:var(--accent-coral);">DENV-2 (67%)</strong> dominant across Odisha —
+                associated with Dengue Hemorrhagic Fever (DHF) and severe clinical manifestations.
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- ── District Ranking Table ─────────────────────────── -->
+        <div class="card animate-fadeInUp">
+          <div class="section-header">
+            <div class="section-title">
+              <div class="section-title-icon">🏥</div>
+              <span data-i18n="dashboard.districtRank">District Risk Ranking</span>
+            </div>
+            <div style="display:flex; gap:8px; align-items:center;">
+              <select class="select-input" id="rank-year" style="font-size:11px; padding:5px 10px;"
+                onchange="renderDistrictTable('district-table', 10)">
+                <option value="2025">2025 Data</option>
+                <option value="2024">2024 Data</option>
+              </select>
+              <a href="analytics.html" class="section-action" data-i18n="dashboard.viewDetails">View All →</a>
+            </div>
+          </div>
+          <div id="district-table" style="overflow-x:auto;"></div>
+        </div>
+
+      </main>
+    </div><!-- end main-content -->
+  </div><!-- end app-layout -->
+
+  <!-- ── 1. AI SYMPTOM CHECKER MODAL ────────────────────────────────────── -->
+  <div class="modal-overlay" id="symptom-modal">
+    <div class="modal-card">
+      <button class="modal-close-btn" onclick="closeModal('symptom-modal')"><i class="fa-solid fa-xmark"></i></button>
+      <div style="display:flex; align-items:center; gap:10px; margin-bottom:16px;">
+        <div style="font-size:24px;">🧪</div>
+        <div>
+          <div style="font-size:18px; font-weight:800; color:#f0f4ff;">AI Clinical Symptom Risk Engine</div>
+          <div style="font-size:11px; color:#8b9cc8;">Bayesian Multi-Feature Clinical Evaluation for Dengue & DHF</div>
+        </div>
+      </div>
+
+      <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; margin-bottom:12px;">
+        <div>
+          <label style="font-size:11px; color:#8b9cc8; font-weight:600; display:block; margin-bottom:4px;">Patient Name</label>
+          <input type="text" id="sym-name" class="map-search-input" value="Santosh Mohanty" placeholder="Full Name">
+        </div>
+        <div>
+          <label style="font-size:11px; color:#8b9cc8; font-weight:600; display:block; margin-bottom:4px;">Age (Years)</label>
+          <input type="number" id="sym-age" class="map-search-input" value="28" placeholder="Age">
+        </div>
+        <div>
+          <label style="font-size:11px; color:#8b9cc8; font-weight:600; display:block; margin-bottom:4px;">Gender</label>
+          <select id="sym-gender" class="map-search-input" style="background:#0a1628;">
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+      </div>
+
+      <div style="display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:10px; margin-bottom:12px;">
+        <div>
+          <label style="font-size:11px; color:#8b9cc8; font-weight:600; display:block; margin-bottom:4px;">Fever (°F)</label>
+          <input type="number" id="sym-temp" class="map-search-input" value="102.4" step="0.1" placeholder="°F">
+        </div>
+        <div>
+          <label style="font-size:11px; color:#8b9cc8; font-weight:600; display:block; margin-bottom:4px;">Duration (Days)</label>
+          <input type="number" id="sym-days" class="map-search-input" value="4" placeholder="Days">
+        </div>
+        <div>
+          <label style="font-size:11px; color:#8b9cc8; font-weight:600; display:block; margin-bottom:4px;">Platelets (/mm³)</label>
+          <input type="number" id="sym-platelets" class="map-search-input" value="95000" placeholder="e.g. 95000">
+        </div>
+        <div>
+          <label style="font-size:11px; color:#8b9cc8; font-weight:600; display:block; margin-bottom:4px;">Blood Pressure</label>
+          <input type="text" id="sym-bp" class="map-search-input" value="110/70" placeholder="120/80">
+        </div>
+      </div>
+
+      <div style="margin-bottom:12px; font-size:11px; color:#8b9cc8;">
+        <div style="font-weight:700; color:#f0f4ff; margin-bottom:6px;">Select Clinical Symptoms Present:</div>
+        <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:6px;">
+          <label><input type="checkbox" id="sym-headache" checked> Severe Headache</label>
+          <label><input type="checkbox" id="sym-jointpain" checked> Joint / Bone Pain</label>
+          <label><input type="checkbox" id="sym-musclepain" checked> Muscle Pain</label>
+          <label><input type="checkbox" id="sym-vomiting"> Vomiting / Nausea</label>
+          <label><input type="checkbox" id="sym-rash"> Skin Rash</label>
+          <label><input type="checkbox" id="sym-bleeding"> Gum / Nose Bleeding</label>
+        </div>
+      </div>
+
+      <div style="margin-bottom:14px; font-size:11px; color:#8b9cc8;">
+        <label style="font-weight:700; color:#f0f4ff; display:block; margin-bottom:4px;">Pre-existing Health Conditions:</label>
+        <select id="sym-comorbidity" class="map-search-input" style="background:#0a1628;">
+          <option value="None">None (Healthy)</option>
+          <option value="Diabetes">Diabetes Mellitus</option>
+          <option value="Hypertension">Hypertension</option>
+          <option value="Asthma">Asthma / Respiratory</option>
+        </select>
+      </div>
+
+      <div style="display:flex; gap:8px;">
+        <button class="btn btn-primary" onclick="runAISymptomChecker()" style="flex:2; padding:10px; background:var(--gradient-cyan); border:none; font-weight:800;">
+          🔬 Calculate AI Risk Diagnosis
+        </button>
+        <button class="btn btn-outline" onclick="showSymptomHistory()" style="flex:1; padding:10px; border-color:var(--accent-purple); color:#d8b4fe; font-weight:700;">
+          📜 View History
+        </button>
+      </div>
+
+      <div id="symptom-results" style="margin-top:14px; display:none;"></div>
+    </div>
+  </div>
+
+  <!-- ── 2. AI MOSQUITO HOTSPOT DETECTOR MODAL ────────────────────────── -->
+  <div class="modal-overlay" id="detector-modal">
+    <div class="modal-card">
+      <button class="modal-close-btn" onclick="closeModal('detector-modal')"><i class="fa-solid fa-xmark"></i></button>
+      <div style="display:flex; align-items:center; gap:10px; margin-bottom:16px;">
+        <div style="font-size:24px;">📷</div>
+        <div>
+          <div style="font-size:18px; font-weight:800; color:#f0f4ff;">AI Computer Vision Breeding Detector</div>
+          <div style="font-size:11px; color:#8b9cc8;">Upload or inspect site photos for AI stagnant water & larval detection</div>
+        </div>
+      </div>
+
+      <div style="margin-bottom:14px; display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+        <button class="btn btn-primary btn-sm" onclick="startLiveCameraDetection()" id="live-cam-btn" style="background:linear-gradient(135deg,#ff4444,#ff6b6b); border:none; font-weight:800;">
+          🎥 Live Camera Scanner
+        </button>
+        <button class="btn btn-outline btn-sm" onclick="toggleCameraFacingMode()" id="switch-cam-btn" style="display:none; border-color:var(--accent-cyan); color:#00d4ff;">
+          🔄 Switch Camera
+        </button>
+        <input type="file" id="detector-file-input" accept="image/jpeg,image/png,image/jpg,image/webp" style="display:none;" onchange="handleImageUpload(event)">
+        <button class="btn btn-outline btn-sm" onclick="document.getElementById('detector-file-input').click()">
+          📁 Upload Image
+        </button>
+        <div style="font-size:11px; color:#8b9cc8;">Samples:</div>
+        <button class="btn btn-outline btn-sm" onclick="analyzeSampleImage('waterlog')">💧 Stagnant Water</button>
+        <button class="btn btn-outline btn-sm" onclick="analyzeSampleImage('garbage')">🗑️ Open Tyres</button>
+        <button class="btn btn-outline btn-sm" onclick="analyzeSampleImage('construction')">🏗️ Drain</button>
+      </div>
+
+      <video id="detector-video" autoplay playsinline style="display:none;"></video>
+
+      <div style="position:relative; width:100%; height:260px; background:#050d1a; border:2px dashed rgba(0,212,255,0.3); border-radius:12px; overflow:hidden; display:flex; align-items:center; justify-content:center; margin-bottom:14px;">
+        <!-- Real-Time AI HUD Badges -->
+        <div id="cam-hud-bar" style="display:none; position:absolute; top:10px; left:10px; right:10px; z-index:10; display:flex; justify-content:space-between; align-items:center; font-size:10px; font-weight:800; pointer-events:none;">
+          <span style="background:rgba(0,212,255,0.25); color:#00d4ff; padding:3px 8px; border-radius:12px; border:1px solid rgba(0,212,255,0.4);" id="cam-mode-badge">
+            🤖 YOLOv8-Vision AI Active
+          </span>
+          <div style="display:flex; gap:6px;">
+            <span style="background:rgba(0,229,160,0.2); color:#00e5a0; padding:3px 8px; border-radius:12px; border:1px solid rgba(0,229,160,0.4);" id="cam-fps-badge">
+              ⚡ 45 FPS
+            </span>
+            <span style="background:rgba(255,107,107,0.2); color:#ff6b6b; padding:3px 8px; border-radius:12px; border:1px solid rgba(255,107,107,0.4);" id="cam-det-count">
+              🔍 2 Hazards Detected
+            </span>
+          </div>
+        </div>
+
+        <canvas id="detector-canvas" width="600" height="260" style="width:100%; height:100%; object-fit:contain;"></canvas>
+
+        <div id="detector-placeholder" style="position:absolute; text-align:center; color:#8b9cc8; font-size:12px; pointer-events:none;">
+          <i class="fa-solid fa-camera-retro" style="font-size:36px; color:var(--accent-cyan); margin-bottom:8px;"></i>
+          <div>Click <strong>🎥 Live Camera Scanner</strong> to detect live mosquitoes with alert</div>
+        </div>
+      </div>
+
+      <div id="detector-output" style="display:none;"></div>
+    </div>
+  </div>
+
+  <!-- ── 3. HEALTH QUIZ GAMIFICATION MODAL ────────────────────────────── -->
+  <div class="modal-overlay" id="quiz-modal">
+    <div class="modal-card">
+      <button class="modal-close-btn" onclick="closeModal('quiz-modal')"><i class="fa-solid fa-xmark"></i></button>
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+        <div style="display:flex; align-items:center; gap:10px;">
+          <div style="font-size:24px;">🏆</div>
+          <div>
+            <div style="font-size:18px; font-weight:800; color:#f0f4ff;">Dengue Awareness Health Quiz</div>
+            <div style="font-size:11px; color:#8b9cc8;">Timed Interactive Quiz · 5 Questions</div>
+          </div>
+        </div>
+        <div style="font-size:14px; font-weight:800; color:#ff6b6b; background:rgba(255,107,107,0.15); padding:6px 12px; border-radius:20px; border:1px solid rgba(255,107,107,0.3);">
+          ⏱️ <span id="quiz-timer">60</span>s
+        </div>
+      </div>
+
+      <div style="width:100%; height:6px; background:rgba(255,255,255,0.08); border-radius:4px; overflow:hidden; margin-bottom:16px;">
+        <div id="quiz-progress-bar" style="width:20%; height:100%; background:var(--accent-cyan); transition:width 0.3s ease;"></div>
+      </div>
+
+      <div id="quiz-container">
+        <div style="background:rgba(255,255,255,0.03); padding:14px; border-radius:10px; margin-bottom:14px;">
+          <div style="font-size:14px; font-weight:700; color:#f0f4ff; margin-bottom:12px;">1. During which time of day are Aedes aegypti mosquitoes most active?</div>
+          <div style="display:flex; flex-direction:column; gap:8px; font-size:12px;">
+            <label style="padding:10px 12px; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:8px; cursor:pointer; display:flex; align-items:center; gap:8px;">
+              <input type="radio" name="quiz-opt" value="0"> Late Midnight (12 AM - 3 AM)
+            </label>
+            <label style="padding:10px 12px; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:8px; cursor:pointer; display:flex; align-items:center; gap:8px;">
+              <input type="radio" name="quiz-opt" value="1" checked> Early Morning & Late Afternoon (Daytime)
+            </label>
+            <label style="padding:10px 12px; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:8px; cursor:pointer; display:flex; align-items:center; gap:8px;">
+              <input type="radio" name="quiz-opt" value="2"> High Noon (12 PM - 1 PM)
+            </label>
+          </div>
+        </div>
+        <button class="btn btn-primary" onclick="submitQuizAnswer()" style="width:100%; padding:10px; background:var(--gradient-cyan); border:none; font-weight:800;">
+          Next Question →
+        </button>
+      </div>
+      <div id="quiz-results" style="display:none; text-align:center;"></div>
+    </div>
+  </div>
+
+  <!-- ── 4. ADMIN GOVERNANCE PORTAL MODAL ────────────────────────────── -->
+  <div class="modal-overlay" id="admin-modal">
+    <div class="modal-card">
+      <button class="modal-close-btn" onclick="closeModal('admin-modal')"><i class="fa-solid fa-xmark"></i></button>
+      <div style="display:flex; align-items:center; gap:10px; margin-bottom:16px;">
+        <div style="font-size:24px;">🔒</div>
+        <div>
+          <div style="font-size:18px; font-weight:800; color:#f0f4ff;">Government Health Officer Portal</div>
+          <div style="font-size:11px; color:#8b9cc8;">Role-based surveillance control & outbreak decision room</div>
+        </div>
+      </div>
+
+      <!-- Passcode Auth Screen -->
+      <div id="admin-auth-screen" style="background:rgba(255,255,255,0.03); border:1px solid var(--border-glass); padding:20px; border-radius:12px; text-align:center;">
+        <div style="font-size:14px; font-weight:700; color:#f0f4ff; margin-bottom:8px;">🔑 Authenticate Access</div>
+        <div style="font-size:11px; color:#8b9cc8; margin-bottom:14px;">Enter Government Official Passcode to unlock admin controls:</div>
+        <input type="password" id="admin-passcode" class="map-search-input" value="admin" style="width:200px; margin:0 auto 14px auto; text-align:center;" placeholder="Passcode (default: admin)">
+        <button class="btn btn-primary" onclick="authenticateAdmin()" style="width:200px; margin:0 auto; padding:8px; background:var(--gradient-cyan); border:none; font-weight:800;">
+          Unlock Portal
+        </button>
+      </div>
+
+      <!-- Admin Authenticated Dashboard -->
+      <div id="admin-dashboard-screen" style="display:none;">
+        <div style="background:rgba(0,212,255,0.08); border:1px solid rgba(0,212,255,0.3); padding:12px; border-radius:10px; margin-bottom:14px; font-size:12px; color:#00d4ff; font-weight:700; display:flex; justify-content:space-between; align-items:center;">
+          <span>🛡️ Official Session Active: Chief Epidemiologist (Odisha Health Dept)</span>
+          <span style="font-size:10px; color:#8b9cc8;">ID: OHD-2026-992</span>
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:8px; text-align:center; font-size:11px; margin-bottom:14px;">
+          <div style="background:rgba(255,255,255,0.03); padding:10px; border-radius:8px; border:1px solid rgba(255,255,255,0.06);">
+            <div style="font-size:18px; font-weight:800; color:#00d4ff;">1,480</div>
+            <div>Total Users</div>
+          </div>
+          <div style="background:rgba(255,255,255,0.03); padding:10px; border-radius:8px; border:1px solid rgba(255,255,255,0.06);">
+            <div style="font-size:18px; font-weight:800; color:#ffd666;">312</div>
+            <div>Community Reports</div>
+          </div>
+          <div style="background:rgba(255,255,255,0.03); padding:10px; border-radius:8px; border:1px solid rgba(255,255,255,0.06);">
+            <div style="font-size:18px; font-weight:800; color:#d8b4fe;">840</div>
+            <div>Symptom Checks</div>
+          </div>
+          <div style="background:rgba(255,255,255,0.03); padding:10px; border-radius:8px; border:1px solid rgba(255,255,255,0.06);">
+            <div style="font-size:18px; font-weight:800; color:#ff6b6b;">3</div>
+            <div>Critical Districts</div>
+          </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+          <button class="btn btn-primary" onclick="sendMassHealthAlert()" style="padding:10px; background:#ff4444; border:none; font-weight:800; font-size:11px;">
+            📢 Broadcast Mass Emergency Alert
+          </button>
+          <button class="btn btn-primary" onclick="exportDataCSV()" style="padding:10px; background:var(--gradient-cyan); border:none; font-weight:800; font-size:11px;">
+            📥 Export Complete CSV Data
+          </button>
+          <button class="btn btn-outline" onclick="window.print()" style="padding:10px; border-color:var(--accent-purple); color:#d8b4fe; font-weight:800; font-size:11px;">
+            📄 Print Official PDF Report
+          </button>
+          <button class="btn btn-outline" onclick="alert('✅ All 312 community reports reviewed and validated!')" style="padding:10px; border-color:var(--accent-green); color:#00e5a0; font-weight:800; font-size:11px;">
+            ✅ Approve Pending Reports
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Scripts ─────────────────────────────────────────────────────── -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+  <script src="https://unpkg.com/leaflet.heat/dist/leaflet-heat.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script src="data.js"></script>
+  <script src="mapdata.js"></script>
+  <script src="i18n.js"></script>
+  <script src="map.js"></script>
+  <script src="app.js"></script>
+
+  <script>
+    // ── Page Init ──
+    document.addEventListener('DOMContentLoaded', () => {
+      // Initialize map
+      initMap('odisha-map');
+
+      // Charts
+      initWeeklyTrendChart('trend-chart');
+      initWeatherCorrChart('weather-chart');
+      initSerotypeChart('serotype-chart');
+
+      // District table
+      renderDistrictTable('district-table', 10);
+
+      // Animate KPI counters
+      document.querySelectorAll('[data-count]').forEach(el => {
+        const target = parseFloat(el.dataset.count);
+        const suffix = el.dataset.suffix || '';
+        animateCounter(el, target, 1800, '', suffix);
+      });
+    });
+
+    function switchTrendYear(val) {
+      // Re-render chart based on selection — simplified for demo
+      const canvas = document.getElementById('trend-chart');
+      if (!canvas) return;
+      Chart.getChart(canvas)?.destroy();
+      initWeeklyTrendChart('trend-chart');
+    }
+  </script>
+  <script src="assistant.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="MosqAware Reports — Generate and export daily, weekly, monthly, and outbreak dengue reports for Odisha government officials." />
+  <title>Reports — MosqAware</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Rajdhani:wght@500;600;700&display=swap" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    #sidebar-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:99; backdrop-filter:blur(4px); }
+    #sidebar-overlay.show { display:block; }
+    .report-preview-area {
+      background: #ffffff;
+      color: #000;
+      border-radius: var(--radius-lg);
+      padding: 32px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.4);
+      font-family: 'Inter', sans-serif;
+    }
+    .report-header-bar {
+      background: linear-gradient(135deg, #050d1a, #0a1628);
+      color: white;
+      border-radius: 10px;
+      padding: 20px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+    }
+    .report-kpi-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .report-kpi-item {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 14px;
+      text-align: center;
+    }
+    .report-kpi-value {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 28px;
+      font-weight: 700;
+      color: #0a1628;
+    }
+    .report-kpi-label {
+      font-size: 10px;
+      color: #64748b;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-top: 4px;
+    }
+    .report-section-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #0a1628;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 10px;
+      padding-bottom: 6px;
+      border-bottom: 2px solid #00d4ff;
+      display: inline-block;
+    }
+    .report-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+      margin-bottom: 20px;
+    }
+    .report-table th {
+      background: #0a1628;
+      color: white;
+      padding: 8px 12px;
+      text-align: left;
+      font-weight: 600;
+      font-size: 11px;
+    }
+    .report-table td {
+      padding: 8px 12px;
+      border-bottom: 1px solid #f1f5f9;
+      color: #334155;
+    }
+    .report-table tr:hover td { background: #f8fafc; }
+    .generate-btn {
+      background: linear-gradient(135deg, #00d4ff, #0066ff);
+      color: #000;
+      border: none;
+      border-radius: 10px;
+      padding: 12px 24px;
+      font-family: 'Inter', sans-serif;
+      font-weight: 700;
+      font-size: 14px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s;
+    }
+    .generate-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,212,255,0.4); }
+    .loading-spinner {
+      width: 16px; height: 16px;
+      border: 2px solid rgba(0,0,0,0.2);
+      border-top-color: #000;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+<div id="sidebar-overlay"></div>
+<div class="app-layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <a class="brand-logo" href="index.html">
+        <div class="brand-icon">🦟</div>
+        <div class="brand-text">
+          <div class="brand-name">MosqAware</div>
+          <div class="brand-sub">Odisha State</div>
+        </div>
+      </a>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section-label">Main</div>
+      <a class="nav-item" href="index.html"><span class="nav-icon"><i class="fa-solid fa-gauge-high"></i></span><span>Dashboard</span></a>
+      <a class="nav-item" href="prediction.html"><span class="nav-icon"><i class="fa-solid fa-brain"></i></span><span>AI Prediction</span></a>
+      <a class="nav-item" href="analytics.html"><span class="nav-icon"><i class="fa-solid fa-chart-line"></i></span><span>Analytics</span></a>
+      <div class="nav-section-label">Tools</div>
+      <a class="nav-item" href="breeding.html"><span class="nav-icon"><i class="fa-solid fa-mosquito"></i></span><span>Breeding Index</span></a>
+      <a class="nav-item" href="awareness.html"><span class="nav-icon"><i class="fa-solid fa-bullhorn"></i></span><span>Public Awareness</span></a>
+      <a class="nav-item active" href="reports.html"><span class="nav-icon"><i class="fa-solid fa-file-pdf"></i></span><span>Reports</span></a>
+      <a class="nav-item" href="forecast2027.html"><span class="nav-icon"><i class="fa-solid fa-calendar-days"></i></span><span>2027 Forecast</span><span class="nav-badge" style="background:rgba(255,107,107,0.85);">NEW</span></a>
+      <a class="nav-item" href="directory.html" id="nav-directory"><span class="nav-icon"><i class="fa-solid fa-sitemap"></i></span><span>Village Directory</span><span class="nav-badge" style="background:var(--accent-cyan); color:#000;">51k</span></a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="lang-switcher">
+        <button class="lang-btn active" data-lang="en">EN</button>
+        <button class="lang-btn" data-lang="hi">HI</button>
+        <button class="lang-btn" data-lang="or">OR</button>
+      </div>
+      <div class="system-status"><div class="status-dot"></div><span>Report engine active</span></div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main-content">
+    <header class="top-header">
+      <div style="display:flex; align-items:center; gap:12px;">
+        <button class="menu-toggle" id="menu-toggle"><i class="fa-solid fa-bars"></i></button>
+        <div class="header-title">
+          <div class="page-title">Report Generation</div>
+          <div class="page-subtitle">Automated Government-Grade Dengue Reports · Daily · Weekly · Monthly · Annual</div>
+        </div>
+      </div>
+      <div class="header-actions">
+        <div class="header-badge"><i class="fa-solid fa-file-pdf" style="color:var(--accent-coral);"></i> PDF Export Ready</div>
+        <button class="btn btn-primary btn-sm" onclick="printReport()">
+          <i class="fa-solid fa-print"></i> Print Report
+        </button>
+      </div>
+    </header>
+
+    <main class="page-content">
+
+      <div style="display:grid; grid-template-columns:320px 1fr; gap:20px;">
+
+        <!-- Report Controls -->
+        <div>
+          <!-- Report Type -->
+          <div class="card animate-fadeInUp" style="margin-bottom:16px;">
+            <div class="section-title" style="margin-bottom:16px;">
+              <div class="section-title-icon">📋</div>
+              Report Type
+            </div>
+            <div class="report-type-grid" style="grid-template-columns:1fr;">
+              <div class="report-type-card selected" onclick="selectReport(this,'daily')">
+                <div style="font-size:20px; margin-bottom:6px;">📅</div>
+                <div style="font-size:13px; font-weight:700; color:var(--text-primary);">Daily Bulletin</div>
+                <div style="font-size:11px; color:var(--text-muted); margin-top:4px;">Cases, TPR, new alerts, weather</div>
+              </div>
+              <div class="report-type-card" onclick="selectReport(this,'weekly')">
+                <div style="font-size:20px; margin-bottom:6px;">📈</div>
+                <div style="font-size:13px; font-weight:700; color:var(--text-primary);">Weekly Report</div>
+                <div style="font-size:11px; color:var(--text-muted); margin-top:4px;">7-day trends, district ranking</div>
+              </div>
+              <div class="report-type-card" onclick="selectReport(this,'monthly')">
+                <div style="font-size:20px; margin-bottom:6px;">📊</div>
+                <div style="font-size:13px; font-weight:700; color:var(--text-primary);">Monthly Report</div>
+                <div style="font-size:11px; color:var(--text-muted); margin-top:4px;">Full analysis + predictions</div>
+              </div>
+              <div class="report-type-card" onclick="selectReport(this,'outbreak')">
+                <div style="font-size:20px; margin-bottom:6px;">🚨</div>
+                <div style="font-size:13px; font-weight:700; color:var(--text-primary);">Outbreak Report</div>
+                <div style="font-size:11px; color:var(--text-muted); margin-top:4px;">Detailed outbreak analysis</div>
+              </div>
+              <div class="report-type-card" onclick="selectReport(this,'annual')">
+                <div style="font-size:20px; margin-bottom:6px;">📰</div>
+                <div style="font-size:13px; font-weight:700; color:var(--text-primary);">Annual Report</div>
+                <div style="font-size:11px; color:var(--text-muted); margin-top:4px;">Year-in-review + recommendations</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Options -->
+          <div class="card animate-fadeInUp" style="margin-bottom:16px;">
+            <div class="section-title" style="margin-bottom:14px;">
+              <div class="section-title-icon">⚙️</div>
+              Report Options
+            </div>
+            <div style="margin-bottom:12px;">
+              <label style="font-size:12px; color:var(--text-muted); display:block; margin-bottom:6px; font-weight:600;">Date / Period</label>
+              <input type="date" id="report-date" class="select-input w-full" style="padding:9px 14px;" />
+            </div>
+            <div style="margin-bottom:12px;">
+              <label style="font-size:12px; color:var(--text-muted); display:block; margin-bottom:6px; font-weight:600;">District Filter</label>
+              <select class="select-input w-full" id="report-district">
+                <option value="all">All Districts</option>
+                <option value="Khordha">Khordha</option>
+                <option value="Balasore">Balasore</option>
+                <option value="Cuttack">Cuttack</option>
+                <option value="Mayurbhanj">Mayurbhanj</option>
+              </select>
+            </div>
+            <div style="margin-bottom:12px;">
+              <label style="font-size:12px; color:var(--text-muted); display:block; margin-bottom:6px; font-weight:600;">Include Sections</label>
+              <div style="display:flex; flex-direction:column; gap:8px;">
+                <label style="display:flex; align-items:center; gap:8px; font-size:12px; color:var(--text-secondary); cursor:pointer;">
+                  <input type="checkbox" checked style="accent-color:var(--accent-cyan);"> Executive Summary
+                </label>
+                <label style="display:flex; align-items:center; gap:8px; font-size:12px; color:var(--text-secondary); cursor:pointer;">
+                  <input type="checkbox" checked style="accent-color:var(--accent-cyan);"> District Rankings
+                </label>
+                <label style="display:flex; align-items:center; gap:8px; font-size:12px; color:var(--text-secondary); cursor:pointer;">
+                  <input type="checkbox" checked style="accent-color:var(--accent-cyan);"> AI Predictions
+                </label>
+                <label style="display:flex; align-items:center; gap:8px; font-size:12px; color:var(--text-secondary); cursor:pointer;">
+                  <input type="checkbox" style="accent-color:var(--accent-cyan);"> Weather Data
+                </label>
+                <label style="display:flex; align-items:center; gap:8px; font-size:12px; color:var(--text-secondary); cursor:pointer;">
+                  <input type="checkbox" style="accent-color:var(--accent-cyan);"> Breeding Index
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Generate Button -->
+          <button class="generate-btn w-full" id="generate-btn" onclick="generateReport()">
+            <div class="loading-spinner" id="gen-spinner"></div>
+            <i class="fa-solid fa-file-circle-check" id="gen-icon"></i>
+            <span id="gen-text">Generate Report</span>
+          </button>
+
+          <!-- Download Info -->
+          <div style="margin-top:12px; font-size:11px; color:var(--text-muted); text-align:center;">
+            Use browser <strong>Ctrl+P</strong> / <strong>⌘+P</strong> to save as PDF
+          </div>
+        </div>
+
+        <!-- Report Preview -->
+        <div class="animate-fadeInUp">
+          <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;">
+            <div style="font-size:14px; font-weight:700; color:var(--text-primary);">
+              📄 Report Preview
+            </div>
+            <div style="font-size:12px; color:var(--text-muted);" id="report-status">
+              <span id="status-dot" style="display:inline-block; width:8px; height:8px; background:var(--accent-green); border-radius:50%; margin-right:6px;"></span>
+              Preview ready
+            </div>
+          </div>
+
+          <div class="report-preview-area" id="report-preview">
+
+            <!-- Report Header -->
+            <div class="report-header-bar">
+              <div>
+                <div style="font-family:'Rajdhani',sans-serif; font-size:22px; font-weight:700; color:#00d4ff;">MosqAware</div>
+                <div style="font-size:11px; color:#8b9cc8;">Government of Odisha · Dengue Surveillance System</div>
+              </div>
+              <div style="text-align:right;">
+                <div id="report-type-display" style="font-size:16px; font-weight:700; color:white;">Daily Bulletin</div>
+                <div id="report-date-display" style="font-size:12px; color:#8b9cc8;">30 July 2026</div>
+              </div>
+            </div>
+
+            <!-- KPI Row -->
+            <div class="report-kpi-row">
+              <div class="report-kpi-item">
+                <div class="report-kpi-value" style="color:#00d4ff;">50</div>
+                <div class="report-kpi-label">Cases (2026 YTD)</div>
+              </div>
+              <div class="report-kpi-item">
+                <div class="report-kpi-value" style="color:#ff6b6b;">3</div>
+                <div class="report-kpi-label">Active Districts</div>
+              </div>
+              <div class="report-kpi-item">
+                <div class="report-kpi-value" style="color:#0a1628;">0.42%</div>
+                <div class="report-kpi-label">Current TPR</div>
+              </div>
+              <div class="report-kpi-item">
+                <div class="report-kpi-value" style="color:#00e5a0;">LOW</div>
+                <div class="report-kpi-label">Risk Level</div>
+              </div>
+            </div>
+
+            <!-- Alert Status -->
+            <div style="background:#f0fdf4; border:1px solid #86efac; border-radius:8px; padding:12px 16px; margin-bottom:20px; display:flex; align-items:center; gap:10px;">
+              <span style="font-size:20px;">🟢</span>
+              <div>
+                <div style="font-size:13px; font-weight:700; color:#065f46;">NORMAL — Routine Surveillance Mode</div>
+                <div style="font-size:11px; color:#047857; margin-top:2px;">No active outbreak. Pre-monsoon surveillance ongoing across all 30 districts.</div>
+              </div>
+            </div>
+
+            <!-- District Summary -->
+            <div class="report-section-title">District Summary — Top Risk Districts</div>
+            <table class="report-table">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>District</th>
+                  <th>Cases (2025)</th>
+                  <th>TPR%</th>
+                  <th>Risk Score</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="report-district-rows"></tbody>
+            </table>
+
+            <!-- AI Predictions -->
+            <div class="report-section-title">AI Prediction — Upcoming Months</div>
+            <table class="report-table">
+              <thead>
+                <tr>
+                  <th>Month</th>
+                  <th>Predicted Cases</th>
+                  <th>Range</th>
+                  <th>Confidence</th>
+                  <th>Action Required</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td>Aug 2026</td><td><strong>380</strong></td><td>290–470</td><td>82%</td><td>Pre-position resources</td></tr>
+                <tr><td>Sep 2026</td><td><strong style="color:#f97316;">620</strong></td><td>490–750</td><td>79%</td><td>Activate response protocol</td></tr>
+                <tr><td>Oct 2026</td><td><strong>490</strong></td><td>370–610</td><td>76%</td><td>Continue surveillance</td></tr>
+                <tr><td>Nov 2026</td><td><strong>210</strong></td><td>150–270</td><td>80%</td><td>Routine monitoring</td></tr>
+              </tbody>
+            </table>
+
+            <!-- Recommendations -->
+            <div class="report-section-title">Recommendations</div>
+            <ol style="font-size:12px; color:#334155; line-height:2; padding-left:18px;">
+              <li>Intensify pre-monsoon dry day drives in Khordha, Balasore, and Cuttack before August 2026.</li>
+              <li>Deploy additional testing kits (NS1 antigen + IgM ELISA) to 8 watch-listed districts.</li>
+              <li>Activate Rapid Response Teams in Khordha and Balasore by August 15, 2026.</li>
+              <li>Continue weekly satellite NDWI monitoring for water-logged area identification.</li>
+              <li>Schedule quarterly model retraining with updated 2026 case data.</li>
+            </ol>
+
+            <!-- Footer -->
+            <div style="margin-top:24px; padding-top:16px; border-top:1px solid #e2e8f0; display:flex; justify-content:space-between; font-size:10px; color:#94a3b8;">
+              <span>MosqAware v3.2 · XGBoost+RF+LSTM Ensemble · Odisha State Health Department</span>
+              <span>Generated: 30 Jul 2026 · NCVBDC Data</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="data.js"></script>
+<script src="i18n.js"></script>
+<script src="app.js"></script>
+<script>
+// Set default date
+document.getElementById('report-date').value = new Date().toISOString().split('T')[0];
+
+// Report type label map
+const reportLabels = {
+  daily: 'Daily Bulletin',
+  weekly: 'Weekly Epidemiological Report',
+  monthly: 'Monthly Dengue Surveillance Report',
+  outbreak: 'Outbreak Investigation Report',
+  annual: 'Annual Dengue Review 2025',
+};
+
+let currentReportType = 'daily';
+
+function selectReport(el, type) {
+  document.querySelectorAll('.report-type-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  currentReportType = type;
+  document.getElementById('report-type-display').textContent = reportLabels[type];
+}
+
+function generateReport() {
+  const btn = document.getElementById('generate-btn');
+  const spinner = document.getElementById('gen-spinner');
+  const icon = document.getElementById('gen-icon');
+  const text = document.getElementById('gen-text');
+
+  spinner.style.display = 'block';
+  icon.style.display = 'none';
+  text.textContent = 'Generating...';
+  btn.disabled = true;
+
+  setTimeout(() => {
+    spinner.style.display = 'none';
+    icon.style.display = 'block';
+    text.textContent = 'Report Ready!';
+
+    const dateVal = document.getElementById('report-date').value;
+    const d = new Date(dateVal);
+    document.getElementById('report-date-display').textContent = d.toLocaleDateString('en-IN', { day:'numeric', month:'long', year:'numeric' });
+    document.getElementById('report-type-display').textContent = reportLabels[currentReportType];
+
+    document.getElementById('report-status').innerHTML = '<span style="display:inline-block;width:8px;height:8px;background:#00e5a0;border-radius:50%;margin-right:6px;"></span>Generated successfully';
+
+    setTimeout(() => {
+      text.textContent = 'Generate Report';
+      btn.disabled = false;
+    }, 3000);
+  }, 1800);
+}
+
+function printReport() {
+  window.print();
+}
+
+// Populate report district rows
+document.addEventListener('DOMContentLoaded', () => {
+  const top8 = [...ODISHA_DATA.districts].sort((a,b)=>b.riskScore-a.riskScore).slice(0,8);
+  const tbody = document.getElementById('report-district-rows');
+  if (tbody) {
+    tbody.innerHTML = top8.map((d,i) => `
+      <tr>
+        <td style="color:#64748b;">${i+1}</td>
+        <td style="font-weight:600;">${d.name}</td>
+        <td>${d.cases2025}</td>
+        <td>${d.tpr}%</td>
+        <td><strong style="color:${d.riskScore>=56?'#ef4444':d.riskScore>=31?'#f59e0b':'#22c55e'};">${d.riskScore}</strong></td>
+        <td style="color:${d.riskLevel==='HIGH'?'#ef4444':d.riskLevel==='MODERATE'?'#f59e0b':'#22c55e'}; font-weight:600;">${d.riskLevel}</td>
+      </tr>
+    `).join('');
+  }
+});
+</script>
+<script src="assistant.js"></script>
+</body>
+</html>

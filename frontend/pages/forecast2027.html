@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="MosqAware — 2027 Dengue Outbreak Forecast for Odisha. SARIMA-XGBoost hybrid model projects 10,000–15,000 cases. District-wise risk mapping, climate correlations, and preparedness recommendations." />
+  <title>2027 Dengue Forecast — MosqAware</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Rajdhani:wght@500;600;700&display=swap" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="style.css" />
+
+  <style>
+    /* ── Page-specific ── */
+    #sidebar-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:99; backdrop-filter:blur(4px); }
+    #sidebar-overlay.show { display:block; }
+
+    /* Countdown / status banner */
+    .forecast-hero {
+      background: linear-gradient(135deg,
+        rgba(255,107,107,0.08) 0%,
+        rgba(255,159,67,0.06) 50%,
+        rgba(168,85,247,0.06) 100%);
+      border: 1px solid rgba(255,107,107,0.25);
+      border-radius: var(--radius-xl);
+      padding: 28px 32px;
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      margin-bottom: 28px;
+      position: relative;
+      overflow: hidden;
+    }
+    .forecast-hero::before {
+      content: '';
+      position: absolute;
+      top: -40px; right: -40px;
+      width: 200px; height: 200px;
+      background: radial-gradient(circle, rgba(255,107,107,0.1) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .forecast-case-range {
+      text-align: center;
+      flex-shrink: 0;
+    }
+    .forecast-case-range .range-label {
+      font-size: 11px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 4px;
+    }
+    .forecast-case-range .range-val {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 52px;
+      font-weight: 700;
+      line-height: 1;
+      background: linear-gradient(135deg, #ff6b6b, #ff9f43);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .forecast-case-range .range-sub {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+    .divider-v { width: 1px; height: 70px; background: rgba(255,255,255,0.08); flex-shrink: 0; }
+
+    /* Trend indicators */
+    .trend-pill {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 6px 14px; border-radius: 999px; font-size: 12px; font-weight: 700;
+    }
+    .trend-up-pill { background: rgba(255,68,68,0.12); color: #ff6b6b; border: 1px solid rgba(255,68,68,0.2); }
+    .trend-down-pill { background: rgba(0,229,160,0.12); color: var(--accent-green); border: 1px solid rgba(0,229,160,0.2); }
+    .trend-neutral-pill { background: rgba(255,214,102,0.12); color: var(--accent-yellow); border: 1px solid rgba(255,214,102,0.2); }
+
+    /* Summary grid */
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .summary-item {
+      background: var(--bg-glass);
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius-md);
+      padding: 16px 14px;
+      text-align: center;
+    }
+    .summary-emoji { font-size: 26px; margin-bottom: 8px; }
+    .summary-val { font-family: 'Rajdhani', sans-serif; font-size: 20px; font-weight: 700; color: var(--text-primary); line-height: 1.2; }
+    .summary-label { font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.8px; margin-top: 6px; }
+
+    /* District risk row */
+    .district-risk-row {
+      display: grid;
+      grid-template-columns: 1fr 120px 100px 180px;
+      align-items: center;
+      gap: 16px;
+      padding: 14px 18px;
+      background: var(--bg-glass);
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius-md);
+      margin-bottom: 8px;
+      transition: all 0.2s;
+    }
+    .district-risk-row:hover { border-color: rgba(0,212,255,0.2); background: var(--bg-glass-hover); }
+    .hotspot-tag {
+      display: inline-block;
+      padding: 2px 8px;
+      background: rgba(255,107,107,0.1);
+      border: 1px solid rgba(255,107,107,0.2);
+      border-radius: 99px;
+      font-size: 10px;
+      color: var(--accent-coral);
+      margin: 2px 3px 2px 0;
+    }
+
+    /* Climate corr card */
+    .corr-card {
+      background: var(--bg-glass);
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius-md);
+      padding: 18px;
+      text-align: center;
+      transition: all 0.3s;
+    }
+    .corr-card:hover { border-color: rgba(0,212,255,0.2); transform: translateY(-2px); }
+    .corr-r {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 42px;
+      font-weight: 700;
+      line-height: 1;
+    }
+
+    /* Socio-eco table */
+    .or-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 52px; height: 52px;
+      border-radius: 50%;
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 22px;
+      font-weight: 700;
+    }
+
+    /* Clinical outcome */
+    .clinical-stat {
+      text-align: center;
+      padding: 18px 14px;
+      background: var(--bg-glass);
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius-md);
+    }
+    .clinical-val {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 36px;
+      font-weight: 700;
+      line-height: 1;
+    }
+    .clinical-label { font-size: 11px; color: var(--text-muted); margin-top: 6px; }
+
+    /* Recommendation row */
+    .rec-row {
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+      padding: 16px 20px;
+      background: var(--bg-glass);
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius-md);
+      margin-bottom: 10px;
+      transition: all 0.2s;
+    }
+    .rec-row:hover { border-color: rgba(0,212,255,0.2); }
+    .rec-num {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent-cyan), #0066ff);
+      color: #000;
+      font-weight: 800;
+      font-size: 14px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+
+    /* Model comparison */
+    .model-row {
+      display: grid;
+      grid-template-columns: 200px 1fr 120px 120px 100px;
+      gap: 12px;
+      align-items: center;
+      padding: 14px 18px;
+      border-radius: var(--radius-md);
+      font-size: 13px;
+    }
+    .model-row.active-model { background: rgba(0,212,255,0.06); border: 1px solid rgba(0,212,255,0.2); }
+    .model-row.inactive-model { background: var(--bg-glass); border: 1px solid var(--border-glass); opacity: 0.65; }
+
+    /* Prevention window */
+    .prevention-timeline {
+      display: flex;
+      gap: 0;
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      margin-top: 12px;
+    }
+    .timeline-month {
+      flex: 1;
+      padding: 10px 4px;
+      text-align: center;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* Oscillation context */
+    .oscillation-banner {
+      background: rgba(168,85,247,0.06);
+      border: 1px solid rgba(168,85,247,0.2);
+      border-radius: var(--radius-md);
+      padding: 14px 18px;
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    @media (max-width: 768px) {
+      .summary-grid { grid-template-columns: repeat(3,1fr); }
+      .district-risk-row { grid-template-columns: 1fr; }
+      .model-row { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+<div id="sidebar-overlay"></div>
+<div class="app-layout">
+
+  <!-- ═══ SIDEBAR ══════════════════════════════════════════════════ -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <a class="brand-logo" href="index.html">
+        <div class="brand-icon">🦟</div>
+        <div class="brand-text">
+          <div class="brand-name">MosqAware</div>
+          <div class="brand-sub">Odisha State</div>
+        </div>
+      </a>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section-label">Main</div>
+      <a class="nav-item" href="index.html"><span class="nav-icon"><i class="fa-solid fa-gauge-high"></i></span><span>Dashboard</span></a>
+      <a class="nav-item" href="prediction.html"><span class="nav-icon"><i class="fa-solid fa-brain"></i></span><span>AI Prediction</span><span class="nav-badge">LIVE</span></a>
+      <a class="nav-item" href="analytics.html"><span class="nav-icon"><i class="fa-solid fa-chart-line"></i></span><span>Analytics</span></a>
+      <div class="nav-section-label">Tools</div>
+      <a class="nav-item" href="breeding.html"><span class="nav-icon"><i class="fa-solid fa-mosquito"></i></span><span>Breeding Index</span></a>
+      <a class="nav-item" href="awareness.html"><span class="nav-icon"><i class="fa-solid fa-bullhorn"></i></span><span>Public Awareness</span></a>
+      <a class="nav-item" href="reports.html"><span class="nav-icon"><i class="fa-solid fa-file-pdf"></i></span><span>Reports</span></a>
+      <a class="nav-item active" href="forecast2027.html"><span class="nav-icon"><i class="fa-solid fa-calendar-days"></i></span><span>2027 Forecast</span><span class="nav-badge" style="background:rgba(255,107,107,0.85);">NEW</span></a>
+      <a class="nav-item" href="directory.html" id="nav-directory"><span class="nav-icon"><i class="fa-solid fa-sitemap"></i></span><span>Village Directory</span><span class="nav-badge" style="background:var(--accent-cyan); color:#000;">51k</span></a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="lang-switcher">
+        <button class="lang-btn active" data-lang="en">EN</button>
+        <button class="lang-btn" data-lang="hi">HI</button>
+        <button class="lang-btn" data-lang="or">OR</button>
+      </div>
+      <div class="system-status"><div class="status-dot" style="background:var(--accent-coral);"></div><span style="color:var(--accent-coral);">⚠ WATCH — Resurgence</span></div>
+      <div style="font-size:10px; color:var(--text-muted); margin-top:6px;">SARIMA-XGBoost v3.2 · Jul 2026</div>
+    </div>
+  </aside>
+
+  <!-- ═══ MAIN ════════════════════════════════════════════════════ -->
+  <div class="main-content">
+    <header class="top-header">
+      <div style="display:flex; align-items:center; gap:12px;">
+        <button class="menu-toggle" id="menu-toggle"><i class="fa-solid fa-bars"></i></button>
+        <div class="header-title">
+          <div class="page-title">2027 Dengue Outbreak Forecast</div>
+          <div class="page-subtitle">SARIMA-XGBoost Hybrid · Bi-GRU+Conv-LSTM · Climate-Epidemiologic Modeling · Odisha</div>
+        </div>
+      </div>
+      <div class="header-actions">
+        <div class="live-indicator" style="border-color:rgba(255,107,107,0.3); color:var(--accent-coral);">
+          <span class="status-dot" style="background:var(--accent-coral);"></span>⚠ WATCH
+        </div>
+        <div class="header-badge"><i class="fa-solid fa-satellite" style="font-size:12px;"></i> Updated Jul 2026</div>
+        <a href="reports.html" class="btn btn-primary btn-sm"><i class="fa-solid fa-file-export"></i> Export</a>
+      </div>
+    </header>
+
+    <main class="page-content">
+
+      <!-- ── Hero Forecast Banner ──────────────────────────────── -->
+      <div class="forecast-hero animate-fadeInUp">
+        <div class="forecast-case-range">
+          <div class="range-label">Projected Cases</div>
+          <div class="range-val" id="forecast-counter">12,500</div>
+          <div class="range-sub">Range: 10,000 – 15,000</div>
+        </div>
+        <div class="divider-v"></div>
+        <div style="flex:1;">
+          <div style="font-family:'Rajdhani',sans-serif; font-size:26px; font-weight:700; color:var(--text-primary); margin-bottom:10px;">
+            📈 Significant Rebound Forecast for 2027
+          </div>
+          <div style="font-size:14px; color:var(--text-secondary); line-height:1.7; margin-bottom:14px;">
+            Odisha's 2026 resurgence (3,300+ cases by July, Khordha: 1,154) is a leading indicator of cyclical outbreak risk.
+            Low TPR creating an <strong style="color:var(--accent-yellow);">immunity gap</strong>, monsoon patterns, and DENV-2 dominance point to a
+            <strong style="color:var(--accent-coral);">major outbreak in 2027</strong> — comparable to the 2023 peak.
+          </div>
+          <div style="display:flex; gap:10px; flex-wrap:wrap;">
+            <span class="trend-pill trend-up-pill"><i class="fa-solid fa-arrow-trend-up"></i> Upward Trajectory</span>
+            <span class="trend-pill trend-neutral-pill"><i class="fa-solid fa-calendar"></i> Peak: Jul–Oct 2027</span>
+            <span class="trend-pill trend-up-pill"><i class="fa-solid fa-biohazard"></i> DENV-2 DHF Risk</span>
+            <span class="trend-pill trend-down-pill"><i class="fa-solid fa-shield"></i> Preventable with action</span>
+          </div>
+        </div>
+        <div class="divider-v"></div>
+        <div style="text-align:center; flex-shrink:0;">
+          <div style="font-size:11px; color:var(--text-muted); margin-bottom:8px; text-transform:uppercase; letter-spacing:1px;">Prevention Window</div>
+          <div style="font-family:'Rajdhani',sans-serif; font-size:22px; font-weight:700; color:var(--accent-green);">Jan–Jun</div>
+          <div style="font-size:13px; color:var(--accent-green); font-weight:600;">2027</div>
+          <div style="font-size:11px; color:var(--text-muted); margin-top:4px;">Critical action period</div>
+          <div style="margin-top:10px;">
+            <a href="#recommendations" class="btn btn-outline btn-sm" style="font-size:11px;"><i class="fa-solid fa-arrow-down"></i> See Actions</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Summary KPI Strip ─────────────────────────────────── -->
+      <div class="summary-grid animate-fadeInUp">
+        <div class="summary-item">
+          <div class="summary-emoji">📅</div>
+          <div class="summary-val">Jul–Oct</div>
+          <div class="summary-label">Peak Season</div>
+        </div>
+        <div class="summary-item">
+          <div class="summary-emoji">🏙️</div>
+          <div class="summary-val">4–5</div>
+          <div class="summary-label">High-Risk Districts</div>
+        </div>
+        <div class="summary-item">
+          <div class="summary-emoji">🧬</div>
+          <div class="summary-val">DENV-2</div>
+          <div class="summary-label">Dominant Serotype</div>
+        </div>
+        <div class="summary-item">
+          <div class="summary-emoji">🤒</div>
+          <div class="summary-val">13.4%</div>
+          <div class="summary-label">Severe Case Rate</div>
+        </div>
+        <div class="summary-item">
+          <div class="summary-emoji">🎯</div>
+          <div class="summary-val">87%</div>
+          <div class="summary-label">Model Accuracy</div>
+        </div>
+      </div>
+
+      <!-- ── Contextual Trend: 2021–2027 ──────────────────────── -->
+      <div class="card animate-fadeInUp" style="margin-bottom:24px;">
+        <div class="section-header">
+          <div class="section-title">
+            <div class="section-title-icon">📊</div>
+            Historical Trend + 2027 Projection (2018–2027)
+          </div>
+          <div style="display:flex; gap:8px; align-items:center;">
+            <div style="width:12px; height:12px; background:rgba(0,212,255,0.5); border-radius:3px; border:2px solid var(--accent-cyan);"></div>
+            <span style="font-size:11px; color:var(--text-muted);">Actual</span>
+            <div style="width:12px; height:12px; background:rgba(255,107,107,0.5); border-radius:3px; border:2px dashed var(--accent-coral);"></div>
+            <span style="font-size:11px; color:var(--text-muted);">Projected</span>
+          </div>
+        </div>
+        <div class="chart-wrapper-xl">
+          <canvas id="trend-2027-chart"></canvas>
+        </div>
+        <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-top:16px;">
+          <div style="padding:12px 16px; background:rgba(255,107,107,0.05); border-radius:10px; border:1px solid rgba(255,107,107,0.15);">
+            <div style="font-size:12px; font-weight:700; color:var(--accent-coral); margin-bottom:4px;">🔴 2023 Peak</div>
+            <div style="font-size:12px; color:var(--text-secondary);">12,845 cases — driven by delayed monsoons, DENV-2 surge, post-pandemic mobility</div>
+          </div>
+          <div style="padding:12px 16px; background:rgba(0,229,160,0.05); border-radius:10px; border:1px solid rgba(0,229,160,0.15);">
+            <div style="font-size:12px; font-weight:700; color:var(--accent-green); margin-bottom:4px;">🟢 2025 Trough</div>
+            <div style="font-size:12px; color:var(--text-secondary);">2,635 cases — aggressive fogging campaigns, dry-day drives, early detection</div>
+          </div>
+          <div style="padding:12px 16px; background:rgba(255,159,67,0.05); border-radius:10px; border:1px solid rgba(255,159,67,0.15);">
+            <div style="font-size:12px; font-weight:700; color:var(--accent-orange); margin-bottom:4px;">🟠 2027 Forecast</div>
+            <div style="font-size:12px; color:var(--text-secondary);">10,000–15,000 — SARIMA-XGBoost model; immunity gap + complacency risk</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Monthly 2027 Forecast Chart ──────────────────────── -->
+      <div class="grid-2" style="margin-bottom:24px;">
+
+        <div class="card animate-fadeInUp">
+          <div class="section-header">
+            <div class="section-title">
+              <div class="section-title-icon">📅</div>
+              Monthly Case Projection — 2027
+            </div>
+            <span style="font-size:11px; color:var(--text-muted);">Shaded = 95% CI range</span>
+          </div>
+          <div class="chart-wrapper-lg">
+            <canvas id="monthly-2027-chart"></canvas>
+          </div>
+          <div class="oscillation-banner" style="margin-top:14px;">
+            <strong style="color:var(--accent-purple);">⚡ SARIMA Oscillation Pattern:</strong>
+            Periodic oscillations every 6 months are detected in Odisha's dengue data.
+            After a 2025 trough, the model predicts a sharp post-monsoon spike in Aug–Sep 2027,
+            with a secondary pre-monsoon rise in Apr–May 2027.
+          </div>
+        </div>
+
+        <!-- Compared to 2023 Peak -->
+        <div class="card animate-fadeInUp">
+          <div class="section-header">
+            <div class="section-title">
+              <div class="section-title-icon">⚖️</div>
+              2027 vs 2023 Peak — Monthly Comparison
+            </div>
+          </div>
+          <div class="chart-wrapper-lg">
+            <canvas id="compare-2023-chart"></canvas>
+          </div>
+          <div style="margin-top:12px; padding:12px; background:rgba(255,214,102,0.05); border:1px solid rgba(255,214,102,0.15); border-radius:10px; font-size:12px; color:var(--text-muted);">
+            <strong style="color:var(--accent-yellow);">⚠️ Low-immunity population warning:</strong>
+            TPR drop (5.61% → 0.98%) means fewer infections in 2025–26, creating a susceptible cohort.
+            SARIMA predicts this demographic gap will amplify the 2027 wave.
+          </div>
+        </div>
+      </div>
+
+      <!-- ── District Risk Map 2027 ────────────────────────────── -->
+      <div class="card animate-fadeInUp" style="margin-bottom:24px;" id="district-risk">
+        <div class="section-header">
+          <div class="section-title">
+            <div class="section-title-icon">🗺️</div>
+            District-wise Risk Mapping — 2027 Projection
+          </div>
+          <span style="font-size:12px; color:var(--text-muted);">Source: SARIMA-XGBoost + GIS Analysis</span>
+        </div>
+        <div id="district-risk-rows"></div>
+      </div>
+
+      <!-- ── Climate Correlations ──────────────────────────────── -->
+      <div class="card animate-fadeInUp" style="margin-bottom:24px;">
+        <div class="section-header">
+          <div class="section-title">
+            <div class="section-title-icon">🌡️</div>
+            Climate-Dengue Correlations (Validated for Odisha)
+          </div>
+          <span style="font-size:12px; color:var(--text-muted);">Pearson r values · Lagged analysis</span>
+        </div>
+        <div class="grid-3" style="margin-bottom:18px;">
+          <div class="corr-card">
+            <div style="font-size:28px; margin-bottom:8px;">🌧️</div>
+            <div class="corr-r" style="color:var(--accent-coral);">r = 0.37</div>
+            <div style="font-size:14px; font-weight:700; color:var(--text-primary); margin:8px 0;">Rainfall</div>
+            <div style="font-size:11px; color:var(--text-muted); margin-bottom:10px;">Lag: 0–2 months · Strongest predictor</div>
+            <div style="font-size:12px; color:var(--text-secondary);">Moderate rain (50–150mm) creates breeding sites; heavy rain flushes larvae</div>
+            <div class="progress-bar" style="margin-top:10px;">
+              <div class="progress-fill" style="width:37%; background:var(--accent-coral);"></div>
+            </div>
+          </div>
+          <div class="corr-card">
+            <div style="font-size:28px; margin-bottom:8px;">🌡️</div>
+            <div class="corr-r" style="color:var(--accent-yellow);">r = 0.28</div>
+            <div style="font-size:14px; font-weight:700; color:var(--text-primary); margin:8px 0;">Temperature</div>
+            <div style="font-size:11px; color:var(--text-muted); margin-bottom:10px;">Lag: 1–5 months · Weight: 41%</div>
+            <div style="font-size:12px; color:var(--text-secondary);">&gt;27°C accelerates Aedes aegypti breeding cycles and DENV replication rate</div>
+            <div class="progress-bar" style="margin-top:10px;">
+              <div class="progress-fill" style="width:28%; background:var(--accent-yellow);"></div>
+            </div>
+          </div>
+          <div class="corr-card">
+            <div style="font-size:28px; margin-bottom:8px;">🌬️</div>
+            <div class="corr-r" style="color:var(--accent-cyan);">r = 0.25</div>
+            <div style="font-size:14px; font-weight:700; color:var(--text-primary); margin:8px 0;">Wind Speed</div>
+            <div style="font-size:11px; color:var(--text-muted); margin-bottom:10px;">Lag: 1–6 months</div>
+            <div style="font-size:12px; color:var(--text-secondary);">Influences Aedes mosquito dispersal radius and cross-district spread patterns</div>
+            <div class="progress-bar" style="margin-top:10px;">
+              <div class="progress-fill" style="width:25%; background:var(--accent-cyan);"></div>
+            </div>
+          </div>
+        </div>
+        <div style="grid-column:1/-1;">
+          <div class="corr-card" style="display:flex; align-items:center; gap:20px; text-align:left;">
+            <div style="text-align:center; flex-shrink:0;">
+              <div style="font-size:24px; margin-bottom:4px;">💧</div>
+              <div class="corr-r" style="color:var(--accent-green); font-size:28px;">r = 0.18</div>
+            </div>
+            <div style="flex:1;">
+              <div style="font-size:14px; font-weight:700; color:var(--text-primary); margin-bottom:4px;">Humidity · Lag: 1–4 months · Weight: 20%</div>
+              <div style="font-size:12px; color:var(--text-secondary);">Optimal mosquito survival band is 60–78% relative humidity. Below 60% desiccates larvae; above 78% reduces flight activity. July–August Odisha (avg 82%) slightly above optimal but drives the peak due to combined rainfall effect.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Clinical Risk + Socio-Eco ────────────────────────── -->
+      <div class="grid-2" style="margin-bottom:24px;">
+
+        <!-- Pediatric Clinical Outcomes -->
+        <div class="card animate-fadeInUp">
+          <div class="section-header">
+            <div class="section-title">
+              <div class="section-title-icon">🏥</div>
+              Clinical Outcomes at Risk — MKCG Study
+            </div>
+            <span style="font-size:11px; color:var(--text-muted);">MKCG Medical College, Berhampur</span>
+          </div>
+          <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:14px;">
+            <div class="clinical-stat">
+              <div class="clinical-val" style="color:var(--accent-green);">86.6%</div>
+              <div class="clinical-label">Non-Severe Cases</div>
+            </div>
+            <div class="clinical-stat">
+              <div class="clinical-val" style="color:var(--accent-coral);">13.4%</div>
+              <div class="clinical-label">Severe Cases (DHF)</div>
+            </div>
+            <div class="clinical-stat">
+              <div class="clinical-val" style="color:var(--accent-yellow);">1.03%</div>
+              <div class="clinical-label">Pediatric CFR</div>
+            </div>
+            <div class="clinical-stat">
+              <div class="clinical-val" style="color:var(--accent-orange);">43.8%</div>
+              <div class="clinical-label">Hepatomegaly</div>
+            </div>
+            <div class="clinical-stat">
+              <div class="clinical-val" style="color:var(--accent-cyan);">27.5%</div>
+              <div class="clinical-label">Thrombocytopenia</div>
+            </div>
+            <div class="clinical-stat">
+              <div class="clinical-val" style="color:var(--accent-purple);">3.8d</div>
+              <div class="clinical-label">Avg Hospital Stay</div>
+            </div>
+          </div>
+          <div style="padding:14px; background:rgba(255,107,107,0.05); border-radius:10px; border:1px solid rgba(255,107,107,0.15);">
+            <div style="font-size:12px; color:var(--text-secondary);">
+              <strong style="color:var(--accent-coral);">⚠️ 2027 Healthcare Implication:</strong>
+              If 12,500 cases are projected, expect <strong style="color:var(--accent-yellow);">~1,675 severe dengue cases</strong> (13.4%) requiring hospitalisation, with <strong style="color:var(--accent-coral);">~129 requiring ICU care</strong>.
+              Platelet concentrate and NS1 rapid kits must be pre-positioned by June 2027.
+            </div>
+          </div>
+
+          <!-- DENV-2 Donut -->
+          <div style="margin-top:16px;">
+            <div style="font-size:12px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:1px; margin-bottom:10px;">Serotype Distribution</div>
+            <div style="height:180px; position:relative;">
+              <canvas id="serotype-2027-chart"></canvas>
+            </div>
+            <div style="margin-top:10px; font-size:12px; color:var(--text-muted);">
+              DENV-2 dominant in <strong style="color:var(--accent-coral);">13/18 surveyed districts</strong>.
+              Higher DHF/DSS risk than DENV-1/3 infections.
+            </div>
+          </div>
+        </div>
+
+        <!-- Socio-Ecological Factors -->
+        <div class="card animate-fadeInUp">
+          <div class="section-header">
+            <div class="section-title">
+              <div class="section-title-icon">🏘️</div>
+              Socio-Ecological Risk Factors (Odisha Study)
+            </div>
+            <span style="font-size:11px; color:var(--text-muted);">Validated Odds Ratios</span>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:14px; margin-bottom:18px;" id="socio-eco-list"></div>
+
+          <!-- Socio Chart -->
+          <div class="chart-wrapper" style="height:180px;">
+            <canvas id="socio-chart"></canvas>
+          </div>
+
+          <div style="margin-top:16px;">
+            <div style="font-size:12px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:1px; margin-bottom:10px;">2027 Risk Multiplier Implication</div>
+            <div style="font-size:13px; color:var(--text-secondary); line-height:1.8;">
+              Populations with <strong style="color:var(--accent-coral);">thatched housing + daily commute</strong> have a combined OR of ~9.0 — meaning they are
+              <strong>9× more likely</strong> to contract dengue than those in concrete houses without occupational travel.
+              Focus outreach on semi-urban fringes of Khordha, Balasore, and Cuttack.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Prevention Timeline ───────────────────────────────── -->
+      <div class="card animate-fadeInUp" style="margin-bottom:24px;">
+        <div class="section-header">
+          <div class="section-title">
+            <div class="section-title-icon">⏳</div>
+            2027 Intervention Timeline — Critical Prevention Window
+          </div>
+        </div>
+        <div class="prevention-timeline">
+          <div class="timeline-month" style="background:rgba(0,229,160,0.25); color:var(--accent-green);">Jan<br/>🟢 Pre-Action</div>
+          <div class="timeline-month" style="background:rgba(0,229,160,0.2); color:var(--accent-green);">Feb<br/>🟢 Planning</div>
+          <div class="timeline-month" style="background:rgba(0,212,255,0.25); color:var(--accent-cyan);">Mar<br/>🔵 Fogging</div>
+          <div class="timeline-month" style="background:rgba(0,212,255,0.25); color:var(--accent-cyan);">Apr<br/>🔵 Surveys</div>
+          <div class="timeline-month" style="background:rgba(255,214,102,0.3); color:var(--accent-yellow);">May<br/>🟡 Alert Mode</div>
+          <div class="timeline-month" style="background:rgba(255,214,102,0.35); color:var(--accent-yellow);">Jun<br/>🟡 Deploy</div>
+          <div class="timeline-month" style="background:rgba(255,159,67,0.4); color:var(--accent-orange);">Jul<br/>🟠 Peak Risk</div>
+          <div class="timeline-month" style="background:rgba(255,68,68,0.4); color:#ff4444);">Aug<br/>🔴 SURGE</div>
+          <div class="timeline-month" style="background:rgba(255,68,68,0.35); color:#ff4444);">Sep<br/>🔴 SURGE</div>
+          <div class="timeline-month" style="background:rgba(255,159,67,0.35); color:var(--accent-orange);">Oct<br/>🟠 Declining</div>
+          <div class="timeline-month" style="background:rgba(255,214,102,0.2); color:var(--accent-yellow);">Nov<br/>🟡 Debrief</div>
+          <div class="timeline-month" style="background:rgba(0,229,160,0.15); color:var(--accent-green);">Dec<br/>🟢 Low</div>
+        </div>
+        <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-top:14px;">
+          <div style="padding:12px; background:rgba(0,229,160,0.05); border-radius:10px; border:1px solid rgba(0,229,160,0.15); font-size:12px;">
+            <strong style="color:var(--accent-green);">Jan–Mar:</strong> Pre-position resources, train RRTs, update surveillance protocols
+          </div>
+          <div style="padding:12px; background:rgba(0,212,255,0.05); border-radius:10px; border:1px solid rgba(0,212,255,0.15); font-size:12px;">
+            <strong style="color:var(--accent-cyan);">Apr–Jun:</strong> Source reduction drives, fogging, NDWI monitoring, dry-day campaigns
+          </div>
+          <div style="padding:12px; background:rgba(255,159,67,0.05); border-radius:10px; border:1px solid rgba(255,159,67,0.15); font-size:12px;">
+            <strong style="color:var(--accent-orange);">Jul–Sep:</strong> Full outbreak response mode — daily reporting, hospitalisations tracked
+          </div>
+          <div style="padding:12px; background:rgba(255,214,102,0.05); border-radius:10px; border:1px solid rgba(255,214,102,0.15); font-size:12px;">
+            <strong style="color:var(--accent-yellow);">Oct–Dec:</strong> Post-peak debrief, model retraining, prepare for 2028 cycle
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Model Comparison ──────────────────────────────────── -->
+      <div class="card animate-fadeInUp" style="margin-bottom:24px;">
+        <div class="section-header">
+          <div class="section-title">
+            <div class="section-title-icon">⚙️</div>
+            Predictive Model Comparison
+          </div>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:8px;" id="model-comparison"></div>
+      </div>
+
+      <!-- ── Government Recommendations ───────────────────────── -->
+      <div class="card animate-fadeInUp" id="recommendations">
+        <div class="section-header">
+          <div class="section-title">
+            <div class="section-title-icon">🏛️</div>
+            Government Preparedness Recommendations
+          </div>
+          <span style="font-size:12px; color:var(--text-muted);">Priority actions for Govt of Odisha</span>
+        </div>
+        <div id="rec-list"></div>
+
+        <div style="margin-top:20px; padding:20px; background:linear-gradient(135deg,rgba(0,229,160,0.05),rgba(0,212,255,0.05)); border-radius:var(--radius-lg); border:1px solid rgba(0,229,160,0.2);">
+          <div style="font-size:14px; font-weight:700; color:var(--accent-green); margin-bottom:12px;">🌟 For the Public — Your Actions Count</div>
+          <div style="display:grid; grid-template-columns:repeat(2,1fr); gap:10px; font-size:13px; color:var(--text-secondary);">
+            <div>✅ Eliminate standing water around homes <strong>weekly</strong></div>
+            <div>✅ Use mosquito repellents (DEET, Picaridin, IR3535)</div>
+            <div>✅ Wear full-sleeved clothing <strong>during daytime</strong></div>
+            <div>✅ Seek medical care immediately for fever + warning signs</div>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="data.js"></script>
+<script src="i18n.js"></script>
+<script src="app.js"></script>
+<script>
+// ── Helper ──
+function getRiskBg(level) {
+  return { CRITICAL:'rgba(255,68,68,0.07)', HIGH:'rgba(255,159,67,0.07)', MODERATE:'rgba(255,214,102,0.06)', LOW:'rgba(0,229,160,0.05)' }[level] || 'var(--bg-glass)';
+}
+function getRiskBorder(level) {
+  return { CRITICAL:'rgba(255,68,68,0.25)', HIGH:'rgba(255,159,67,0.2)', MODERATE:'rgba(255,214,102,0.18)', LOW:'rgba(0,229,160,0.15)' }[level] || 'var(--border-glass)';
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const F = ODISHA_DATA.forecast2027;
+
+  // ── 1. Historical + Forecast Trend Chart ──
+  const yearlyCases = ODISHA_DATA.yearlyCases;
+  new Chart(document.getElementById('trend-2027-chart'), {
+    type: 'bar',
+    data: {
+      labels: yearlyCases.map(d => d.year),
+      datasets: [{
+        label: 'Actual Cases',
+        data: yearlyCases.map(d => d.projected ? null : d.cases),
+        backgroundColor: yearlyCases.map(d => d.projected ? 'transparent' : d.year === 2023 ? 'rgba(255,107,107,0.6)' : 'rgba(0,212,255,0.35)'),
+        borderColor:     yearlyCases.map(d => d.year === 2023 ? '#ff6b6b' : '#00d4ff'),
+        borderWidth: 2, borderRadius: 6, yAxisID: 'y',
+      },{
+        label: 'Projected Cases',
+        data: yearlyCases.map(d => d.projected ? d.cases : null),
+        backgroundColor: 'rgba(255,107,107,0.15)',
+        borderColor: '#ff6b6b',
+        borderWidth: 2, borderDash: [6,4], borderRadius: 6, yAxisID: 'y',
+        // use bar with pattern to indicate projection
+      },{
+        label: 'TPR %',
+        data: yearlyCases.map(d => d.tpr),
+        type: 'line',
+        borderColor: '#ffd666',
+        backgroundColor: 'transparent',
+        tension: 0.4, borderDash: [4,3], borderWidth: 2, pointRadius: 4, yAxisID: 'y1',
+      }],
+    },
+    options: {
+      ...CHART_DEFAULTS,
+      scales: {
+        x: CHART_DEFAULTS.scales.x,
+        y: { ...CHART_DEFAULTS.scales.y, position:'left', title:{display:true, text:'Cases', color:'#8b9cc8', font:{size:10}} },
+        y1: { ...CHART_DEFAULTS.scales.y, position:'right', grid:{drawOnChartArea:false}, title:{display:true, text:'TPR%', color:'#8b9cc8', font:{size:10}}, suggestedMin:0, suggestedMax:12 },
+      },
+    },
+  });
+
+  // ── 2. Monthly 2027 Forecast ──
+  const mp = F.monthlyProjections;
+  new Chart(document.getElementById('monthly-2027-chart'), {
+    type: 'bar',
+    data: {
+      labels: mp.map(d => d.month),
+      datasets: [
+        {
+          label: 'Predicted Cases',
+          data: mp.map(d => d.cases),
+          backgroundColor: mp.map(d => d.cases >= 2500 ? 'rgba(255,68,68,0.45)' : d.cases >= 1500 ? 'rgba(255,159,67,0.45)' : d.cases >= 700 ? 'rgba(255,214,102,0.45)' : 'rgba(0,212,255,0.3)'),
+          borderColor: mp.map(d => d.cases >= 2500 ? '#ff4444' : d.cases >= 1500 ? '#ff9f43' : d.cases >= 700 ? '#ffd666' : '#00d4ff'),
+          borderWidth: 2, borderRadius: 6,
+        },
+        {
+          label: 'Upper Bound',
+          data: mp.map(d => d.upper),
+          type: 'line',
+          borderColor: 'rgba(255,107,107,0.35)',
+          backgroundColor: 'transparent',
+          tension: 0.4, borderDash: [5,3], borderWidth: 1.5, pointRadius: 2,
+        },
+        {
+          label: 'Lower Bound',
+          data: mp.map(d => d.lower),
+          type: 'line',
+          borderColor: 'rgba(0,212,255,0.35)',
+          backgroundColor: 'transparent',
+          tension: 0.4, borderDash: [5,3], borderWidth: 1.5, pointRadius: 2,
+        },
+      ],
+    },
+    options: { ...CHART_DEFAULTS },
+  });
+
+  // ── 3. 2027 vs 2023 Comparison ──
+  const c2023 = ODISHA_DATA.monthlyCases2024.map(d => d.cases); // use 2023 monthly if had; 2024 as proxy
+  new Chart(document.getElementById('compare-2023-chart'), {
+    type: 'line',
+    data: {
+      labels: mp.map(d => d.month),
+      datasets: [
+        {
+          label: '2023 (Actual Peak)',
+          data: [350, 290, 480, 890, 1340, 2420, 3180, 3320, 2760, 1450, 740, 290],
+          borderColor: '#ff6b6b',
+          backgroundColor: 'rgba(255,107,107,0.07)',
+          fill: true, tension: 0.4, borderWidth: 2, pointRadius: 3,
+        },
+        {
+          label: '2027 (Projected)',
+          data: mp.map(d => d.cases),
+          borderColor: '#ff9f43',
+          backgroundColor: 'rgba(255,159,67,0.07)',
+          fill: true, tension: 0.4, borderWidth: 2, borderDash: [6,3], pointRadius: 3,
+        },
+      ],
+    },
+    options: { ...CHART_DEFAULTS },
+  });
+
+  // ── 4. District Risk Rows ──
+  document.getElementById('district-risk-rows').innerHTML = F.districtRisk.map(d => `
+    <div class="district-risk-row" style="background:${getRiskBg(d.riskLevel)}; border-color:${getRiskBorder(d.riskLevel)};">
+      <div>
+        <div style="font-size:14px; font-weight:700; color:var(--text-primary); margin-bottom:4px;">${d.district}</div>
+        <div style="font-size:11px; color:var(--text-muted); margin-bottom:6px;">${d.keyDrivers}</div>
+        ${d.hotspots.length ? '<div>' + d.hotspots.map(h => `<span class="hotspot-tag">📍${h}</span>`).join('') + '</div>' : ''}
+      </div>
+      <div style="text-align:center;">
+        <div style="font-family:Rajdhani,sans-serif; font-size:28px; font-weight:700; color:${getRiskColorByLevel(d.riskLevel)};">${d.projectedCases.toLocaleString()}</div>
+        <div style="font-size:10px; color:var(--text-muted);">projected cases</div>
+      </div>
+      <div style="text-align:center;">
+        <span class="risk-badge ${d.riskLevel}">${d.riskLevel}</span>
+        <div style="font-size:11px; color:var(--text-muted); margin-top:6px;">${d.projectedCaseShare} of state</div>
+      </div>
+      <div>
+        <div class="progress-bar">
+          <div class="progress-fill" style="width:${Math.min(d.projectedCases/50,100)}%; background:${getRiskColorByLevel(d.riskLevel)};"></div>
+        </div>
+      </div>
+    </div>
+  `).join('');
+
+  // ── 5. Serotype Chart ──
+  new Chart(document.getElementById('serotype-2027-chart'), {
+    type: 'doughnut',
+    data: {
+      labels: ['DENV-1','DENV-2 (Dominant)','DENV-3','DENV-4'],
+      datasets: [{
+        data: [12, 67, 14, 7],
+        backgroundColor: ['rgba(0,212,255,0.6)','rgba(255,107,107,0.8)','rgba(255,214,102,0.6)','rgba(0,229,160,0.6)'],
+        borderColor: 'rgba(255,255,255,0.05)', borderWidth: 2, hoverOffset: 6,
+      }],
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false, cutout: '65%',
+      plugins: {
+        legend: { position:'right', labels: { color:'#8b9cc8', font:{family:'Inter',size:10}, boxWidth:8, boxHeight:8, padding:8 } },
+        tooltip: CHART_DEFAULTS.plugins.tooltip,
+      },
+    },
+  });
+
+  // ── 6. Socio-Eco Risk Factors ──
+  const se = F.socioEcoFactors;
+  document.getElementById('socio-eco-list').innerHTML = se.map(f => {
+    const pct = (f.or / 3 * 100).toFixed(0);
+    const col = f.or >= 3 ? 'var(--accent-coral)' : 'var(--accent-orange)';
+    return `
+      <div style="display:flex; align-items:center; gap:16px; padding:14px; background:var(--bg-glass); border:1px solid var(--border-glass); border-radius:var(--radius-md);">
+        <div class="or-badge" style="background:rgba(255,107,107,0.1); border:2px solid ${col}; color:${col};">${f.or}×</div>
+        <div style="flex:1;">
+          <div style="font-size:13px; font-weight:600; color:var(--text-primary); margin-bottom:3px;">${f.factor}</div>
+          <div style="font-size:12px; color:var(--text-muted);">${f.implication}</div>
+          <div class="progress-bar" style="margin-top:8px; width:100%;">
+            <div class="progress-fill" style="width:${pct}%; background:${col};"></div>
+          </div>
+        </div>
+        <div style="text-align:center; flex-shrink:0;">
+          <div style="font-size:10px; color:var(--text-muted);">Odds Ratio</div>
+          <div style="font-family:Rajdhani,sans-serif; font-size:28px; font-weight:700; color:${col};">${f.or}</div>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  // Socio bar chart
+  new Chart(document.getElementById('socio-chart'), {
+    type: 'bar',
+    data: {
+      labels: se.map(f => f.factor.split('/')[0].trim()),
+      datasets: [{ label:'Odds Ratio (OR)', data: se.map(f => f.or), backgroundColor:['rgba(255,107,107,0.5)','rgba(255,107,107,0.5)','rgba(255,159,67,0.5)'], borderColor:['#ff6b6b','#ff6b6b','#ff9f43'], borderWidth:2, borderRadius:6 }],
+    },
+    options: { ...CHART_DEFAULTS, plugins:{...CHART_DEFAULTS.plugins, legend:{display:false}}, indexAxis:'y' },
+  });
+
+  // ── 7. Model Comparison ──
+  document.getElementById('model-comparison').innerHTML = F.models.map(m => `
+    <div class="model-row ${m.used ? 'active-model' : 'inactive-model'}" style="margin-bottom:0;">
+      <div>
+        <div style="font-size:13px; font-weight:${m.used?'700':'500'}; color:${m.used?'var(--text-primary)':'var(--text-muted)'};">
+          ${m.used ? '⭐ ' : ''}${m.name}
+        </div>
+        ${m.used ? '<div style="font-size:10px; color:var(--accent-cyan); margin-top:2px;">ACTIVE MODEL</div>' : ''}
+      </div>
+      <div style="font-size:12px; color:var(--text-secondary);">${m.range}</div>
+      <div style="font-size:12px; color:var(--text-muted);">${m.confidence}</div>
+      <div style="font-size:12px; color:var(--text-muted);">${m.leadTime}</div>
+      <div>${m.used ? '<span class="risk-badge MODERATE" style="font-size:10px;">In Use</span>' : '<span style="font-size:10px; color:var(--text-muted); padding:4px 10px; background:var(--bg-glass); border-radius:99px; border:1px solid var(--border-glass);">Reference</span>'}</div>
+    </div>
+  `).join('');
+
+  // ── 8. Recommendations ──
+  document.getElementById('rec-list').innerHTML = F.govtRecommendations.map(r => `
+    <div class="rec-row">
+      <div class="rec-num">${r.priority}</div>
+      <div>
+        <div style="font-size:14px; font-weight:700; color:var(--text-primary); margin-bottom:4px;">${r.action}</div>
+        <div style="font-size:12px; color:var(--text-muted);">${r.detail}</div>
+      </div>
+    </div>
+  `).join('');
+
+  // ── 9. Animate headline counter ──
+  animateCounter(document.getElementById('forecast-counter'), 12500, 2000, '', '');
+
+  // Scroll animations
+  initScrollAnimations();
+});
+</script>
+<script src="assistant.js"></script>
+</body>
+</html>

@@ -1,0 +1,27 @@
+{
+  "name": "ai-denguel-backend",
+  "version": "3.2.0",
+  "description": "Backend API server for MosqAware — Odisha State Dengue Prediction and Early Warning System",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "keywords": [
+    "dengue",
+    "odisha",
+    "prediction",
+    "xgboost",
+    "sarima",
+    "express",
+    "api"
+  ],
+  "author": "MosqAware Team",
+  "license": "MIT",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
+    "helmet": "^7.1.0",
+    "morgan": "^1.10.0"
+  }
+}
