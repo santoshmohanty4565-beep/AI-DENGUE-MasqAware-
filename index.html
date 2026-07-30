@@ -24,6 +24,11 @@
   <!-- App CSS -->
   <link rel="stylesheet" href="style.css" />
 
+  <!-- Firebase SDKs (compat) -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+
   <style>
     /* ── Page-specific overrides ── */
     .hero-alert {
@@ -214,6 +219,14 @@
           </button>
           <button class="btn btn-outline btn-sm" onclick="openModal('quiz-modal')" style="border-color:rgba(255,214,102,0.4); color:#ffd666;">
             🏆 Health Quiz
+          </button>
+          <!-- Report Incident (only visible when logged in) -->
+          <button class="btn btn-outline btn-sm" id="report-hdr-btn" onclick="openReportModal()" style="display:none; border-color:rgba(255,107,107,0.4); color:#ff6b6b;">
+            📋 Report Incident
+          </button>
+          <!-- Auth Button -->
+          <button class="btn btn-outline btn-sm" id="auth-btn" onclick="openModal('login-modal')" style="display:flex; align-items:center; gap:6px; min-width:90px; justify-content:center;">
+            <i class="fa-brands fa-google" style="font-size:12px;"></i> Sign In
           </button>
         </div>
       </header>
@@ -965,6 +978,150 @@
     }
   </script>
   <script src="assistant.js"></script>
+  <script src="auth.js"></script>
+
+  <!-- ═══ LOGIN MODAL ══════════════════════════════════════════════════════ -->
+  <div class="modal-overlay" id="login-modal">
+    <div class="modal-card" style="max-width:400px; text-align:center;">
+      <button class="modal-close-btn" onclick="closeModal('login-modal')">✕</button>
+      <div style="margin-bottom:24px;">
+        <div style="font-size:48px; margin-bottom:12px;">🦟</div>
+        <div style="font-size:22px; font-weight:800; color:#f0f4ff; margin-bottom:4px;">Welcome to MosqAware</div>
+        <div style="font-size:13px; color:#8b9cc8;">Sign in to report dengue incidents, track your submissions, and help protect your community.</div>
+      </div>
+      <!-- Google Sign In Button -->
+      <button onclick="signInWithGoogle()" id="google-signin-btn"
+        style="width:100%; display:flex; align-items:center; justify-content:center; gap:12px; padding:14px 20px; background:#fff; color:#1f1f1f; border:none; border-radius:12px; font-size:15px; font-weight:700; cursor:pointer; transition:all 0.2s ease; margin-bottom:16px; box-shadow:0 4px 20px rgba(0,0,0,0.3);"
+        onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 28px rgba(0,0,0,0.4)'"
+        onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 20px rgba(0,0,0,0.3)'">
+        <svg width="20" height="20" viewBox="0 0 48 48">
+          <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+          <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+          <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+          <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+        </svg>
+        Continue with Google
+      </button>
+      <div style="font-size:11px; color:#4a5580; line-height:1.5;">
+        By signing in, you agree to help improve dengue surveillance in Odisha. Your reports are reviewed by health officials.
+      </div>
+      <div style="margin-top:16px; padding:12px; background:rgba(255,214,102,0.08); border:1px solid rgba(255,214,102,0.2); border-radius:8px; font-size:11px; color:#ffd666; text-align:left;">
+        <strong>🔧 Developer Note:</strong> Add your Firebase config in <code>auth.js</code> to enable real authentication. Without it, reports are saved locally.
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ USER PROFILE MODAL ═══════════════════════════════════════════════ -->
+  <div class="modal-overlay" id="user-profile-modal">
+    <div class="modal-card" style="max-width:460px;">
+      <button class="modal-close-btn" onclick="closeModal('user-profile-modal')">✕</button>
+      <div style="text-align:center; margin-bottom:20px;">
+        <img id="profile-avatar" src="" alt="Avatar"
+          style="width:72px; height:72px; border-radius:50%; border:3px solid #00d4ff; margin-bottom:10px; object-fit:cover;"
+          onerror="this.src='https://ui-avatars.com/api/?name=U&background=00d4ff&color=000&size=80'" />
+        <div id="profile-name" style="font-size:18px; font-weight:800; color:#f0f4ff;">User</div>
+        <div id="profile-email" style="font-size:12px; color:#8b9cc8; margin-top:2px;">user@gmail.com</div>
+        <div style="display:inline-block; margin-top:8px; padding:3px 12px; background:rgba(0,229,160,0.15); border:1px solid rgba(0,229,160,0.3); border-radius:99px; font-size:11px; color:#00e5a0; font-weight:700;">✅ Verified Community Reporter</div>
+      </div>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:20px;">
+        <button onclick="openReportModal(); closeModal('user-profile-modal')" class="btn btn-primary" style="justify-content:center; gap:8px;">
+          📋 Submit Report
+        </button>
+        <button onclick="signOut()" class="btn btn-outline" style="justify-content:center; color:#ff6b6b; border-color:rgba(255,107,107,0.4);">
+          🚪 Sign Out
+        </button>
+      </div>
+      <div style="font-size:13px; font-weight:700; color:#f0f4ff; margin-bottom:12px;">📊 My Submitted Reports</div>
+      <div id="user-reports-list">
+        <div style="text-align:center; padding:20px; color:#8b9cc8; font-size:12px;">⏳ Loading reports...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ REPORT INCIDENT MODAL ════════════════════════════════════════════ -->
+  <div class="modal-overlay" id="report-modal">
+    <div class="modal-card" style="max-width:560px;">
+      <button class="modal-close-btn" onclick="closeModal('report-modal')">✕</button>
+      <div style="margin-bottom:20px;">
+        <div style="font-size:22px; font-weight:800; color:#f0f4ff;">📋 Report a Dengue Incident</div>
+        <div style="font-size:12px; color:#8b9cc8; margin-top:4px;">Help health officials by reporting cases, breeding sites, or outbreak concerns in your area.</div>
+      </div>
+      <form id="user-report-form" onsubmit="submitUserReport(event)">
+        <!-- Type + Severity -->
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:14px;">
+          <div>
+            <label style="font-size:11px; color:#8b9cc8; font-weight:600; display:block; margin-bottom:5px;">Report Type *</label>
+            <select id="report-type" required style="width:100%; padding:10px 12px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.12); border-radius:8px; color:#f0f4ff; font-size:12px;">
+              <option value="" disabled selected>Select type...</option>
+              <option value="dengue_case">🦟 Dengue Case</option>
+              <option value="breeding_site">💧 Breeding Site</option>
+              <option value="outbreak">🚨 Outbreak Alert</option>
+              <option value="stagnant_water">🌊 Stagnant Water</option>
+              <option value="dead_birds">🐦 Unusual Deaths</option>
+              <option value="other">📌 Other</option>
+            </select>
+          </div>
+          <div>
+            <label style="font-size:11px; color:#8b9cc8; font-weight:600; display:block; margin-bottom:5px;">Severity *</label>
+            <select id="report-severity" required style="width:100%; padding:10px 12px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.12); border-radius:8px; color:#f0f4ff; font-size:12px;">
+              <option value="" disabled selected>Select severity...</option>
+              <option value="low">🟢 Low</option>
+              <option value="medium">🟡 Medium</option>
+              <option value="high">🟠 High</option>
+              <option value="critical">🔴 Critical</option>
+            </select>
+          </div>
+        </div>
+        <!-- District + Location -->
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:14px;">
+          <div>
+            <label style="font-size:11px; color:#8b9cc8; font-weight:600; display:block; margin-bottom:5px;">District *</label>
+            <select id="report-district" required style="width:100%; padding:10px 12px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.12); border-radius:8px; color:#f0f4ff; font-size:12px;">
+              <option value="" disabled selected>Select district...</option>
+              <option>Khordha</option><option>Cuttack</option><option>Puri</option><option>Ganjam</option>
+              <option>Balasore</option><option>Sundargarh</option><option>Sambalpur</option><option>Mayurbhanj</option>
+              <option>Koraput</option><option>Rayagada</option><option>Kalahandi</option><option>Bolangir</option>
+              <option>Boudh</option><option>Angul</option><option>Dhenkanal</option><option>Jajpur</option>
+              <option>Kendrapara</option><option>Jagatsinghpur</option><option>Nayagarh</option><option>Kandhamal</option>
+              <option>Gajapati</option><option>Malkangiri</option><option>Nabarangpur</option><option>Nuapada</option>
+              <option>Bargarh</option><option>Jharsuguda</option><option>Deogarh</option><option>Subarnapur</option>
+              <option>Bhadrak</option><option>Kendujhar</option>
+            </select>
+          </div>
+          <div>
+            <label style="font-size:11px; color:#8b9cc8; font-weight:600; display:block; margin-bottom:5px;">Exact Location</label>
+            <input type="text" id="report-location" placeholder="Ward / Village / Colony" style="width:100%; padding:10px 12px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.12); border-radius:8px; color:#f0f4ff; font-size:12px;" />
+          </div>
+        </div>
+        <!-- Symptoms -->
+        <div style="margin-bottom:14px;">
+          <label style="font-size:11px; color:#8b9cc8; font-weight:600; display:block; margin-bottom:8px;">Symptoms Observed (optional)</label>
+          <div style="display:flex; flex-wrap:wrap; gap:8px;">
+            <label style="display:flex; align-items:center; gap:5px; font-size:11px; color:#c0caf5; cursor:pointer;"><input type="checkbox" class="report-symptom-cb" value="fever"> 🌡️ Fever</label>
+            <label style="display:flex; align-items:center; gap:5px; font-size:11px; color:#c0caf5; cursor:pointer;"><input type="checkbox" class="report-symptom-cb" value="rash"> 🔴 Rash</label>
+            <label style="display:flex; align-items:center; gap:5px; font-size:11px; color:#c0caf5; cursor:pointer;"><input type="checkbox" class="report-symptom-cb" value="joint_pain"> 🦴 Joint Pain</label>
+            <label style="display:flex; align-items:center; gap:5px; font-size:11px; color:#c0caf5; cursor:pointer;"><input type="checkbox" class="report-symptom-cb" value="vomiting"> 🤢 Vomiting</label>
+            <label style="display:flex; align-items:center; gap:5px; font-size:11px; color:#c0caf5; cursor:pointer;"><input type="checkbox" class="report-symptom-cb" value="bleeding"> 🩸 Bleeding</label>
+            <label style="display:flex; align-items:center; gap:5px; font-size:11px; color:#c0caf5; cursor:pointer;"><input type="checkbox" class="report-symptom-cb" value="headache"> 🤕 Headache</label>
+          </div>
+        </div>
+        <!-- Description -->
+        <div style="margin-bottom:18px;">
+          <label style="font-size:11px; color:#8b9cc8; font-weight:600; display:block; margin-bottom:5px;">Description *</label>
+          <textarea id="report-description" rows="3" required placeholder="Describe the incident — number of people affected, environmental conditions, any actions taken..." style="width:100%; padding:10px 12px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.12); border-radius:8px; color:#f0f4ff; font-size:12px; resize:vertical; font-family:inherit;"></textarea>
+        </div>
+        <!-- Reporter Info (auto-filled) -->
+        <input type="hidden" id="report-user-name" />
+        <input type="hidden" id="report-user-email" />
+        <!-- Submit -->
+        <button type="submit" id="report-submit-btn" class="btn btn-primary" style="width:100%; justify-content:center; font-size:14px; padding:12px;">
+          📤 Submit Report to Health Officials
+        </button>
+        <div style="font-size:10px; color:#4a5580; text-align:center; margin-top:8px;">Reports are reviewed by Odisha State Health Department officials. Your identity is kept confidential.</div>
+      </form>
+    </div>
+  </div>
+
 </body>
 
 </html>

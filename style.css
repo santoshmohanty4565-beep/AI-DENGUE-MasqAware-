@@ -1933,3 +1933,46 @@ body::before {
   color: #ff6b6b;
 }
 
+
+/* ─── Auth & Login System ─────────────────────────────────────────────────── */
+.modal-card select,
+.modal-card textarea,
+.modal-card input[type="text"],
+.modal-card input[type="email"] {
+  background: rgba(255, 255, 255, 0.04) !important;
+  border: 1px solid rgba(255, 255, 255, 0.10) !important;
+  border-radius: 8px;
+  color: #f0f4ff !important;
+  font-family: 'Inter', sans-serif;
+  transition: border-color 0.2s ease;
+}
+.modal-card select:focus,
+.modal-card textarea:focus,
+.modal-card input:focus {
+  outline: none;
+  border-color: rgba(0,212,255,0.5) !important;
+  box-shadow: 0 0 0 3px rgba(0,212,255,0.08);
+}
+.modal-card select option { background: #0a1628; color: #f0f4ff; }
+
+#auth-btn {
+  display: flex; align-items: center; gap: 6px;
+  min-width: 90px; justify-content: center;
+  transition: all 0.2s ease;
+}
+#auth-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(0,212,255,0.15); }
+#profile-avatar:hover { box-shadow: 0 0 0 4px rgba(0,212,255,0.3), 0 0 20px rgba(0,212,255,0.2); }
+#google-signin-btn:active { transform: scale(0.98) !important; }
+.report-symptom-cb { accent-color: #00d4ff; width: 14px; height: 14px; cursor: pointer; }
+
+#user-reports-list > div:hover {
+  background: rgba(0,212,255,0.04) !important;
+  border-color: rgba(0,212,255,0.15) !important;
+  transition: all 0.2s ease;
+}
+
+@media (max-width: 600px) {
+  #login-modal .modal-card,
+  #user-profile-modal .modal-card,
+  #report-modal .modal-card { padding: 20px 16px; }
+}
