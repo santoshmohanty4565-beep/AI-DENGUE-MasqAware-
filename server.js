@@ -11,9 +11,10 @@ const morgan = require('morgan');
 const path = require('path');
 
 // API v1 Route Modules
-const mapRoutes = require('./apis/v1/map');
+const mapRoutes  = require('./apis/v1/map');
 const riskRoutes = require('./apis/v1/risk');
 const analyticsRoutes = require('./apis/v1/analytics');
+const authRoutes = require('./apis/v1/auth');
 const middleware = require('./backend/middleware');
 
 const app = express();
@@ -338,6 +339,7 @@ app.post('/api/detect-mosquito', (req, res) => {
 app.use('/api/v1/map', mapRoutes);
 app.use('/api/v1/risk', riskRoutes);
 app.use('/api/v1/analytics', analyticsRoutes);
+app.use('/api/auth', authRoutes);
 
 // 404 handler for unknown API routes
 app.use(middleware.notFoundHandler);

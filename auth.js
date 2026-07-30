@@ -1,283 +1,192 @@
 /**
- * MosqAware — Firebase Authentication & User Report System
- * Google Sign-In + Firestore database for user reports
+ * MosqAware — Frontend Auth Manager
+ * Uses the backend /api/auth API with JWT tokens.
+ * Falls back gracefully if not logged in.
  */
 
-// ─── FIREBASE CONFIGURATION ────────────────────────────────────────────────
-// Replace these values with your actual Firebase project config from:
-// https://console.firebase.google.com → Your Project → Project Settings → Web App
-const FIREBASE_CONFIG = {
-  apiKey: "AIzaSyDemo-Replace-With-Your-Real-Key",
-  authDomain: "mosqaware-demo.firebaseapp.com",
-  projectId: "mosqaware-demo",
-  storageBucket: "mosqaware-demo.appspot.com",
-  messagingSenderId: "123456789012",
-  appId: "1:123456789012:web:abc123def456"
-};
+const API = '/api/auth';
 
-// ─── STATE ─────────────────────────────────────────────────────────────────
 let currentUser = null;
-let db = null;
-let auth = null;
-let firebaseReady = false;
 
-// ─── INIT FIREBASE ─────────────────────────────────────────────────────────
-function initFirebase() {
+// ─── INIT ─────────────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  checkSession();
+});
+
+// ─── CHECK STORED SESSION ──────────────────────────────────────────────────
+async function checkSession() {
+  const token = localStorage.getItem('mq_token');
+  if (!token) { renderLoggedOut(); return; }
+
   try {
-    if (!firebase.apps.length) {
-      firebase.initializeApp(FIREBASE_CONFIG);
-    }
-    auth = firebase.auth();
-    db   = firebase.firestore();
-    firebaseReady = true;
-
-    // Listen for auth state changes
-    auth.onAuthStateChanged(onAuthStateChanged);
-  } catch (err) {
-    console.warn('Firebase init error (using demo mode):', err.message);
-    firebaseReady = false;
-    renderLoggedOut();
-  }
-}
-
-// ─── AUTH STATE HANDLER ────────────────────────────────────────────────────
-function onAuthStateChanged(user) {
-  currentUser = user;
-  if (user) {
+    const res  = await fetch(API + '/me', { headers: { Authorization: 'Bearer ' + token } });
+    if (!res.ok) { localStorage.removeItem('mq_token'); localStorage.removeItem('mq_user'); renderLoggedOut(); return; }
+    const user = await res.json();
+    currentUser = user;
     renderLoggedIn(user);
     loadUserReports();
-  } else {
+  } catch {
     renderLoggedOut();
   }
 }
 
-// ─── GOOGLE SIGN IN ────────────────────────────────────────────────────────
-async function signInWithGoogle() {
-  if (!firebaseReady) {
-    showAuthToast('⚠️ Firebase not configured. Please add your Firebase config to auth.js', 'warn');
-    return;
-  }
-  try {
-    const provider = new firebase.auth.GoogleAuthProvider();
-    provider.addScope('profile');
-    provider.addScope('email');
-    await auth.signInWithPopup(provider);
-  } catch (err) {
-    if (err.code !== 'auth/popup-closed-by-user') {
-      showAuthToast('❌ Sign-in failed: ' + err.message, 'error');
-    }
-  }
+// ─── SIGN OUT ─────────────────────────────────────────────────────────────
+function signOut() {
+  localStorage.removeItem('mq_token');
+  localStorage.removeItem('mq_user');
+  currentUser = null;
+  closeModal('user-profile-modal');
+  renderLoggedOut();
+  showAuthToast('👋 You have been signed out.', 'success');
 }
 
-// ─── SIGN OUT ──────────────────────────────────────────────────────────────
-async function signOut() {
-  if (!firebaseReady) return;
-  try {
-    await auth.signOut();
-    closeModal('user-profile-modal');
-    showAuthToast('👋 You have been signed out.', 'success');
-  } catch (err) {
-    showAuthToast('Sign-out error: ' + err.message, 'error');
-  }
-}
-
-// ─── RENDER LOGGED IN ──────────────────────────────────────────────────────
+// ─── RENDER LOGGED IN ─────────────────────────────────────────────────────
 function renderLoggedIn(user) {
+  currentUser = user;
   const btn = document.getElementById('auth-btn');
-  if (!btn) return;
-  btn.innerHTML = `
-    <img src="${user.photoURL || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(user.displayName || 'U') + '&background=00d4ff&color=000'}"
-      style="width:26px; height:26px; border-radius:50%; border:2px solid #00d4ff; object-fit:cover;"
-      onerror="this.src='https://ui-avatars.com/api/?name=U&background=00d4ff&color=000'" />
-    <span style="font-size:11px; max-width:80px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${(user.displayName || user.email || 'User').split(' ')[0]}</span>
-    <i class="fa-solid fa-chevron-down" style="font-size:9px; opacity:0.6;"></i>
-  `;
-  btn.onclick = () => openModal('user-profile-modal');
-  btn.style.borderColor = 'rgba(0,212,255,0.5)';
-  btn.style.color = '#00d4ff';
+  if (btn) {
+    btn.innerHTML = `
+      <img src="${user.avatar || getAvatar(user.name)}"
+        style="width:26px;height:26px;border-radius:50%;border:2px solid #00d4ff;object-fit:cover;"
+        onerror="this.src='${getAvatar(user.name)}'" />
+      <span style="font-size:11px;max-width:72px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${(user.name||'User').split(' ')[0]}</span>
+      <i class="fa-solid fa-chevron-down" style="font-size:9px;opacity:0.6;"></i>
+    `;
+    btn.onclick = () => openModal('user-profile-modal');
+    btn.style.cssText += 'border-color:rgba(0,212,255,0.5);color:#00d4ff;';
+  }
 
   // Populate profile modal
-  const nameEl  = document.getElementById('profile-name');
-  const emailEl = document.getElementById('profile-email');
-  const avatarEl = document.getElementById('profile-avatar');
-  if (nameEl)  nameEl.textContent  = user.displayName || 'User';
-  if (emailEl) emailEl.textContent = user.email || '';
-  if (avatarEl) avatarEl.src = user.photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.displayName || 'U')}&background=00d4ff&color=000&size=80`;
+  const el = id => document.getElementById(id);
+  if (el('profile-name'))   el('profile-name').textContent  = user.name  || 'User';
+  if (el('profile-email'))  el('profile-email').textContent = user.email || '';
+  if (el('profile-avatar')) { el('profile-avatar').src = user.avatar || getAvatar(user.name); }
 
-  // Pre-fill report form
-  const reportName  = document.getElementById('report-user-name');
-  const reportEmail = document.getElementById('report-user-email');
-  if (reportName)  reportName.value = user.displayName || '';
-  if (reportEmail) reportEmail.value = user.email || '';
+  // Pre-fill report hidden fields
+  if (el('report-user-name'))  el('report-user-name').value  = user.name  || '';
+  if (el('report-user-email')) el('report-user-email').value = user.email || '';
 
   // Show report button in header
-  const reportHdrBtn = document.getElementById('report-hdr-btn');
-  if (reportHdrBtn) reportHdrBtn.style.display = 'flex';
-
-  showAuthToast(`✅ Welcome, ${(user.displayName || 'User').split(' ')[0]}!`, 'success');
+  const rBtn = el('report-hdr-btn');
+  if (rBtn) rBtn.style.display = 'flex';
 }
 
-// ─── RENDER LOGGED OUT ─────────────────────────────────────────────────────
+// ─── RENDER LOGGED OUT ────────────────────────────────────────────────────
 function renderLoggedOut() {
   const btn = document.getElementById('auth-btn');
-  if (!btn) return;
-  btn.innerHTML = `<i class="fa-brands fa-google" style="font-size:12px;"></i> Sign In`;
-  btn.onclick = () => openModal('login-modal');
-  btn.style.borderColor = 'rgba(255,255,255,0.2)';
-  btn.style.color = '#f0f4ff';
-
-  const reportHdrBtn = document.getElementById('report-hdr-btn');
-  if (reportHdrBtn) reportHdrBtn.style.display = 'none';
+  if (btn) {
+    btn.innerHTML = `<i class="fa-solid fa-right-to-bracket" style="font-size:12px;"></i> Sign In`;
+    btn.onclick = () => { window.location.href = 'login.html'; };
+    btn.style.borderColor = 'rgba(255,255,255,0.2)';
+    btn.style.color = '#f0f4ff';
+  }
+  const rBtn = document.getElementById('report-hdr-btn');
+  if (rBtn) rBtn.style.display = 'none';
 }
 
-// ─── SUBMIT USER REPORT ────────────────────────────────────────────────────
+// ─── SUBMIT USER REPORT ───────────────────────────────────────────────────
 async function submitUserReport(e) {
   e.preventDefault();
-  if (!currentUser) {
-    openModal('login-modal');
-    return;
-  }
+  if (!currentUser) { window.location.href = 'login.html'; return; }
 
-  const form = document.getElementById('user-report-form');
-  const btn  = document.getElementById('report-submit-btn');
+  const token = localStorage.getItem('mq_token');
+  const btn   = document.getElementById('report-submit-btn');
 
-  const reportData = {
-    uid:         currentUser.uid,
-    userName:    currentUser.displayName || '',
-    userEmail:   currentUser.email || '',
-    userPhoto:   currentUser.photoURL || '',
+  const body = {
     reportType:  document.getElementById('report-type').value,
     district:    document.getElementById('report-district').value,
     location:    document.getElementById('report-location').value,
     description: document.getElementById('report-description').value,
     severity:    document.getElementById('report-severity').value,
     symptoms:    Array.from(document.querySelectorAll('.report-symptom-cb:checked')).map(c => c.value),
-    timestamp:   firebase.firestore.FieldValue.serverTimestamp(),
-    status:      'pending',
-    createdAt:   new Date().toISOString(),
   };
 
-  if (!reportData.reportType || !reportData.district || !reportData.description) {
-    showAuthToast('⚠️ Please fill all required fields.', 'warn');
-    return;
+  if (!body.reportType || !body.district || !body.description || !body.severity) {
+    showAuthToast('⚠️ Please fill all required fields.', 'warn'); return;
   }
 
-  btn.disabled = true;
-  btn.textContent = '⏳ Submitting...';
+  btn.disabled = true; btn.textContent = '⏳ Submitting…';
 
   try {
-    let docId;
-    if (firebaseReady && db) {
-      const docRef = await db.collection('user_reports').add(reportData);
-      docId = docRef.id;
-    } else {
-      // Local demo mode
-      docId = 'LOCAL-' + Date.now();
-      const local = JSON.parse(localStorage.getItem('mosqaware_reports') || '[]');
-      local.unshift({ ...reportData, id: docId });
-      localStorage.setItem('mosqaware_reports', JSON.stringify(local.slice(0, 50)));
-    }
-
-    showAuthToast('✅ Report submitted! ID: ' + docId.slice(0, 12) + '...', 'success');
-    form.reset();
+    const res  = await fetch(API + '/reports', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
+      body: JSON.stringify(body)
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Submission failed');
+    showAuthToast('✅ Report submitted! ID: ' + data.report.id, 'success');
+    document.getElementById('user-report-form').reset();
     closeModal('report-modal');
     loadUserReports();
   } catch (err) {
-    showAuthToast('❌ Submit failed: ' + err.message, 'error');
+    showAuthToast('❌ ' + err.message, 'error');
   } finally {
-    btn.disabled = false;
-    btn.textContent = '📤 Submit Report';
+    btn.disabled = false; btn.textContent = '📤 Submit Report to Health Officials';
   }
 }
 
-// ─── LOAD USER REPORTS ─────────────────────────────────────────────────────
+// ─── LOAD USER REPORTS ────────────────────────────────────────────────────
 async function loadUserReports() {
-  if (!currentUser) return;
   const container = document.getElementById('user-reports-list');
-  if (!container) return;
+  if (!container || !currentUser) return;
+  container.innerHTML = '<div style="text-align:center;padding:20px;color:#8b9cc8;font-size:12px;">⏳ Loading your reports…</div>';
 
-  container.innerHTML = '<div style="text-align:center; padding:20px; color:#8b9cc8; font-size:12px;">⏳ Loading your reports...</div>';
-
-  let reports = [];
-
+  const token = localStorage.getItem('mq_token');
   try {
-    if (firebaseReady && db) {
-      const snap = await db.collection('user_reports')
-        .where('uid', '==', currentUser.uid)
-        .orderBy('timestamp', 'desc')
-        .limit(10)
-        .get();
-      reports = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-    } else {
-      const local = JSON.parse(localStorage.getItem('mosqaware_reports') || '[]');
-      reports = local.filter(r => r.uid === currentUser.uid || r.userEmail === currentUser.email);
+    const res  = await fetch(API + '/reports', { headers: { Authorization: 'Bearer ' + token } });
+    const data = await res.json();
+    const reports = data.reports || [];
+
+    if (!reports.length) {
+      container.innerHTML = '<div style="text-align:center;padding:20px;color:#8b9cc8;font-size:12px;">📭 No reports yet. Use <strong style=\'color:#00d4ff;\'>📋 Report Incident</strong> to submit your first report.</div>';
+      return;
     }
-  } catch (err) {
-    // Fallback to local
-    const local = JSON.parse(localStorage.getItem('mosqaware_reports') || '[]');
-    reports = local.slice(0, 10);
-  }
 
-  if (!reports.length) {
-    container.innerHTML = '<div style="text-align:center; padding:20px; color:#8b9cc8; font-size:12px;">📭 No reports submitted yet. Use the <strong style=\'color:#00d4ff;\'>📋 Report Incident</strong> button to submit your first report.</div>';
-    return;
-  }
-
-  const severityColor = { low: '#00e5a0', medium: '#ffd666', high: '#ff9f43', critical: '#ff4444' };
-  container.innerHTML = reports.map(r => `
-    <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.07); border-radius:10px; padding:12px; margin-bottom:8px;">
-      <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:8px; margin-bottom:6px;">
-        <div style="font-weight:700; font-size:13px; color:#f0f4ff;">${getReportTypeLabel(r.reportType)}</div>
-        <span style="font-size:10px; padding:2px 8px; border-radius:99px; background:${severityColor[r.severity] || '#8b9cc8'}22; color:${severityColor[r.severity] || '#8b9cc8'}; border:1px solid ${severityColor[r.severity] || '#8b9cc8'}44; white-space:nowrap; font-weight:700;">${(r.severity || 'N/A').toUpperCase()}</span>
+    const sColor = { low:'#00e5a0', medium:'#ffd666', high:'#ff9f43', critical:'#ff4444' };
+    container.innerHTML = reports.map(r => `
+      <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:10px;padding:12px;margin-bottom:8px;">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:6px;">
+          <div style="font-weight:700;font-size:13px;color:#f0f4ff;">${getReportTypeLabel(r.reportType)}</div>
+          <span style="font-size:10px;padding:2px 8px;border-radius:99px;background:${sColor[r.severity]||'#8b9cc8'}22;color:${sColor[r.severity]||'#8b9cc8'};border:1px solid ${sColor[r.severity]||'#8b9cc8'}44;white-space:nowrap;font-weight:700;">${(r.severity||'N/A').toUpperCase()}</span>
+        </div>
+        <div style="font-size:11px;color:#8b9cc8;margin-bottom:4px;">📍 ${r.district||'N/A'}${r.location?' — '+r.location:''}</div>
+        <div style="font-size:11px;color:#c0caf5;">${(r.description||'').slice(0,100)}${(r.description||'').length>100?'…':''}</div>
+        <div style="display:flex;justify-content:space-between;margin-top:8px;font-size:10px;color:#4a5580;">
+          <span>🕐 ${new Date(r.createdAt).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'})}</span>
+          <span style="color:${r.status==='pending'?'#ffd666':'#00e5a0'};font-weight:700;">${r.status==='pending'?'⏳ Pending':'✅ Reviewed'}</span>
+        </div>
       </div>
-      <div style="font-size:11px; color:#8b9cc8; margin-bottom:4px;">📍 ${r.district || 'N/A'} ${r.location ? '— ' + r.location : ''}</div>
-      <div style="font-size:11px; color:#c0caf5;">${(r.description || '').slice(0, 100)}${r.description?.length > 100 ? '...' : ''}</div>
-      <div style="display:flex; justify-content:space-between; margin-top:8px; font-size:10px; color:#4a5580;">
-        <span>🕐 ${r.createdAt ? new Date(r.createdAt).toLocaleDateString('en-IN', {day:'2-digit', month:'short', year:'numeric'}) : 'Just now'}</span>
-        <span style="color:${r.status === 'pending' ? '#ffd666' : '#00e5a0'}; font-weight:700;">${r.status === 'pending' ? '⏳ Pending Review' : '✅ Reviewed'}</span>
-      </div>
-    </div>
-  `).join('');
+    `).join('');
+  } catch {
+    container.innerHTML = '<div style="text-align:center;padding:16px;color:#ff6b6b;font-size:12px;">⚠️ Could not load reports. Please refresh.</div>';
+  }
 }
 
-function getReportTypeLabel(type) {
-  const map = {
-    dengue_case: '🦟 Dengue Case Report',
-    breeding_site: '💧 Mosquito Breeding Site',
-    outbreak: '🚨 Outbreak Alert',
-    stagnant_water: '🌊 Stagnant Water Area',
-    dead_birds: '🐦 Unusual Animal Deaths',
-    other: '📌 Other Health Concern'
-  };
-  return map[type] || type || 'Report';
-}
-
-// ─── TOAST NOTIFICATION ────────────────────────────────────────────────────
-function showAuthToast(msg, type = 'success') {
-  const colors = {
-    success: { bg: 'rgba(0,229,160,0.95)', border: '#00e5a0' },
-    error:   { bg: 'rgba(255,68,68,0.97)', border: '#ff4444' },
-    warn:    { bg: 'rgba(255,214,102,0.95)', border: '#ffd666' },
-  };
-  const c = colors[type] || colors.success;
-  const t = document.createElement('div');
-  t.style.cssText = `position:fixed; top:20px; left:50%; transform:translateX(-50%); background:${c.bg}; color:#000; padding:11px 22px; border-radius:12px; font-weight:700; font-size:13px; z-index:999999; box-shadow:0 6px 24px rgba(0,0,0,0.5); border:1px solid ${c.border}; white-space:nowrap; max-width:90vw; text-align:center;`;
-  t.textContent = msg;
-  document.body.appendChild(t);
-  setTimeout(() => { t.style.opacity = '0'; t.style.transition = 'opacity 0.4s'; setTimeout(() => t.remove(), 400); }, 3000);
-}
-
-// ─── OPEN REPORT MODAL (requires login) ───────────────────────────────────
+// ─── OPEN REPORT MODAL (requires login) ──────────────────────────────────
 function openReportModal() {
-  if (!currentUser) {
-    showAuthToast('⚠️ Please sign in to submit a report.', 'warn');
-    openModal('login-modal');
-    return;
-  }
+  if (!currentUser) { window.location.href = 'login.html'; return; }
   openModal('report-modal');
 }
 
-// ─── INIT ON DOM READY ─────────────────────────────────────────────────────
-document.addEventListener('DOMContentLoaded', () => {
-  initFirebase();
-});
+// ─── HELPERS ─────────────────────────────────────────────────────────────
+function getAvatar(name) {
+  return `https://ui-avatars.com/api/?name=${encodeURIComponent(name||'U')}&background=00d4ff&color=000&size=80`;
+}
+function getReportTypeLabel(type) {
+  const m = { dengue_case:'🦟 Dengue Case', breeding_site:'💧 Breeding Site', outbreak:'🚨 Outbreak Alert', stagnant_water:'🌊 Stagnant Water', dead_birds:'🐦 Unusual Deaths', other:'📌 Other' };
+  return m[type] || type || 'Report';
+}
+function showAuthToast(msg, type='success') {
+  const colors = { success:{bg:'rgba(0,229,160,0.95)',c:'#000'}, error:{bg:'rgba(255,68,68,0.97)',c:'#fff'}, warn:{bg:'rgba(255,214,102,0.95)',c:'#000'} };
+  const c = colors[type]||colors.success;
+  const t = document.createElement('div');
+  t.style.cssText = `position:fixed;top:20px;left:50%;transform:translateX(-50%);background:${c.bg};color:${c.c};padding:11px 22px;border-radius:12px;font-weight:700;font-size:13px;z-index:999999;box-shadow:0 6px 24px rgba(0,0,0,0.5);white-space:nowrap;max-width:90vw;text-align:center;`;
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => { t.style.opacity='0'; t.style.transition='opacity 0.4s'; setTimeout(()=>t.remove(),400); }, 3000);
+}
+
+// Stub for Firebase sign-in (no longer used, kept for compatibility)
+function signInWithGoogle() { window.location.href = 'login.html'; }
+function initFirebase() {}
