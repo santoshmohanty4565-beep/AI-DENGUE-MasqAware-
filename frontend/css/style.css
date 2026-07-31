@@ -72,24 +72,139 @@ html {
 
 body {
   font-family: 'Inter', system-ui, sans-serif;
-  background: var(--gradient-main);
+  background:
+    /* Layer 1 — dark semi-transparent overlay for readability */
+    linear-gradient(to bottom,
+      rgba(5, 13, 26, 0.80) 0%,
+      rgba(5, 13, 30, 0.74) 40%,
+      rgba(5, 13, 26, 0.86) 100%
+    ),
+    /* Layer 2 — Konark Chakra wheel watermark (centred, large, subtle) */
+    url('konark_wheel_bg_1785469768671.png') no-repeat center center fixed,
+    /* Layer 3 — Odisha cultural silhouette strip at bottom */
+    url('odisha_cultural_silhouette_bg_1785468647343.png') no-repeat center bottom,
+    /* Layer 4 — Cinematic Odisha aerial AI surveillance map */
+    url('odisha_ai_command_bg_1785468258219.png') no-repeat center center fixed;
+  background-size: cover, 72vmin auto, 120% auto, cover;
+  background-blend-mode: normal, luminosity, normal, normal;
   color: var(--text-primary);
   min-height: 100vh;
   overflow-x: hidden;
   line-height: 1.6;
 }
 
-/* Animated background particles */
+/* ── Cinematic Odisha AI Surveillance Command Overlay ──────────────────────── */
 body::before {
   content: '';
   position: fixed;
   top: 0; left: 0; right: 0; bottom: 0;
   background:
-    radial-gradient(ellipse at 20% 50%, rgba(0, 212, 255, 0.04) 0%, transparent 50%),
-    radial-gradient(ellipse at 80% 20%, rgba(168, 85, 247, 0.04) 0%, transparent 50%),
-    radial-gradient(ellipse at 60% 80%, rgba(0, 229, 160, 0.03) 0%, transparent 50%);
+    radial-gradient(ellipse at 15% 55%, rgba(0, 212, 255, 0.12) 0%, transparent 55%),
+    radial-gradient(ellipse at 82% 18%, rgba(168, 85, 247, 0.10) 0%, transparent 55%),
+    radial-gradient(ellipse at 55% 82%, rgba(0, 229, 160, 0.08) 0%, transparent 55%),
+    radial-gradient(ellipse at 50% 5%, rgba(255, 107, 107, 0.06) 0%, transparent 45%);
+  animation: pulseOverlay 12s ease-in-out infinite alternate;
   pointer-events: none;
   z-index: 0;
+}
+
+/* Subtle animated scan-line / hex-grid shimmer */
+body::after {
+  content: '';
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-image:
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 48px,
+      rgba(0, 212, 255, 0.025) 48px,
+      rgba(0, 212, 255, 0.025) 50px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 48px,
+      rgba(0, 212, 255, 0.025) 48px,
+      rgba(0, 212, 255, 0.025) 50px
+    );
+  animation: scanlineScroll 20s linear infinite;
+  pointer-events: none;
+  z-index: 0;
+}
+
+@keyframes pulseOverlay {
+  0%   { opacity: 0.7; transform: scale(1); }
+  50%  { opacity: 1.0; transform: scale(1.03); }
+  100% { opacity: 0.8; transform: scale(1); }
+}
+
+@keyframes scanlineScroll {
+  0%   { background-position: 0 0, 0 0; }
+  100% { background-position: 0 200px, 200px 0; }
+}
+
+/* Floating Animated Mosquito Vector Shield Pins */
+.mosquito-flying-vector {
+  position: fixed;
+  z-index: 1;
+  pointer-events: none;
+  font-size: 20px;
+  filter: drop-shadow(0 0 10px rgba(255, 68, 68, 0.6));
+  animation: floatMosquito 18s linear infinite;
+  opacity: 0.45;
+}
+
+@keyframes floatMosquito {
+  0% { transform: translate(-10vw, 100vh) rotate(0deg) scale(0.8); opacity: 0; }
+  20% { opacity: 0.7; }
+  50% { transform: translate(40vw, 40vh) rotate(180deg) scale(1.1); }
+  80% { opacity: 0.7; }
+  100% { transform: translate(110vw, -10vh) rotate(360deg) scale(0.8); opacity: 0; }
+}
+
+/* ─── Odisha Cultural Heritage Silhouette Strip (Fixed Bottom) ──────────────── */
+.odisha-silhouette-strip {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 220px;
+  background:
+    linear-gradient(to top, rgba(5, 13, 26, 0.0) 0%, rgba(5, 13, 26, 0.65) 100%),
+    url('odisha_cultural_silhouette_bg_1785468647343.png') no-repeat center bottom;
+  background-size: cover, 130% auto;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.72;
+  animation: silhouetteFade 8s ease-in-out infinite alternate;
+}
+
+@keyframes silhouetteFade {
+  0%   { opacity: 0.65; transform: scaleX(1); }
+  100% { opacity: 0.80; transform: scaleX(1.01); }
+}
+
+/* ─── Konark Chakra — Fixed Rotating Sacred Wheel Watermark ─────────────────── */
+.konark-wheel-bg {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 70vmin;
+  height: 70vmin;
+  background: url('konark_wheel_bg_1785469768671.png') no-repeat center center;
+  background-size: contain;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.09;
+  filter: sepia(0.4) hue-rotate(180deg) saturate(1.2) drop-shadow(0 0 60px rgba(200, 169, 110, 0.35));
+  animation: konarkSpin 120s linear infinite;
+}
+
+@keyframes konarkSpin {
+  0%   { transform: translate(-50%, -50%) rotate(0deg); }
+  100% { transform: translate(-50%, -50%) rotate(360deg); }
 }
 
 /* ─── Layout ─────────────────────────────────────────────────────────────── */
@@ -104,9 +219,9 @@ body::before {
 .sidebar {
   width: var(--sidebar-width);
   min-height: 100vh;
-  background: rgba(5, 13, 26, 0.95);
-  backdrop-filter: blur(20px);
-  border-right: 1px solid var(--border-glass);
+  background: rgba(4, 10, 22, 0.96);
+  backdrop-filter: blur(32px) saturate(1.6);
+  border-right: 1px solid rgba(0, 212, 255, 0.18);
   display: flex;
   flex-direction: column;
   position: fixed;
@@ -114,6 +229,7 @@ body::before {
   z-index: 100;
   transition: transform var(--transition-base);
   overflow-y: auto;
+  box-shadow: 4px 0 40px rgba(0, 0, 0, 0.6), inset -1px 0 0 rgba(0, 212, 255, 0.06);
 }
 
 .sidebar-brand {
@@ -298,9 +414,9 @@ body::before {
 /* ─── Header ─────────────────────────────────────────────────────────────── */
 .top-header {
   height: var(--header-height);
-  background: rgba(5, 13, 26, 0.8);
-  backdrop-filter: blur(20px);
-  border-bottom: 1px solid var(--border-glass);
+  background: rgba(4, 10, 22, 0.88);
+  backdrop-filter: blur(28px) saturate(1.5);
+  border-bottom: 1px solid rgba(0, 212, 255, 0.14);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -308,6 +424,7 @@ body::before {
   position: sticky;
   top: 0;
   z-index: 50;
+  box-shadow: 0 4px 32px rgba(0, 0, 0, 0.4);
 }
 
 .header-title {
@@ -381,9 +498,9 @@ body::before {
 
 /* ─── Cards ──────────────────────────────────────────────────────────────── */
 .card {
-  background: var(--bg-card);
-  backdrop-filter: blur(20px);
-  border: 1px solid var(--border-card);
+  background: rgba(8, 18, 34, 0.82);
+  backdrop-filter: blur(24px) saturate(1.4);
+  border: 1px solid rgba(0, 212, 255, 0.10);
   border-radius: var(--radius-lg);
   padding: 24px;
   transition: all var(--transition-base);
@@ -396,13 +513,21 @@ body::before {
   position: absolute;
   top: 0; left: 0; right: 0;
   height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(0, 212, 255, 0.3), transparent);
+  background: linear-gradient(90deg, transparent 0%, rgba(0, 212, 255, 0.45) 50%, transparent 100%);
+}
+
+.card::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: linear-gradient(160deg, rgba(0, 212, 255, 0.03) 0%, transparent 60%);
+  pointer-events: none;
 }
 
 .card:hover {
-  border-color: rgba(0, 212, 255, 0.15);
-  box-shadow: var(--shadow-card-hover);
-  transform: translateY(-2px);
+  border-color: rgba(0, 212, 255, 0.22);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.55), 0 0 40px rgba(0, 212, 255, 0.10);
+  transform: translateY(-3px);
 }
 
 .card-glass {
@@ -630,23 +755,136 @@ body::before {
   box-shadow: 0 0 10px rgba(0, 212, 255, 0.2);
 }
 
+/* ─── Google Maps Style Autocomplete Search ──────────────────────────────── */
+.map-search-wrapper {
+  position: relative;
+  display: inline-block;
+  min-width: 280px;
+}
+
 .map-search-input {
-  background: var(--bg-card);
-  border: 1px solid var(--border-glass);
-  border-radius: var(--radius-sm);
+  background: rgba(13, 27, 46, 0.95);
+  border: 1px solid rgba(0, 212, 255, 0.35);
+  border-radius: 8px;
   color: var(--text-primary);
-  padding: 6px 12px;
+  padding: 8px 14px 8px 34px;
   font-size: 12px;
   font-family: inherit;
   outline: none;
-  min-width: 200px;
-  transition: border-color 0.2s ease;
+  width: 100%;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.4);
 }
 
 .map-search-input:focus {
   border-color: var(--accent-cyan);
-  box-shadow: 0 0 8px rgba(0, 212, 255, 0.2);
+  box-shadow: 0 0 16px rgba(0, 212, 255, 0.35);
+  background: #09162a;
 }
+
+.search-icon-inside {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--accent-cyan);
+  font-size: 13px;
+  pointer-events: none;
+}
+
+.map-search-dropdown {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  background: rgba(7, 16, 31, 0.98);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(0, 212, 255, 0.3);
+  border-radius: 12px;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.85);
+  z-index: 9999;
+  max-height: 380px;
+  overflow-y: auto;
+  display: none;
+}
+
+.map-search-dropdown.show {
+  display: block;
+  animation: dropdownFadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes dropdownFadeIn {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.search-suggestion-item {
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  transition: background 0.15s ease;
+}
+
+.search-suggestion-item:last-child {
+  border-bottom: none;
+}
+
+.search-suggestion-item:hover,
+.search-suggestion-item.active-item {
+  background: rgba(0, 212, 255, 0.15);
+}
+
+.search-suggestion-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.search-suggestion-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.06);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+}
+
+.search-suggestion-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #f0f4ff;
+}
+
+.search-suggestion-title b {
+  color: var(--accent-cyan);
+  text-decoration: underline;
+}
+
+.search-suggestion-subtext {
+  font-size: 10px;
+  color: #8b9cc8;
+  margin-top: 2px;
+}
+
+.search-suggestion-badge {
+  font-size: 9px;
+  font-weight: 800;
+  padding: 3px 8px;
+  border-radius: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.badge-district { background: rgba(0,212,255,0.15); color: #00d4ff; border: 1px solid rgba(0,212,255,0.3); }
+.badge-city { background: rgba(255,214,102,0.15); color: #ffd666; border: 1px solid rgba(255,214,102,0.3); }
+.badge-block { background: rgba(255,159,67,0.15); color: #ff9f43; border: 1px solid rgba(255,159,67,0.3); }
+.badge-village { background: rgba(0,229,160,0.15); color: #00e5a0; border: 1px solid rgba(0,229,160,0.3); }
+.badge-hotspot { background: rgba(255,68,68,0.15); color: #ff4444; border: 1px solid rgba(255,68,68,0.3); }
 
 /* ─── Chart Containers ───────────────────────────────────────────────────── */
 .chart-wrapper {
@@ -1063,6 +1301,222 @@ body::before {
 ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: rgba(0,212,255,0.3); }
 
+/* ─── Responsive — Mobile First ──────────────────────────────────────────── */
+
+/* ── Tablet: ≤ 1200px ── */
+@media (max-width: 1200px) {
+  .kpi-grid                   { grid-template-columns: repeat(2, 1fr); }
+  .grid-2-1, .grid-1-2        { grid-template-columns: 1fr; }
+}
+
+/* ── Mobile Phone & Tablet Responsive Layout: ≤ 900px ── */
+@media (max-width: 900px) {
+  /* Mobile Sidebar Drawer */
+  .sidebar {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    bottom: 0 !important;
+    width: 280px !important;
+    max-width: 85vw !important;
+    z-index: 99999 !important;
+    transform: translateX(-100%) !important;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    box-shadow: 8px 0 40px rgba(0, 0, 0, 0.7) !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+
+  .sidebar.open {
+    transform: translateX(0) !important;
+  }
+
+  .main-content {
+    margin-left: 0 !important;
+    width: 100% !important;
+  }
+
+  /* Hamburger Menu Button */
+  .menu-toggle {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 38px !important;
+    height: 38px !important;
+    border-radius: 8px !important;
+    background: rgba(255, 255, 255, 0.08) !important;
+    border: 1px solid var(--border-glass) !important;
+    color: var(--text-primary) !important;
+    font-size: 16px !important;
+    cursor: pointer !important;
+    z-index: 1000 !important;
+    touch-action: manipulation !important;
+  }
+
+  .menu-toggle:active {
+    transform: scale(0.95) !important;
+  }
+
+  /* Sidebar Backdrop Overlay */
+  .sidebar-backdrop {
+    display: none;
+    position: fixed !important;
+    inset: 0 !important;
+    background: rgba(5, 13, 26, 0.75) !important;
+    backdrop-filter: blur(8px) !important;
+    -webkit-backdrop-filter: blur(8px) !important;
+    z-index: 99998 !important;
+    opacity: 0;
+    transition: opacity 0.3s ease !important;
+  }
+
+  .sidebar-backdrop.visible {
+    display: block !important;
+    opacity: 1 !important;
+  }
+
+  /* Grids */
+  .grid-2 { grid-template-columns: 1fr !important; }
+  .grid-3 { grid-template-columns: 1fr !important; }
+  .grid-4 { grid-template-columns: repeat(2, 1fr) !important; }
+
+  /* Header */
+  .top-header {
+    padding: 10px 12px !important;
+    gap: 8px !important;
+    min-height: 60px !important;
+  }
+
+  .header-actions {
+    gap: 6px !important;
+    flex-wrap: wrap !important;
+  }
+
+  .header-actions .btn-sm {
+    padding: 6px 10px !important;
+    font-size: 11px !important;
+  }
+
+  .page-content {
+    padding: 12px !important;
+  }
+
+  /* Map */
+  #odisha-map {
+    height: 320px !important;
+  }
+
+  /* Modal */
+  .modal-card {
+    padding: 18px !important;
+    max-height: 92vh !important;
+    border-radius: 14px !important;
+    width: 94vw !important;
+  }
+}
+
+/* ── Mobile: ≤ 600px ── */
+@media (max-width: 600px) {
+  /* Root font size reduction */
+  html                        { font-size: 14px; }
+
+  /* Header stacks on small screens */
+  .top-header {
+    flex-wrap: wrap;
+    height: auto;
+    padding: 10px 12px;
+    gap: 8px;
+  }
+  .header-brand               { min-width: 0; }
+  .brand-name                 { font-size: 16px !important; }
+  .page-subtitle              { display: none; }
+
+  /* Header action buttons — scroll horizontally */
+  .header-actions {
+    width: 100%;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    padding-bottom: 4px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .header-actions::-webkit-scrollbar { display: none; }
+  .header-actions .btn-sm     { white-space: nowrap; flex-shrink: 0; font-size: 11px; padding: 5px 9px; }
+
+  /* KPIs: 1 column */
+  .kpi-grid                   { grid-template-columns: 1fr; gap: 10px; }
+  .kpi-value                  { font-size: 28px !important; }
+
+  /* All grids: 1 column */
+  .grid-2, .grid-3            { grid-template-columns: 1fr; gap: 12px; }
+  .grid-2-1, .grid-1-2        { grid-template-columns: 1fr; }
+  .weather-grid               { grid-template-columns: repeat(2, 1fr); }
+  .report-type-grid           { grid-template-columns: 1fr; }
+
+  /* Map */
+  #odisha-map                 { height: 260px !important; }
+
+  /* Search bar */
+  .map-search-input           { font-size: 13px; padding: 10px 14px; }
+  .search-wrapper             { padding: 10px 12px; }
+
+  /* Cards */
+  .card                       { padding: 14px; border-radius: 12px; }
+  .card-title                 { font-size: 13px; }
+
+  /* Page content */
+  .page-content               { padding: 10px 10px 80px; }
+
+  /* Modal — full screen on mobile */
+  .modal-overlay              { padding: 0; align-items: flex-end; }
+  .modal-card {
+    max-width: 100%;
+    border-radius: 20px 20px 0 0;
+    max-height: 92vh;
+    padding: 16px;
+  }
+
+  /* Tabs / Pills */
+  .tab-bar                    { flex-wrap: wrap; gap: 6px; }
+  .tab-btn                    { font-size: 11px; padding: 6px 10px; }
+
+  /* Tables */
+  .table-container            { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  table                       { min-width: 480px; }
+  th, td                      { font-size: 11px; padding: 6px 8px; }
+
+  /* Sidebar width on mobile */
+  .sidebar                    { width: 260px !important; }
+
+  /* Alert ticker */
+  .alert-ticker-text          { font-size: 11px; }
+
+  /* Floating AI chatbot button */
+  .assistant-toggle           { padding: 10px 14px; font-size: 12px; }
+  .assistant-modal            { right: 10px; bottom: 70px; width: calc(100vw - 20px); }
+
+  /* Index values */
+  .index-value                { font-size: 32px; }
+
+  /* Button text — keep concise */
+  .btn                        { font-size: 12px; }
+}
+
+/* ── Extra Small Mobile: ≤ 380px ── */
+@media (max-width: 380px) {
+  .brand-name                 { font-size: 14px !important; }
+  .kpi-value                  { font-size: 24px !important; }
+  .modal-card                 { padding: 12px; }
+  #odisha-map                 { height: 220px !important; }
+}
+
+/* ─── Print Styles ───────────────────────────────────────────────────────── */
+@media print {
+  .sidebar, .top-header, .header-actions, .btn { display: none; }
+  .main-content { margin-left: 0; }
+  body { background: white; color: black; }
+}
+
 /* ─── Utility Classes ────────────────────────────────────────────────────── */
 .text-primary   { color: var(--text-primary); }
 .text-secondary { color: var(--text-secondary); }
@@ -1417,6 +1871,285 @@ body::before {
   font-size: 12px;
 }
 
+/* ─── Hackathon AI Innovation Feature Styles ────────────────────────────── */
+.ai-badge-header {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  background: linear-gradient(135deg, rgba(168,85,247,0.2), rgba(0,212,255,0.2));
+  border: 1px solid rgba(168,85,247,0.4);
+  border-radius: 20px;
+  color: #d8b4fe;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.xai-factor-card {
+  background: rgba(255,255,255,0.025);
+  border: 1px solid var(--border-glass);
+  border-radius: 10px;
+  padding: 12px;
+  margin-bottom: 8px;
+  transition: all 0.2s ease;
+}
+
+.xai-factor-card:hover {
+  background: rgba(0,212,255,0.05);
+  border-color: rgba(0,212,255,0.25);
+}
+
+.xai-bar-track {
+  width: 100%;
+  height: 6px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-top: 6px;
+}
+
+.xai-bar-fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.8s ease;
+}
+
+.resource-alloc-card {
+  background: var(--bg-glass);
+  border: 1px solid var(--border-glass);
+  border-radius: 12px;
+  padding: 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.resource-alloc-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--accent-cyan);
+}
+
+.resource-alloc-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.floating-mosquito-pin {
+  font-size: 16px;
+  animation: mosquitoFloat 2s ease-in-out infinite;
+  filter: drop-shadow(0 0 6px rgba(255,68,68,0.8));
+}
+
+@keyframes mosquitoFloat {
+  0%, 100% { transform: translateY(0) rotate(-5deg); }
+  50% { transform: translateY(-6px) rotate(5deg); }
+}
+
+.ai-alert-banner {
+  background: linear-gradient(135deg, rgba(255,68,68,0.12), rgba(255,159,67,0.1));
+  border: 1px solid rgba(255,68,68,0.4);
+  border-radius: 12px;
+  padding: 14px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 18px;
+  animation: alertGlowPulse 3s infinite;
+}
+
+@keyframes alertGlowPulse {
+  0%, 100% { box-shadow: 0 0 10px rgba(255,68,68,0.2); }
+  50% { box-shadow: 0 0 20px rgba(255,68,68,0.45); }
+}
+
+.scorecard-mini-box {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 8px;
+  padding: 10px;
+  text-align: center;
+}
+
+/* ─── Light Mode Theme Overrides ────────────────────────────────────────── */
+/* ─── Official Government Theme Overrides (Light Mode) ──────────────────── */
+[data-theme="light"] {
+  --bg-primary:    #f8fafc;
+  --bg-secondary:  #ffffff;
+  --bg-card:       #ffffff;
+  --bg-glass:      rgba(5, 150, 105, 0.05);
+  --bg-glass-hover:rgba(5, 150, 105, 0.10);
+
+  --accent-cyan:   #0284c7;
+  --accent-green:  #059669;
+  --accent-coral:  #dc2626;
+  --accent-yellow: #d97706;
+
+  --text-primary:  #0f172a;
+  --text-secondary:#334155;
+  --text-muted:    #64748b;
+  --text-accent:   #059669;
+
+  --border-glass:  rgba(6, 78, 59, 0.12);
+  --border-card:   rgba(6, 78, 59, 0.10);
+
+  --gradient-main: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  --shadow-card:   0 4px 20px rgba(0, 0, 0, 0.04);
+}
+
+[data-theme="light"] body {
+  background-color: #f8fafc !important;
+  background-image:
+    linear-gradient(to bottom, rgba(248, 250, 252, 0.94), rgba(241, 245, 249, 0.97)),
+    url('odisha_cultural_silhouette_bg_1785468647343.png') !important;
+  background-position: top center, top center !important;
+  background-repeat: no-repeat, no-repeat !important;
+  background-size: cover, 100% auto !important;
+  color: #0f172a !important;
+}
+
+[data-theme="light"] .sidebar {
+  background: linear-gradient(180deg, #023526 0%, #043927 50%, #022c22 100%) !important;
+  border-right: 1px solid rgba(5, 150, 105, 0.25) !important;
+  color: #ffffff !important;
+  box-shadow: 4px 0 24px rgba(0, 0, 0, 0.1) !important;
+}
+
+[data-theme="light"] .sidebar .brand-name {
+  color: #ffffff !important;
+}
+
+[data-theme="light"] .sidebar .brand-sub {
+  color: rgba(255, 255, 255, 0.75) !important;
+}
+
+[data-theme="light"] .sidebar .brand-icon {
+  background: #ffffff !important;
+  color: #043927 !important;
+  border-radius: 50% !important;
+  width: 38px; height: 38px;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2) !important;
+}
+
+[data-theme="light"] .sidebar .nav-section-label {
+  color: rgba(255, 255, 255, 0.55) !important;
+  letter-spacing: 1.5px !important;
+}
+
+[data-theme="light"] .sidebar .nav-item {
+  color: rgba(255, 255, 255, 0.85) !important;
+}
+
+[data-theme="light"] .sidebar .nav-item:hover {
+  background: rgba(255, 255, 255, 0.10) !important;
+  color: #ffffff !important;
+}
+
+[data-theme="light"] .sidebar .nav-item.active {
+  background: linear-gradient(135deg, #059669 0%, #047857 100%) !important;
+  color: #ffffff !important;
+  font-weight: 700 !important;
+  box-shadow: 0 4px 14px rgba(5, 150, 105, 0.4) !important;
+}
+
+[data-theme="light"] .sidebar-footer {
+  border-top-color: rgba(255, 255, 255, 0.12) !important;
+}
+
+[data-theme="light"] .top-header {
+  background: #ffffff !important;
+  border-bottom: 1px solid rgba(6, 78, 59, 0.15) !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04) !important;
+  position: relative;
+  overflow: hidden;
+}
+
+[data-theme="light"] .top-header::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: url('odisha_skyline_border.svg') no-repeat center bottom !important;
+  background-size: contain !important;
+  opacity: 0.16 !important;
+  pointer-events: none !important;
+  z-index: 0;
+}
+
+[data-theme="light"] .top-header > * {
+  position: relative;
+  z-index: 1;
+}
+
+[data-theme="light"] .page-title {
+  color: #064e3b !important;
+  font-weight: 800 !important;
+}
+
+[data-theme="light"] .page-subtitle {
+  color: #475569 !important;
+}
+
+[data-theme="light"] .card {
+  background: #ffffff !important;
+  border: 1px solid rgba(6, 78, 59, 0.12) !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04) !important;
+  color: #0f172a !important;
+}
+
+[data-theme="light"] .map-search-input {
+  background: #ffffff !important;
+  color: #0f172a !important;
+  border-color: rgba(6, 78, 59, 0.25) !important;
+}
+
+[data-theme="light"] .map-search-dropdown {
+  background: #ffffff !important;
+  color: #0f172a !important;
+  box-shadow: 0 12px 36px rgba(0,0,0,0.12) !important;
+  border-color: rgba(6,78,59,0.15) !important;
+}
+
+[data-theme="light"] .search-suggestion-title {
+  color: #0f172a !important;
+}
+
+[data-theme="light"] #odisha-map {
+  background: #e2e8f0 !important;
+}
+
+[data-theme="light"] .btn-outline {
+  border-color: rgba(6, 78, 59, 0.25) !important;
+  color: #064e3b !important;
+  background: #ffffff !important;
+}
+
+[data-theme="light"] .btn-outline:hover {
+  background: rgba(5, 150, 105, 0.08) !important;
+  border-color: #059669 !important;
+}
+
+[data-theme="light"] .btn-primary {
+  background: linear-gradient(135deg, #059669 0%, #047857 100%) !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 14px rgba(5, 150, 105, 0.3) !important;
+}
+
+[data-theme="light"] .assistant-toggle {
+  background: linear-gradient(135deg, #059669 0%, #047857 100%) !important;
+  box-shadow: 0 8px 24px rgba(5, 150, 105, 0.4) !important;
+  color: #ffffff !important;
+}
+
 /* ─── Bright Light Theme AI Assistant Modal Drawer Styles ───────────────── */
 [data-theme="light"] .assistant-modal {
   background: #ffffff !important;
@@ -1496,6 +2229,56 @@ body::before {
 [data-theme="light"] .assistant-footer button {
   background: linear-gradient(135deg, #059669 0%, #047857 100%) !important;
   color: #ffffff !important;
+}
+
+/* Light Mode Card Color Enhancements */
+[data-theme="light"] #daily-quote-widget {
+  background: #f0fdf4 !important;
+  border-color: rgba(5, 150, 105, 0.3) !important;
+  color: #064e3b !important;
+}
+
+[data-theme="light"] .ai-alert-banner {
+  background: #fef2f2 !important;
+  border-color: #fecaca !important;
+  color: #991b1b !important;
+}
+
+/* Light Theme High Contrast Card Typography Rules */
+[data-theme="light"] .xai-factor-card {
+  background: #f8fafc !important;
+  border: 1px solid rgba(6, 78, 59, 0.15) !important;
+}
+
+[data-theme="light"] .xai-factor-card div,
+[data-theme="light"] .xai-factor-card span {
+  color: #0f172a !important;
+  font-weight: 700 !important;
+}
+
+[data-theme="light"] .resource-alloc-card {
+  background: #f8fafc !important;
+  border: 1px solid rgba(6, 78, 59, 0.15) !important;
+}
+
+[data-theme="light"] .resource-alloc-card div,
+[data-theme="light"] .resource-alloc-card span {
+  color: #0f172a !important;
+}
+
+[data-theme="light"] .section-title {
+  color: #064e3b !important;
+  font-weight: 800 !important;
+}
+
+[data-theme="light"] .kpi-label {
+  color: #334155 !important;
+  font-weight: 700 !important;
+}
+
+[data-theme="light"] .kpi-value {
+  color: #0f172a !important;
+  font-weight: 900 !important;
 }
 
 /* ─── Bright Light Theme Overrides for ALL Popups & Modals ─────────────────── */
@@ -1657,4 +2440,181 @@ body::before {
 [data-theme="light"] .leaflet-popup-close-button:hover {
   color: #dc2626 !important;
 }
+
+/* ─── Fixed & Professional Government Emblem ───────────────────────────── */
+.govt-emblem-fixed {
+  width: 56px !important;
+  height: 56px !important;
+  min-width: 56px !important;
+  min-height: 56px !important;
+  max-width: 56px !important;
+  max-height: 56px !important;
+  object-fit: contain !important;
+  background: transparent !important;
+  border-radius: 0px !important;
+  border: none !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+  filter: none !important;
+  transform: none !important;
+  transition: none !important;
+  animation: none !important;
+  pointer-events: auto;
+  user-select: none;
+  -webkit-user-drag: none;
+  flex-shrink: 0 !important;
+  display: block !important;
+}
+
+.govt-emblem-fixed:hover,
+.govt-emblem-fixed:focus,
+.govt-emblem-fixed:active {
+  transform: none !important;
+  filter: none !important;
+  box-shadow: none !important;
+  opacity: 1 !important;
+  transition: none !important;
+  animation: none !important;
+}
+.mic-voice-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(0, 212, 255, 0.15);
+  border: 1px solid rgba(0, 212, 255, 0.4);
+  color: var(--accent-cyan);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.mic-voice-btn:hover,
+.mic-voice-btn.listening {
+  background: #ff4444;
+  color: #fff;
+  border-color: #ff6b6b;
+  animation: micPulse 1.2s infinite;
+}
+
+@keyframes micPulse {
+  0%, 100% { box-shadow: 0 0 8px rgba(255,68,68,0.4); }
+  50% { box-shadow: 0 0 20px rgba(255,68,68,0.9); }
+}
+
+/* ─── Modals & Glass Overlays ────────────────────────────────────────────── */
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(5, 13, 26, 0.82);
+  backdrop-filter: blur(12px);
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+
+.modal-overlay.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.modal-card {
+  background: rgba(10, 22, 40, 0.95);
+  border: 1px solid rgba(0, 212, 255, 0.3);
+  border-radius: 20px;
+  max-width: 640px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: 24px;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+  position: relative;
+  transform: scale(0.95);
+  transition: transform 0.25s ease;
+}
+
+.modal-overlay.open .modal-card {
+  transform: scale(1);
+}
+
+.modal-close-btn {
+  position: absolute;
+  top: 18px; right: 18px;
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.15);
+  color: var(--text-muted);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.modal-close-btn:hover {
+  background: rgba(255,68,68,0.2);
+  color: #ff6b6b;
+}
+
+
+/* ─── Auth & Login System ─────────────────────────────────────────────────── */
+.modal-card select,
+.modal-card textarea,
+.modal-card input[type="text"],
+.modal-card input[type="email"] {
+  background: rgba(255, 255, 255, 0.04) !important;
+  border: 1px solid rgba(255, 255, 255, 0.10) !important;
+  border-radius: 8px;
+  color: #f0f4ff !important;
+  font-family: 'Inter', sans-serif;
+  transition: border-color 0.2s ease;
+}
+.modal-card select:focus,
+.modal-card textarea:focus,
+.modal-card input:focus {
+  outline: none;
+  border-color: rgba(0,212,255,0.5) !important;
+  box-shadow: 0 0 0 3px rgba(0,212,255,0.08);
+}
+.modal-card select option { background: #0a1628; color: #f0f4ff; }
+
+#auth-btn {
+  display: flex; align-items: center; gap: 6px;
+  min-width: 90px; justify-content: center;
+  transition: all 0.2s ease;
+}
+#auth-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(0,212,255,0.15); }
+#profile-avatar:hover { box-shadow: 0 0 0 4px rgba(0,212,255,0.3), 0 0 20px rgba(0,212,255,0.2); }
+#google-signin-btn:active { transform: scale(0.98) !important; }
+.report-symptom-cb { accent-color: #00d4ff; width: 14px; height: 14px; cursor: pointer; }
+
+#user-reports-list > div:hover {
+  background: rgba(0,212,255,0.04) !important;
+  border-color: rgba(0,212,255,0.15) !important;
+  transition: all 0.2s ease;
+}
+
+@media (max-width: 600px) {
+  #login-modal .modal-card,
+  #user-profile-modal .modal-card,
+  #report-modal .modal-card { padding: 20px 16px; }
+}
+
+/* ─── Bio-Acoustic & Simulation Styles ────────────────────────────────── */
+.acoustic-status-bar.active { color: #00e5a0; border: 1px solid rgba(0,229,160,0.4); }
+.acoustic-status-bar.warning { color: #ffd666; border: 1px solid rgba(255,214,102,0.4); }
+.acoustic-status-bar.idle { color: #8b9cc8; border: 1px solid rgba(255,255,255,0.1); }
+
+.acoustic-badge {
+  font-size: 10px; font-weight: 800; padding: 4px 10px; border-radius: 99px; display: inline-block;
+}
+.acoustic-badge.critical { background: rgba(255,59,92,0.15); color: #ff3b5c; border: 1px solid rgba(255,59,92,0.3); }
+.acoustic-badge.high { background: rgba(255,140,0,0.15); color: #ff8c00; border: 1px solid rgba(255,140,0,0.3); }
+.acoustic-badge.moderate { background: rgba(255,204,0,0.15); color: #ffcc00; border: 1px solid rgba(255,204,0,0.3); }
+.acoustic-badge.safe, .acoustic-badge.idle { background: rgba(0,229,160,0.12); color: #00e5a0; border: 1px solid rgba(0,229,160,0.3); }
 
