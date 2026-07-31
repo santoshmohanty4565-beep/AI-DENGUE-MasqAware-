@@ -15,6 +15,12 @@ const mapRoutes  = require('./apis/v1/map');
 const riskRoutes = require('./apis/v1/risk');
 const analyticsRoutes = require('./apis/v1/analytics');
 const authRoutes = require('./apis/v1/auth');
+const acousticRoutes = require('./apis/v1/acoustic');
+const predictRoutes  = require('./apis/v1/predict');
+const outbreakPredictorRoutes = require('./apis/v1/outbreak_predictor');
+const doctorRoutes   = require('./apis/v1/doctors');
+const decisionIntelligenceRoutes = require('./apis/v1/decision_intelligence');
+const earlyWarningRoutes = require('./apis/v1/early_warning_predictor');
 const middleware = require('./backend/middleware');
 
 const app = express();
@@ -170,6 +176,45 @@ app.get('/api/health', (req, res) => {
   });
 });
 
+// Daily Rotating Health Quote & Date API Endpoint
+app.get('/api/v1/daily-quote', (req, res) => {
+  const now = new Date();
+  const quotes = [
+    { quote: "It is health that is real wealth and not pieces of gold and silver.", author: "Mahatma Gandhi", category: "Wellness & Prevention" },
+    { quote: "He who has health has hope; and he who has hope has everything.", author: "Arabian Proverb", category: "Hope & Vitality" },
+    { quote: "The greatest of follies is to sacrifice health for any other kind of happiness.", author: "Arthur Schopenhauer", category: "Mindfulness" },
+    { quote: "Prevention is better than cure. Eliminating standing water today protects your community tomorrow.", author: "WHO Health Directive", category: "Vector Protection" },
+    { quote: "To keep the body in good health is a duty... otherwise we shall not be able to keep our mind strong and clear.", author: "Buddha", category: "Holistic Health" },
+    { quote: "Early detection saves lives. Constant surveillance is the key to outbreak prevention.", author: "NCVBDC Vector Protocol", category: "Epidemiological Surveillance" },
+    { quote: "Health is a state of complete physical, mental and social well-being and not merely the absence of disease.", author: "World Health Organization", category: "Global Health" },
+    { quote: "A healthy attitude is contagious but don't wait to catch it from others, be a carrier.", author: "Tom Stoppard", category: "Community Action" },
+    { quote: "The first wealth is health. Take care of your environment to take care of your body.", author: "Ralph Waldo Emerson", category: "Environmental Health" },
+    { quote: "Clean air, safe water, and vector control are the fundamental pillars of public health.", author: "Florence Nightingale", category: "Public Hygiene" }
+  ];
+
+  const startOfYear = new Date(now.getFullYear(), 0, 0);
+  const diff = now - startOfYear;
+  const oneDay = 1000 * 60 * 60 * 24;
+  const dayOfYear = Math.floor(diff / oneDay);
+  
+  const selected = quotes[dayOfYear % quotes.length];
+  const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+  const dayName = days[now.getDay()];
+  const formattedDate = now.toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' });
+
+  res.json({
+    status: 'success',
+    dayOfWeek: dayName,
+    dateString: `${dayName}, ${formattedDate}`,
+    formattedDate,
+    quote: selected.quote,
+    author: selected.author,
+    category: selected.category,
+    dayOfYear,
+    timestamp: now.toISOString()
+  });
+});
+
 // Dashboard stats & summary
 app.get('/api/dashboard/stats', (req, res) => {
   res.json({
@@ -264,26 +309,36 @@ app.get('/api/villages', (req, res) => {
   });
 });
 
-// AI Assistant Chatbot API Endpoint
+// AI Assistant Chatbot API Endpoint — Short-Form Common Responses Engine
 app.post('/api/assistant/chat', (req, res) => {
   const { message } = req.body;
   if (!message) {
     return res.status(400).json({ status: 'error', message: 'Message field is required' });
   }
 
-  const text = message.toLowerCase();
+  const text = message.toLowerCase().trim();
   let reply = "";
 
-  if (text.includes("2027") || text.includes("forecast") || text.includes("future")) {
-    reply = `🔮 **2027 Outbreak Forecast**: 10,000–15,000 cases projected (SARIMA-XGBoost hybrid model) with peak outbreak in July–October 2027.`;
-  } else if (text.includes("district") || text.includes("khordha") || text.includes("bhubaneswar")) {
-    reply = `🔴 **Khordha (Bhubaneswar)** is at CRITICAL risk (30–35% state case share). Key micro-hotspots: Patia, Sikharchandi, Prasanti Vihar, Salia Sahi.`;
+  if (text.includes("khordha") || text.includes("bhubaneswar") || text.includes("patia") || text.includes("hotspot")) {
+    reply = `🔴 Khordha (Bhubaneswar): 1,154 cases | Critical Watch (R₀ = 2.85). Hotspots: Patia, Sikharchandi, Salia Sahi, Nayapalli.`;
+  } else if (text.includes("hospital") || text.includes("icu") || text.includes("scb") || text.includes("capital hospital") || text.includes("aiims") || text.includes("doctor")) {
+    reply = `🏥 SCB Cuttack (120 ICU beds), Capital Hospital BBSR (45 ICU beds), AIIMS BBSR (80 ICU beds). Helpline: 104 / 108.`;
+  } else if (text.includes("acoustic") || text.includes("frequency") || text.includes("fft") || text.includes("wingbeat") || text.includes("hz") || text.includes("sound") || text.includes("aegypti")) {
+    reply = `🎙️ Aedes aegypti: 535 Hz (450–610 Hz) | Aedes albopictus: 625 Hz (540–720 Hz) | Culex: 420 Hz. Confidence >85% triggers larvicide dispatch.`;
+  } else if (text.includes("2027") || text.includes("forecast") || text.includes("future") || text.includes("projection")) {
+    reply = `🔮 2027 Forecast: 10,000–15,000 cases (Peak: July–Oct 2027) driven by DENV-2 (67% share).`;
+  } else if (text.includes("symptom") || text.includes("fever") || text.includes("bleed") || text.includes("dhf") || text.includes("vomit")) {
+    reply = `🩺 High fever, eye pain, joint pain & rash. 🚨 WARNING: Fever + Bleeding + Vomiting (DENV-2 DHF) requires emergency hospital transport (108).`;
+  } else if (text.includes("golden") || text.includes("rule") || text.includes("stay safe") || text.includes("prevention") || text.includes("protect")) {
+    reply = `🛡️ 1. Clear standing water weekly. 2. Wear full sleeves & DEET repellent. 3. Use window mesh screens. 4. Aedes bite 6–9 AM & 3–6 PM. 5. Call 104.`;
+  } else if (text.includes("model") || text.includes("accuracy") || text.includes("sarima") || text.includes("xgboost") || text.includes("ai")) {
+    reply = `🤖 LSTM + Attention: 94.2% accuracy | Bayesian SARIMA-XGBoost: 87.4% accuracy (2–8 wk lead time).`;
   } else if (text.includes("village") || text.includes("51k") || text.includes("block")) {
-    reply = `🏡 Odisha has 51,313 villages across 311 CD blocks and 464 Tahasils. Largest village: Tora (Bargarh district, pop: 18,399).`;
-  } else if (text.includes("model") || text.includes("accuracy") || text.includes("sarima")) {
-    reply = `🤖 **AI Model Benchmark**: Bayesian SARIMA-XGBoost achieves 87.4% accuracy; Hybrid LSTM + Attention achieves 94.2% accuracy (F1 = 0.927).`;
+    reply = `🏡 51,313 Villages across 311 CD Blocks & 30 Districts. Largest village: Tora (Bargarh, pop: 18,399).`;
+  } else if (text.includes("helpline") || text.includes("call") || text.includes("104") || text.includes("108")) {
+    reply = `📞 State Health: 104 (Toll-Free) | Ambulance: 108 | BMC Control: 0674-2392516.`;
   } else {
-    reply = `🦟 **DENGUEl-AI Assistant**: Received "${message}". State 2026 status: 3,300+ provisional cases. Call 104 for emergency medical assistance.`;
+    reply = `🦟 MosqAware AI: Ask about Khordha risk, 2027 forecast, hospital ICU beds, wingbeat FFTs, or Golden Rules.`;
   }
 
   res.json({
@@ -294,44 +349,28 @@ app.post('/api/assistant/chat', (req, res) => {
   });
 });
 
-// ─── REAL-TIME AI MOSQUITO VISION DETECTION API ───────────────────────────
+// ─── AI MOSQUITO VISION DETECTION API ───────────────────────────
 app.post('/api/detect-mosquito', (req, res) => {
-  const { imageBase64, frameWidth, frameHeight } = req.body || {};
+  // Strict rule: Never produce false or simulated detections without a trained model file (.onnx / .tflite / .pt)
+  const modelPath = path.join(__dirname, 'models/mosquito_yolo.onnx');
+  const hasTrainedModel = fs.existsSync(modelPath);
 
-  const w = frameWidth || 640;
-  const h = frameHeight || 480;
-
-  // Real-time vector detection output
-  const detections = [
-    {
-      id: 'det-01',
-      label: 'Aedes aegypti (Female Vector)',
-      classId: 0,
-      confidence: 0.968,
-      bbox: [Math.floor(w * 0.25), Math.floor(h * 0.2), 140, 90],
-      larvalIndex: 8.8,
-      riskLevel: 'CRITICAL',
-      biteWarning: true
-    },
-    {
-      id: 'det-02',
-      label: 'Stagnant Larval Pool',
-      classId: 1,
-      confidence: 0.942,
-      bbox: [Math.floor(w * 0.6), Math.floor(h * 0.5), 180, 120],
-      larvalIndex: 9.1,
-      riskLevel: 'HIGH',
-      biteWarning: false
-    }
-  ];
+  if (!hasTrainedModel) {
+    return res.json({
+      status: 'model_not_loaded',
+      modelLoaded: false,
+      message: 'Mosquito AI model not loaded.',
+      detections: [],
+      timestamp: new Date().toISOString()
+    });
+  }
 
   res.json({
     status: 'success',
-    model: 'YOLOv8-Mosquito-Custom-v3.2',
+    modelLoaded: true,
+    model: 'YOLOv8-Mosquito-Custom-v3.2.onnx',
     timestamp: new Date().toISOString(),
-    count: detections.length,
-    detections,
-    actionPlan: 'Apply Temephos 50% EC larvicide spray & schedule immediate municipal vector fogging.'
+    detections: []
   });
 });
 
@@ -339,7 +378,42 @@ app.post('/api/detect-mosquito', (req, res) => {
 app.use('/api/v1/map', mapRoutes);
 app.use('/api/v1/risk', riskRoutes);
 app.use('/api/v1/analytics', analyticsRoutes);
+app.use('/api/v1/acoustic', acousticRoutes);
+app.use('/api/v1/predict', predictRoutes);
+app.use('/api/v1/outbreak-predictor', outbreakPredictorRoutes);
+app.use('/api/v1/doctors', doctorRoutes);
+app.use('/api/v1/decision-intelligence', decisionIntelligenceRoutes);
+app.use('/api/v1/early-warning', earlyWarningRoutes);
 app.use('/api/auth', authRoutes);
+
+// Simulation Engine API
+app.post('/api/v1/simulation/run', (req, res) => {
+  const { temp = 29.5, humidity = 78, ndwi = 0.65, droneFogging = 20 } = req.body || {};
+  const T = parseFloat(temp);
+  const H = parseFloat(humidity);
+  const W = parseFloat(ndwi);
+  const F = parseFloat(droneFogging) / 100;
+
+  const bitingRate = (T > 13.2 && T < 39.6) ? (0.00014 * T * (T - 13.2) * Math.sqrt(39.6 - T)) : 0.25;
+  const eip = Math.max(4.0, Math.exp(4.7 - 0.09 * T));
+  const vectorLifespan = (H / 100) * 28;
+  const breedingFactor = Math.pow(W, 1.2) * 2.5;
+
+  let r0 = (bitingRate * bitingRate * vectorLifespan * breedingFactor) / (eip * 0.4);
+  r0 = parseFloat(Math.max(0.2, r0 * (1 - F * 0.75)).toFixed(2));
+
+  res.json({
+    status: 'success',
+    timestamp: new Date().toISOString(),
+    metrics: {
+      r0,
+      eipDays: parseFloat(eip.toFixed(1)),
+      bitingRate: parseFloat(bitingRate.toFixed(3)),
+      predictedCases14d: Math.round(150 * W * (T / 25) * Math.pow(r0, 1.4)),
+      riskStatus: r0 > 2.5 ? 'CRITICAL OUTBREAK RISK' : (r0 > 1.2 ? 'SURVEILLANCE WATCH' : 'SAFE')
+    }
+  });
+});
 
 // 404 handler for unknown API routes
 app.use(middleware.notFoundHandler);

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 
 <head>
   <meta charset="UTF-8" />
@@ -113,6 +113,14 @@
 </head>
 
 <body>
+  <!-- 🦟 Animated Flying Mosquito Vectors in Background (Dengue Protection Operations) -->
+  <div class="mosquito-flying-vector" style="top:15%; animation-delay:0s;">🦟</div>
+  <div class="mosquito-flying-vector" style="top:45%; animation-delay:-6s; font-size:16px;">🦟</div>
+  <div class="mosquito-flying-vector" style="top:75%; animation-delay:-12s; font-size:24px;">🦟</div>
+
+  <!-- 🏛️ Odisha Cultural Heritage Silhouette Strip (Konark · Jagannath · Odissi Dancer · Mahanadi) -->
+  <div class="odisha-silhouette-strip" aria-hidden="true"></div>
+
   <!-- Sidebar backdrop for mobile tap-to-close -->
   <div class="sidebar-backdrop" id="sidebar-backdrop" onclick="closeSidebarMobile()"></div>
 
@@ -147,6 +155,12 @@
         <a class="nav-item" href="analytics.html" id="nav-analytics">
           <span class="nav-icon"><i class="fa-solid fa-chart-line"></i></span>
           <span data-i18n="nav.analytics">Analytics</span>
+        </a>
+
+        <a class="nav-item" href="directory.html" id="nav-doctors-hospitals">
+          <span class="nav-icon"><i class="fa-solid fa-hospital-user"></i></span>
+          <span>Doctors & Hospitals</span>
+          <span class="nav-badge" style="background:var(--accent-cyan); color:#000;">14+</span>
         </a>
 
         <div class="nav-section-label">Tools</div>
@@ -198,41 +212,63 @@
     <!-- ═══ MAIN CONTENT ════════════════════════════════════════════ -->
     <div class="main-content">
 
-      <!-- Top Header -->
+      <!-- Top Header — Official Government Banner -->
       <header class="top-header">
-        <div style="display:flex; align-items:center; gap:12px;">
+        <div style="display:flex; align-items:center; gap:14px;">
           <button class="menu-toggle" id="menu-toggle"><i class="fa-solid fa-bars"></i></button>
-          <div class="header-title">
-            <div class="page-title" data-i18n="dashboard.title">Dengue Surveillance Dashboard</div>
-            <div class="page-subtitle">Odisha State — 30 Districts · Real-Time</div>
+          <div style="display:flex; align-items:center; gap:14px; flex-shrink:0;">
+            <img
+              src="png-transparent-india-symbol-ganjam-district-boudh-district-koraput-district-government-of-india-government-of-odisha-college-bhubaneswar-thumbnail.png"
+              alt="Official Government of Odisha Emblem" class="govt-emblem-fixed" width="56" height="56" />
+            <div style="display:flex; flex-direction:column; justify-content:center;">
+              <div style="font-size:17px; font-weight:900; color:#064e3b; line-height:1.1; letter-spacing:-0.3px;">
+                Government of Odisha</div>
+              <div style="font-size:12px; font-weight:700; color:#1e293b; line-height:1.2; margin-top:2px;">Health &
+                Family Welfare Department</div>
+              <div style="font-size:11px; font-weight:600; color:#334155; line-height:1.2;">Odisha State</div>
+            </div>
           </div>
         </div>
-        <div class="header-actions" style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
-          <button class="btn btn-outline btn-sm" onclick="toggleTheme()" id="theme-toggle-btn" title="Toggle Light/Dark Theme">
+
+        <div class="header-actions" style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+
+          <button class="btn btn-outline btn-sm" onclick="toggleTheme()" id="theme-toggle-btn"
+            title="Toggle Official Theme Mode">
             🌙 Theme
           </button>
-          <button class="btn btn-outline btn-sm" onclick="openModal('symptom-modal')" style="border-color:rgba(168,85,247,0.4); color:#d8b4fe;">
+
+          <button class="btn btn-outline btn-sm" onclick="openModal('symptom-modal')"
+            style="border-color:rgba(5,150,105,0.3); color:var(--text-primary);">
             🧪 Symptom Checker
           </button>
-          <button class="btn btn-outline btn-sm" onclick="openModal('detector-modal')" style="border-color:rgba(0,212,255,0.4); color:#00d4ff;">
-            📷 Mosquito Detector
+          <button class="btn btn-outline btn-sm" onclick="openModal('detector-modal')"
+            style="border-color:rgba(5,150,105,0.3); color:var(--text-primary);">
+            🦟 Mosquito Detector
           </button>
-          <button class="btn btn-outline btn-sm" onclick="openModal('quiz-modal')" style="border-color:rgba(255,214,102,0.4); color:#ffd666;">
+          <button class="btn btn-outline btn-sm" onclick="openModal('quiz-modal')"
+            style="border-color:rgba(5,150,105,0.3); color:var(--text-primary);">
             🏆 Health Quiz
           </button>
-          <!-- Report Incident (only visible when logged in) -->
-          <button class="btn btn-outline btn-sm" id="report-hdr-btn" onclick="openReportModal()" style="display:none; border-color:rgba(255,107,107,0.4); color:#ff6b6b;">
+          <!-- Report Incident -->
+          <button class="btn btn-outline btn-sm" id="report-hdr-btn" onclick="openReportModal()"
+            style="display:none; border-color:rgba(220,38,38,0.4); color:#dc2626;">
             📋 Report Incident
           </button>
           <!-- Auth Button -->
-          <button class="btn btn-outline btn-sm" id="auth-btn" onclick="openModal('login-modal')" style="display:flex; align-items:center; gap:6px; min-width:90px; justify-content:center;">
-            <i class="fa-brands fa-google" style="font-size:12px;"></i> Sign In
+          <button class="btn btn-primary btn-sm" id="auth-btn" onclick="openModal('login-modal')"
+            style="display:flex; align-items:center; gap:6px; min-width:90px; justify-content:center; background:linear-gradient(135deg,#059669,#047857); color:#fff; border:none; font-weight:800;">
+            🔑 Sign In
           </button>
         </div>
       </header>
 
       <!-- Page Content -->
       <main class="page-content">
+
+        <!-- 📜 Daily Health Quotation & Live Date/Day Widget -->
+        <div id="daily-quote-widget" class="card animate-fadeInUp"
+          style="margin-bottom:16px; border:1px solid rgba(0,212,255,0.25); background:linear-gradient(135deg, rgba(5,13,26,0.95), rgba(0,212,255,0.06)); padding:16px 20px;">
+        </div>
 
         <!-- AI Real-Time Health Alert System Banner -->
         <div class="ai-alert-banner animate-fadeInUp">
@@ -243,14 +279,295 @@
                 AI EARLY WARNING ALERT: Baramunda & Sikharchandi Hotspots Risk +28%
               </div>
               <div style="font-size:11px; color:#8b9cc8; margin-top:2px;">
-                Predictive Model detected high larval breeding surge post-rainfall. Immediate anti-larval spraying & community fogging recommended.
+                Predictive Model detected high larval breeding surge post-rainfall. Immediate anti-larval spraying &
+                community fogging recommended.
               </div>
             </div>
           </div>
           <div style="display:flex; gap:8px;">
-            <button class="btn btn-primary btn-sm" onclick="searchMapLocation('Baramunda')" style="background:#ff4444; border:none;">
+            <button class="btn btn-primary btn-sm" onclick="searchMapLocation('Baramunda')"
+              style="background:#ff4444; border:none;">
               📍 Zoom to Alert Site
             </button>
+          </div>
+        </div>
+
+        <!-- 🛡️ GOLDEN RULES TO STAY SAFE ═════════════════════════════════════════ -->
+        <div class="card animate-fadeInUp"
+          style="margin-bottom:24px; border:1px solid rgba(255,214,102,0.4); background:linear-gradient(135deg, rgba(5,13,26,0.95), rgba(255,214,102,0.05)); padding:24px;">
+          <div class="section-header" style="margin-bottom:16px;">
+            <div class="section-title">
+              <div class="section-title-icon" style="background:rgba(255,214,102,0.15); color:#ffd666; font-size:20px;">
+                🛡️</div>
+              <div>
+                <div style="font-weight:900; font-size:18px; color:#ffd666; letter-spacing:0.5px;">Golden Rules to Stay
+                  Safe</div>
+                <div style="font-size:11px; color:var(--text-secondary); margin-top:2px;">Essential Community &
+                  Individual Guidelines to Eliminate Vector Breeding & Protect Families</div>
+              </div>
+            </div>
+            <span class="badge badge-warning"
+              style="background:rgba(255,214,102,0.15); color:#ffd666; border:1px solid rgba(255,214,102,0.3); font-weight:800; font-size:11px; padding:6px 12px;">ODISHA
+              PUBLIC HEALTH PROTOCOL</span>
+          </div>
+
+          <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:16px; margin-bottom:16px;">
+
+            <!-- RULE 1 -->
+            <div
+              style="background:rgba(255,255,255,0.03); border:1px solid rgba(0,212,255,0.25); border-radius:12px; padding:16px; transition:transform 0.2s;"
+              class="center-card">
+              <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
+                <div
+                  style="width:36px; height:36px; border-radius:10px; background:rgba(0,212,255,0.15); display:flex; align-items:center; justify-content:center; font-size:18px;">
+                  💧</div>
+                <div>
+                  <div style="font-size:10px; font-weight:800; color:#00d4ff; text-transform:uppercase;">Rule #1</div>
+                  <div style="font-size:13px; font-weight:800; color:#fff;">Remove Standing Water</div>
+                </div>
+              </div>
+              <div style="font-size:12px; color:var(--text-secondary); line-height:1.6;">
+                <div style="margin-bottom:6px; color:#ffd666; font-weight:700;">🗓️ Perform Action Every Week:</div>
+                <ul style="padding-left:16px; margin:0;">
+                  <li>Empty buckets, flower pots, coolers, tyres, bottles, and coconut shells.</li>
+                  <li>Cover all water storage containers tightly with lids or mesh screens.</li>
+                </ul>
+              </div>
+            </div>
+
+            <!-- RULE 2 -->
+            <div
+              style="background:rgba(255,255,255,0.03); border:1px solid rgba(0,229,160,0.25); border-radius:12px; padding:16px; transition:transform 0.2s;"
+              class="center-card">
+              <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
+                <div
+                  style="width:36px; height:36px; border-radius:10px; background:rgba(0,229,160,0.15); display:flex; align-items:center; justify-content:center; font-size:18px;">
+                  🦟</div>
+                <div>
+                  <div style="font-size:10px; font-weight:800; color:#00e5a0; text-transform:uppercase;">Rule #2</div>
+                  <div style="font-size:13px; font-weight:800; color:#fff;">Protect Yourself from Bites</div>
+                </div>
+              </div>
+              <div style="font-size:12px; color:var(--text-secondary); line-height:1.6;">
+                <div style="margin-bottom:6px; color:#00e5a0; font-weight:700;">🛡️ Personal Shield Measures:</div>
+                <ul style="padding-left:16px; margin:0;">
+                  <li>Wear full-sleeved, light-colored clothes to cover skin.</li>
+                  <li>Use mosquito repellent (DEET, Picaridin, or Lemon Eucalyptus).</li>
+                  <li>Sleep under mosquito nets (especially children & elderly).</li>
+                </ul>
+              </div>
+            </div>
+
+            <!-- RULE 3 -->
+            <div
+              style="background:rgba(255,255,255,0.03); border:1px solid rgba(168,85,247,0.25); border-radius:12px; padding:16px; transition:transform 0.2s;"
+              class="center-card">
+              <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
+                <div
+                  style="width:36px; height:36px; border-radius:10px; background:rgba(168,85,247,0.15); display:flex; align-items:center; justify-content:center; font-size:18px;">
+                  🏠</div>
+                <div>
+                  <div style="font-size:10px; font-weight:800; color:#a855f7; text-transform:uppercase;">Rule #3</div>
+                  <div style="font-size:13px; font-weight:800; color:#fff;">Mosquito-Proof Your Home</div>
+                </div>
+              </div>
+              <div style="font-size:12px; color:var(--text-secondary); line-height:1.6;">
+                <div style="margin-bottom:6px; color:#a855f7; font-weight:700;">🚪 Household Defenses:</div>
+                <ul style="padding-left:16px; margin:0;">
+                  <li>Install window and door screens (mesh wire).</li>
+                  <li>Keep surroundings clean and free of dark corners.</li>
+                  <li>Use mosquito traps or indoor insecticides responsibly.</li>
+                </ul>
+              </div>
+            </div>
+
+          </div>
+
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px;">
+
+            <!-- RULE 4 -->
+            <div
+              style="background:rgba(255,107,107,0.06); border:1px solid rgba(255,107,107,0.3); border-radius:12px; padding:16px;">
+              <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
+                <div
+                  style="width:36px; height:36px; border-radius:10px; background:rgba(255,107,107,0.2); display:flex; align-items:center; justify-content:center; font-size:18px;">
+                  ⏰</div>
+                <div>
+                  <div style="font-size:10px; font-weight:800; color:#ff6b6b; text-transform:uppercase;">Rule #4 •
+                    Critical Vector Timing</div>
+                  <div style="font-size:13px; font-weight:800; color:#fff;">Aedes Mosquitoes Bite During the Day!</div>
+                </div>
+              </div>
+              <div style="font-size:12px; color:var(--text-secondary); line-height:1.6;">
+                Be extra vigilant during peak biting activity windows:
+                <div style="display:flex; gap:10px; margin-top:8px; flex-wrap:wrap;">
+                  <span
+                    style="background:rgba(255,107,107,0.15); color:#ff6b6b; padding:4px 10px; border-radius:8px; font-weight:800; font-size:11px; border:1px solid rgba(255,107,107,0.3);">🌅
+                    Early Morning: 6:00 AM – 9:00 AM</span>
+                  <span
+                    style="background:rgba(255,107,107,0.15); color:#ff6b6b; padding:4px 10px; border-radius:8px; font-weight:800; font-size:11px; border:1px solid rgba(255,107,107,0.3);">🌆
+                    Late Afternoon: 3:00 PM – 6:00 PM</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- RULE 5 -->
+            <div
+              style="background:rgba(0,212,255,0.06); border:1px solid rgba(0,212,255,0.3); border-radius:12px; padding:16px;">
+              <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
+                <div
+                  style="width:36px; height:36px; border-radius:10px; background:rgba(0,212,255,0.2); display:flex; align-items:center; justify-content:center; font-size:18px;">
+                  🧹</div>
+                <div>
+                  <div style="font-size:10px; font-weight:800; color:#00d4ff; text-transform:uppercase;">Rule #5 • Civic
+                    Action</div>
+                  <div style="font-size:13px; font-weight:800; color:#fff;">Maintain Community Cleanliness</div>
+                </div>
+              </div>
+              <div style="font-size:12px; color:var(--text-secondary); line-height:1.6;">
+                <ul style="padding-left:16px; margin:0;">
+                  <li>Join neighborhood clean-up drives to eliminate communal larvae hotspots.</li>
+                  <li>Report blocked drains, broken pipes, or stagnant water to local municipal authorities (BMC/CMC/104
+                    Helpline).</li>
+                </ul>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+        <!-- ⚡ DENGUE OUTBREAK PREDICTOR (PRESENT & FUTURE) ═════════════════════ -->
+        <div class="card animate-fadeInUp"
+          style="margin-bottom:24px; border:1px solid rgba(255,59,92,0.3); background:linear-gradient(135deg, rgba(5,13,26,0.95), rgba(255,59,92,0.06)); padding:20px;">
+          <div class="section-header">
+            <div class="section-title">
+              <div class="section-title-icon" style="background:rgba(255,59,92,0.15); color:#ff3b5c;">⚡</div>
+              <span style="font-weight:900; font-size:16px;">Dengue Outbreak Predictor Engine (Present & Future)</span>
+            </div>
+            <div style="display:flex; gap:6px;">
+              <button id="op-mode-present" class="btn btn-primary btn-sm" style="font-size:11px; padding:4px 10px;">⚡
+                Present Mode (2026)</button>
+              <button id="op-mode-future" class="btn btn-outline btn-sm"
+                style="font-size:11px; padding:4px 10px; color:#ff3b5c; border-color:rgba(255,59,92,0.4);">🔮 Future
+                Mode (2027–2035+)</button>
+            </div>
+          </div>
+
+          <!-- District & Future Controls Bar -->
+          <div
+            style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; margin-bottom:16px; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:10px; padding:10px 14px;">
+            <div style="display:flex; align-items:center; gap:8px;">
+              <label style="font-size:11px; font-weight:700; color:var(--accent-cyan);">Target District:</label>
+              <select id="op-district-select" class="select-input"
+                style="font-size:12px; padding:4px 10px; font-weight:700; color:#00d4ff;">
+                <option value="Khordha" selected>Khordha (Bhubaneswar)</option>
+                <option value="Cuttack">Cuttack</option>
+                <option value="Balasore">Balasore</option>
+                <option value="Mayurbhanj">Mayurbhanj</option>
+                <option value="Sundargarh">Sundargarh</option>
+                <option value="Ganjam">Ganjam</option>
+                <option value="Jajpur">Jajpur</option>
+                <option value="Puri">Puri</option>
+              </select>
+            </div>
+
+            <!-- Future Mode Extra Controls -->
+            <div id="op-future-controls" style="display:none; align-items:center; gap:10px;">
+              <label style="font-size:11px; font-weight:700; color:#ff3b5c;">Target Future Year:</label>
+              <select id="op-year-select" class="select-input"
+                style="font-size:12px; padding:4px 10px; font-weight:700; color:#ff3b5c; border-color:rgba(255,59,92,0.4);">
+                <option value="2027" selected>2027 (Peak)</option>
+                <option value="2028">2028</option>
+                <option value="2029">2029</option>
+                <option value="2030">2030</option>
+                <option value="2031">2031 (Peak)</option>
+                <option value="2032">2032</option>
+                <option value="2035">2035 (Peak+)</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Micro-climate Predictor Sliders -->
+          <div style="display:grid; grid-template-columns: repeat(5, 1fr); gap:10px; margin-bottom:16px;">
+            <div>
+              <label style="font-size:10px; color:var(--text-muted); display:flex; justify-content:space-between;">
+                <span>🌡️ Temp</span>
+                <span id="op-temp-val" style="color:#00d4ff;">30.5°C</span>
+              </label>
+              <input type="range" id="op-temp" min="20" max="42" step="0.5" value="30.5"
+                style="width:100%; accent-color:#00d4ff;" />
+            </div>
+
+            <div>
+              <label style="font-size:10px; color:var(--text-muted); display:flex; justify-content:space-between;">
+                <span>💧 Humidity</span>
+                <span id="op-humidity-val" style="color:#00e5a0;">80%</span>
+              </label>
+              <input type="range" id="op-humidity" min="40" max="100" step="1" value="80"
+                style="width:100%; accent-color:#00e5a0;" />
+            </div>
+
+            <div>
+              <label style="font-size:10px; color:var(--text-muted); display:flex; justify-content:space-between;">
+                <span>🌧️ Rain (24h)</span>
+                <span id="op-rain-val" style="color:#ffd666;">140mm</span>
+              </label>
+              <input type="range" id="op-rain" min="0" max="300" step="5" value="140"
+                style="width:100%; accent-color:#ffd666;" />
+            </div>
+
+            <div>
+              <label style="font-size:10px; color:var(--text-muted); display:flex; justify-content:space-between;">
+                <span>🌊 NDWI Water</span>
+                <span id="op-ndwi-val" style="color:#ff9f43;">0.70</span>
+              </label>
+              <input type="range" id="op-ndwi" min="0.1" max="1.0" step="0.05" value="0.70"
+                style="width:100%; accent-color:#ff9f43;" />
+            </div>
+
+            <div>
+              <label style="font-size:10px; color:var(--text-muted); display:flex; justify-content:space-between;">
+                <span>🛸 Fogging</span>
+                <span id="op-fogging-val" style="color:#ff6b6b;">20%</span>
+              </label>
+              <input type="range" id="op-fogging" min="0" max="90" step="5" value="20"
+                style="width:100%; accent-color:#ff6b6b;" />
+            </div>
+          </div>
+
+          <!-- Outbreak Prediction Metrics Display -->
+          <div
+            style="display:grid; grid-template-columns: 2fr 1fr 1fr 2fr; gap:12px; align-items:center; background:rgba(0,0,0,0.3); border:1px solid rgba(255,255,255,0.08); border-radius:12px; padding:14px;">
+            <div>
+              <div style="font-size:10px; color:var(--text-muted);">OUTBREAK RISK SCORE</div>
+              <div id="op-risk-score-val"
+                style="font-family:'Rajdhani',sans-serif; font-size:32px; font-weight:900; color:#ff3b5c; line-height:1;">
+                78%</div>
+              <div style="margin-top:4px;"><span id="op-category-val" class="badge badge-critical">CRITICAL OUTBREAK
+                  EMERGENCY</span></div>
+            </div>
+
+            <div style="text-align:center;">
+              <div style="font-size:10px; color:var(--text-muted);">REPRODUCTION R0</div>
+              <div id="op-r0-val"
+                style="font-family:'Rajdhani',sans-serif; font-size:24px; font-weight:800; color:#ff3b5c;">2.85</div>
+              <div style="font-size:10px; color:var(--text-muted); margin-top:2px;">Threshold > 2.0</div>
+            </div>
+
+            <div style="text-align:center;">
+              <div style="font-size:10px; color:var(--text-muted);">EIP INCUBATION</div>
+              <div id="op-eip-val" style="font-size:16px; font-weight:800; color:#00d4ff;">7.2 Days</div>
+              <div style="font-size:10px; color:var(--text-muted); margin-top:2px;">Extrinsic Period</div>
+            </div>
+
+            <div>
+              <div style="font-size:10px; color:var(--text-muted); margin-bottom:2px;">HOSPITAL SURGE REQUIREMENT</div>
+              <div id="op-surge-val" style="font-size:11px; font-weight:700; color:#ffd666; margin-bottom:4px;">CRITICAL
+                SURGE: +45% Beds</div>
+              <div id="op-action-val" style="font-size:10px; color:var(--text-secondary); line-height:1.3;">24h fogging
+                & drone larvicide spray.</div>
+            </div>
           </div>
         </div>
 
@@ -316,6 +633,60 @@
             </div>
           </div>
 
+          <!-- 🏛️ IMPRESSIVE ODISHA 4K LANDMARK SURVEILLANCE SHOWCASE ═══════════════ -->
+          <div
+            style="margin-bottom:20px; border-radius:14px; overflow:hidden; border:1px solid rgba(0,212,255,0.35); background:#050d1a; box-shadow:0 8px 32px rgba(0,0,0,0.5);">
+            <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:2px; background:rgba(0,212,255,0.2);">
+
+              <!-- Card 1: Bhubaneswar -->
+              <div style="position:relative; height:190px; overflow:hidden;" class="landmark-card-box">
+                <img src="bhubaneswar_smartcity_dengue_hub_1785436473749.png" alt="Bhubaneswar Smart City"
+                  style="width:100%; height:100%; object-fit:cover; display:block; transition:transform 0.5s ease;" />
+                <div
+                  style="position:absolute; inset:0; background:linear-gradient(to top, rgba(5,13,26,0.95), rgba(5,13,26,0.2) 60%, transparent); padding:14px; display:flex; flex-direction:column; justify-content:flex-end;">
+                  <span
+                    style="font-size:10px; font-weight:800; color:#00d4ff; text-transform:uppercase; letter-spacing:0.8px; background:rgba(0,212,255,0.15); padding:2px 8px; border-radius:10px; align-self:flex-start; margin-bottom:4px;">🏛️
+                    CAPITAL HUB</span>
+                  <div style="font-size:15px; font-weight:800; color:#fff; text-shadow:0 2px 4px rgba(0,0,0,0.8);">
+                    Bhubaneswar Smart City</div>
+                  <div style="font-size:10px; color:#8b9cc8; margin-top:2px;">Lingaraj & Central Division Vector Watch
+                  </div>
+                </div>
+              </div>
+
+              <!-- Card 2: Cuttack -->
+              <div style="position:relative; height:190px; overflow:hidden;" class="landmark-card-box">
+                <img src="cuttack_mahanadi_vector_control_1785436498771.png" alt="Cuttack Mahanadi"
+                  style="width:100%; height:100%; object-fit:cover; display:block; transition:transform 0.5s ease;" />
+                <div
+                  style="position:absolute; inset:0; background:linear-gradient(to top, rgba(5,13,26,0.95), rgba(5,13,26,0.2) 60%, transparent); padding:14px; display:flex; flex-direction:column; justify-content:flex-end;">
+                  <span
+                    style="font-size:10px; font-weight:800; color:#ffd666; text-transform:uppercase; letter-spacing:0.8px; background:rgba(255,214,102,0.15); padding:2px 8px; border-radius:10px; align-self:flex-start; margin-bottom:4px;">🌊
+                    RIVER EMBANKMENT</span>
+                  <div style="font-size:15px; font-weight:800; color:#fff; text-shadow:0 2px 4px rgba(0,0,0,0.8);">
+                    Cuttack Mahanadi Riverfront</div>
+                  <div style="font-size:10px; color:#8b9cc8; margin-top:2px;">SCB Medical College & Vector Control</div>
+                </div>
+              </div>
+
+              <!-- Card 3: Puri -->
+              <div style="position:relative; height:190px; overflow:hidden;" class="landmark-card-box">
+                <img src="puri_coastal_surveillance_hub_1785436535718.png" alt="Puri Coast"
+                  style="width:100%; height:100%; object-fit:cover; display:block; transition:transform 0.5s ease;" />
+                <div
+                  style="position:absolute; inset:0; background:linear-gradient(to top, rgba(5,13,26,0.95), rgba(5,13,26,0.2) 60%, transparent); padding:14px; display:flex; flex-direction:column; justify-content:flex-end;">
+                  <span
+                    style="font-size:10px; font-weight:800; color:#00e5a0; text-transform:uppercase; letter-spacing:0.8px; background:rgba(0,229,160,0.15); padding:2px 8px; border-radius:10px; align-self:flex-start; margin-bottom:4px;">🏖️
+                    COASTAL PROMENADE</span>
+                  <div style="font-size:15px; font-weight:800; color:#fff; text-shadow:0 2px 4px rgba(0,0,0,0.8);">Puri
+                    Heritage Sea Coast</div>
+                  <div style="font-size:10px; color:#8b9cc8; margin-top:2px;">Pilgrimage Vector Surveillance Zone</div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
           <div class="map-controls" style="display:flex; flex-direction:column; gap:10px; margin-bottom:12px;">
             <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
               <!-- Layer Toggles -->
@@ -326,7 +697,8 @@
                 <button class="map-layer-btn" data-layer="city" onclick="setMapLayer('city')">🏢 Cities (35+)</button>
                 <button class="map-layer-btn" data-layer="block" onclick="setMapLayer('block')">🏛️ CD Blocks
                   (314)</button>
-                <button class="map-layer-btn" data-layer="village" onclick="setMapLayer('village')">🏡 All Villages (51,349)</button>
+                <button class="map-layer-btn" data-layer="village" onclick="setMapLayer('village')">🏡 All Villages
+                  (51,349)</button>
                 <button class="map-layer-btn" data-layer="hotspot" onclick="setMapLayer('hotspot')">🔥 Hotspots</button>
               </div>
 
@@ -335,11 +707,11 @@
                 <div class="map-search-wrapper" id="map-search-wrapper">
                   <span class="search-icon-inside"><i class="fa-solid fa-magnifying-glass"></i></span>
                   <input type="text" id="map-search" class="map-search-input"
-                    placeholder="Search 50,000+ Odisha Cities, Blocks, Villages..."
-                    autocomplete="off">
+                    placeholder="Search 50,000+ Odisha Cities, Blocks, Villages..." autocomplete="off">
                   <div id="map-search-dropdown" class="map-search-dropdown"></div>
                 </div>
-                <button class="mic-voice-btn" id="voice-search-btn" onclick="startVoiceSearch()" title="Click for Voice Search">
+                <button class="mic-voice-btn" id="voice-search-btn" onclick="startVoiceSearch()"
+                  title="Click for Voice Search">
                   <i class="fa-solid fa-microphone"></i>
                 </button>
                 <select id="district-jump" class="select-input district-select" onchange="focusDistrict(this.value)">
@@ -362,7 +734,37 @@
               <div class="map-filter-group">
                 <label>District</label>
                 <select id="filter-district" class="select-input">
-                  <option value="all">All Districts</option>
+                  <option value="all">All Districts (30)</option>
+                  <option value="Angul">Angul</option>
+                  <option value="Balasore">Balasore</option>
+                  <option value="Bargarh">Bargarh</option>
+                  <option value="Bhadrak">Bhadrak</option>
+                  <option value="Bolangir">Bolangir</option>
+                  <option value="Boudh">Boudh</option>
+                  <option value="Cuttack">Cuttack</option>
+                  <option value="Deogarh">Deogarh</option>
+                  <option value="Dhenkanal">Dhenkanal</option>
+                  <option value="Gajapati">Gajapati</option>
+                  <option value="Ganjam">Ganjam</option>
+                  <option value="Jagatsinghpur">Jagatsinghpur</option>
+                  <option value="Jajpur">Jajpur</option>
+                  <option value="Jharsuguda">Jharsuguda</option>
+                  <option value="Kalahandi">Kalahandi</option>
+                  <option value="Kandhamal">Kandhamal</option>
+                  <option value="Kendrapara">Kendrapara</option>
+                  <option value="Keonjhar">Keonjhar</option>
+                  <option value="Khordha">Khordha (Bhubaneswar)</option>
+                  <option value="Koraput">Koraput</option>
+                  <option value="Malkangiri">Malkangiri</option>
+                  <option value="Mayurbhanj">Mayurbhanj</option>
+                  <option value="Nabarangpur">Nabarangpur</option>
+                  <option value="Nayagarh">Nayagarh</option>
+                  <option value="Nuapada">Nuapada</option>
+                  <option value="Puri">Puri</option>
+                  <option value="Rayagada">Rayagada</option>
+                  <option value="Sambalpur">Sambalpur</option>
+                  <option value="Subarnapur">Subarnapur (Sonepur)</option>
+                  <option value="Sundargarh">Sundargarh</option>
                 </select>
               </div>
               <div class="map-filter-group">
@@ -381,7 +783,8 @@
               <div style="display:flex; gap:12px; align-items:center; flex-wrap:wrap; width:100%;">
                 <div style="font-size:12px; color:var(--text-secondary);">Time view:</div>
                 <div class="slider-label">Jan</div>
-                <input id="map-time-slider" type="range" min="0" max="11" value="6" step="1" onchange="updateMapTime(this.value)" />
+                <input id="map-time-slider" type="range" min="0" max="11" value="6" step="1"
+                  onchange="updateMapTime(this.value)" />
                 <div class="slider-label" id="map-time-label">Jul</div>
               </div>
             </div>
@@ -451,7 +854,8 @@
             </div>
 
             <div style="font-size:12px; color:var(--text-muted); margin-bottom:14px;">
-              Why is <strong style="color:var(--accent-coral);">Baramunda & Khordha at 88/100 Risk Score?</strong> AI risk factor attribution:
+              Why is <strong style="color:var(--accent-coral);">Baramunda & Khordha at 88/100 Risk Score?</strong> AI
+              risk factor attribution:
             </div>
 
             <div class="xai-factor-card">
@@ -459,7 +863,9 @@
                 <span>🌧️ Heavy Rainfall & Humidity Lag (0-2 mo)</span>
                 <span style="color:#ff6b6b;">+28 Risk Pts (39%)</span>
               </div>
-              <div class="xai-bar-track"><div class="xai-bar-fill" style="width:72%; background:#ff6b6b;"></div></div>
+              <div class="xai-bar-track">
+                <div class="xai-bar-fill" style="width:72%; background:#ff6b6b;"></div>
+              </div>
             </div>
 
             <div class="xai-factor-card">
@@ -467,7 +873,9 @@
                 <span>🦟 Mosquito Larval Breeding Density</span>
                 <span style="color:#ffd666;">+24 Risk Pts (31%)</span>
               </div>
-              <div class="xai-bar-track"><div class="xai-bar-fill" style="width:62%; background:#ffd666;"></div></div>
+              <div class="xai-bar-track">
+                <div class="xai-bar-fill" style="width:62%; background:#ffd666;"></div>
+              </div>
             </div>
 
             <div class="xai-factor-card">
@@ -475,7 +883,9 @@
                 <span>👥 Population & Settlement Density</span>
                 <span style="color:#00d4ff;">+18 Risk Pts (18%)</span>
               </div>
-              <div class="xai-bar-track"><div class="xai-bar-fill" style="width:48%; background:#00d4ff;"></div></div>
+              <div class="xai-bar-track">
+                <div class="xai-bar-fill" style="width:48%; background:#00d4ff;"></div>
+              </div>
             </div>
 
             <div class="xai-factor-card">
@@ -483,7 +893,9 @@
                 <span>📈 Historical Case Momentum</span>
                 <span style="color:#00e5a0;">+16 Risk Pts (12%)</span>
               </div>
-              <div class="xai-bar-track"><div class="xai-bar-fill" style="width:40%; background:#00e5a0;"></div></div>
+              <div class="xai-bar-track">
+                <div class="xai-bar-fill" style="width:40%; background:#00e5a0;"></div>
+              </div>
             </div>
           </div>
 
@@ -494,7 +906,9 @@
                 <div class="section-title-icon">🎯</div>
                 AI Smart Resource Allocation
               </div>
-              <span class="ai-badge-header" style="background:rgba(0,212,255,0.15); color:#00d4ff; border-color:rgba(0,212,255,0.3);">Predict → Prevent → Protect</span>
+              <span class="ai-badge-header"
+                style="background:rgba(0,212,255,0.15); color:#00d4ff; border-color:rgba(0,212,255,0.3);">Predict →
+                Prevent → Protect</span>
             </div>
 
             <div style="font-size:12px; color:var(--text-muted); margin-bottom:14px;">
@@ -507,7 +921,8 @@
                 <div>
                   <div style="font-size:14px; font-weight:800; color:#f0f4ff;">12 Vehicles</div>
                   <div style="font-size:10px; color:#8b9cc8;">Fogging Sprayers</div>
-                  <div style="font-size:10px; color:#ff6b6b; font-weight:600; margin-top:2px;">📍 Priority: Baramunda & Sikharchandi</div>
+                  <div style="font-size:10px; color:#ff6b6b; font-weight:600; margin-top:2px;">📍 Priority: Baramunda &
+                    Sikharchandi</div>
                 </div>
               </div>
 
@@ -516,7 +931,8 @@
                 <div>
                   <div style="font-size:14px; font-weight:800; color:#f0f4ff;">8 Rapid Teams</div>
                   <div style="font-size:10px; color:#8b9cc8;">Medical Doctors</div>
-                  <div style="font-size:10px; color:#00d4ff; font-weight:600; margin-top:2px;">📍 Priority: Khordha & Cuttack SCB</div>
+                  <div style="font-size:10px; color:#00d4ff; font-weight:600; margin-top:2px;">📍 Priority: Khordha &
+                    Cuttack SCB</div>
                 </div>
               </div>
 
@@ -525,7 +941,8 @@
                 <div>
                   <div style="font-size:14px; font-weight:800; color:#f0f4ff;">6 Ambulances</div>
                   <div style="font-size:10px; color:#8b9cc8;">Emergency Transport</div>
-                  <div style="font-size:10px; color:#ffd666; font-weight:600; margin-top:2px;">📍 Pre-positioned: Capital Hospital</div>
+                  <div style="font-size:10px; color:#ffd666; font-weight:600; margin-top:2px;">📍 Pre-positioned:
+                    Capital Hospital</div>
                 </div>
               </div>
 
@@ -534,7 +951,8 @@
                 <div>
                   <div style="font-size:14px; font-weight:800; color:#f0f4ff;">2,500 Kits</div>
                   <div style="font-size:10px; color:#8b9cc8;">Dengue Test & ORS</div>
-                  <div style="font-size:10px; color:#00e5a0; font-weight:600; margin-top:2px;">📍 Dispatched to PHC Sub-Centers</div>
+                  <div style="font-size:10px; color:#00e5a0; font-weight:600; margin-top:2px;">📍 Dispatched to PHC
+                    Sub-Centers</div>
                 </div>
               </div>
             </div>
@@ -659,6 +1077,190 @@
 
         </div>
 
+        <!-- ═══ RARE & INNOVATIVE AI DENGUE SUITE ═════════════════════════════════ -->
+        <div class="grid-2" style="margin-bottom:24px;">
+
+          <!-- 🎙️ AI Bio-Acoustic Mosquito Wingbeat Spectrograph Classifier -->
+          <div class="card animate-fadeInUp" style="position:relative; overflow:hidden;">
+            <div class="section-header">
+              <div class="section-title">
+                <div class="section-title-icon" style="background:rgba(255,59,92,0.15); color:#ff3b5c;">🎙️</div>
+                <span>AI Bio-Acoustic Wingbeat Spectrograph</span>
+              </div>
+              <span class="badge badge-critical" style="font-size:10px;">WEB AUDIO FFT</span>
+            </div>
+            <div style="font-size:12px; color:var(--text-muted); margin-bottom:14px;">
+              Real-time acoustic spectrograph analyzing mosquito flight wingbeats (200–1000 Hz) to classify vector
+              species (*Aedes aegypti*, *Aedes albopictus*, *Culex*).
+            </div>
+
+            <!-- Canvas FFT Visualizer -->
+            <div
+              style="position:relative; border-radius:12px; overflow:hidden; border:1px solid rgba(0,212,255,0.2); margin-bottom:14px; background:#050d1a;">
+              <canvas id="acoustic-canvas" width="550" height="140"
+                style="width:100%; height:140px; display:block;"></canvas>
+              <div id="acoustic-status" class="acoustic-status-bar idle"
+                style="position:absolute; top:8px; right:8px; padding:4px 10px; border-radius:20px; font-size:11px; font-weight:700; background:rgba(5,13,26,0.85); backdrop-filter:blur(4px);">
+                ⏸️ Acoustic AI Standby
+              </div>
+            </div>
+
+            <!-- Acoustic Control Buttons -->
+            <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:16px;">
+              <button onclick="window.acousticAI.startListening()" class="btn btn-primary"
+                style="flex:1; justify-content:center; padding:10px; font-size:12px; background:linear-gradient(135deg, #ff3b5c, #ff8c00);">
+                🎙️ Start Live Microphone FFT
+              </button>
+              <button onclick="window.acousticAI.stopListening()" class="btn btn-outline"
+                style="padding:10px 16px; font-size:12px;">
+                🛑 Stop
+              </button>
+            </div>
+
+            <!-- Synthetic Vector Tone Presets for instant testing -->
+            <div style="font-size:11px; font-weight:700; color:var(--text-secondary); margin-bottom:8px;">
+              🧪 Instant Demo Tones (Inject Synthetic Wingbeat Frequencies):
+            </div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:16px;">
+              <button onclick="window.acousticAI.playSynthPreset(535, 'Aedes aegypti (Female)')" class="btn btn-outline"
+                style="font-size:11px; padding:8px; justify-content:flex-start; border-color:rgba(255,59,92,0.4); color:#ff3b5c;">
+                🦟 Aedes aegypti (535 Hz)
+              </button>
+              <button onclick="window.acousticAI.playSynthPreset(625, 'Aedes albopictus (Female)')"
+                class="btn btn-outline"
+                style="font-size:11px; padding:8px; justify-content:flex-start; border-color:rgba(255,140,0,0.4); color:#ff8c00;">
+                🦟 Asian Tiger (625 Hz)
+              </button>
+              <button onclick="window.acousticAI.playSynthPreset(420, 'Culex quinquefasciatus')" class="btn btn-outline"
+                style="font-size:11px; padding:8px; justify-content:flex-start; border-color:rgba(255,204,0,0.4); color:#ffcc00;">
+                🦟 Culex Vector (420 Hz)
+              </button>
+              <button onclick="window.acousticAI.playSynthPreset(330, 'Anopheles stephensi')" class="btn btn-outline"
+                style="font-size:11px; padding:8px; justify-content:flex-start; border-color:rgba(0,212,255,0.4); color:#00d4ff;">
+                🦟 Anopheles (330 Hz)
+              </button>
+            </div>
+
+            <!-- Classification Result Card -->
+            <div
+              style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:12px; padding:14px;">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                <span id="acoustic-result-title" style="font-size:14px; font-weight:800; color:#f0f4ff;">Listening for
+                  Wingbeat Frequencies...</span>
+                <span id="acoustic-result-risk" class="acoustic-badge idle">STANDBY</span>
+              </div>
+              <div id="acoustic-result-freq" style="font-size:12px; font-weight:700; color:#00d4ff; margin-bottom:6px;">
+                -- Hz</div>
+              <div id="acoustic-result-desc" style="font-size:11px; color:var(--text-muted); line-height:1.4;">
+                Bring phone microphone near mosquito flight path or tap a synthetic wingbeat preset above to trigger
+                deep frequency decomposition.
+              </div>
+            </div>
+          </div>
+
+          <!-- 🧬 Swarm Cellular Automata Epidemic Micro-Climate Simulator -->
+          <div class="card animate-fadeInUp" style="position:relative; overflow:hidden;">
+            <div class="section-header">
+              <div class="section-title">
+                <div class="section-title-icon" style="background:rgba(0,229,160,0.15); color:#00e5a0;">🧬</div>
+                <span>Swarm Cellular Automata Epidemic Simulator</span>
+              </div>
+              <span class="badge badge-warning" style="font-size:10px;">AGENT CELLULAR R0</span>
+            </div>
+            <div style="font-size:12px; color:var(--text-muted); margin-bottom:14px;">
+              Interactive micro-climate simulation engine. Tweak ambient temperature, humidity, water body index, and
+              drone larvicide fogging to observe live transmission velocity.
+            </div>
+
+            <!-- Canvas Grid Simulation -->
+            <div
+              style="position:relative; border-radius:12px; overflow:hidden; border:1px solid rgba(0,229,160,0.2); margin-bottom:14px; background:#050d1a;">
+              <canvas id="sim-canvas" width="550" height="140"
+                style="width:100%; height:140px; display:block;"></canvas>
+            </div>
+
+            <!-- Parameter Sliders -->
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:16px;">
+              <div>
+                <label
+                  style="font-size:11px; color:var(--text-muted); font-weight:600; display:flex; justify-content:space-between;">
+                  <span>🌡️ Temp (°C)</span>
+                  <span id="sim-temp-val" style="color:#00d4ff;">29.5°C</span>
+                </label>
+                <input type="range" id="sim-temp" min="15" max="42" step="0.5" value="29.5"
+                  style="width:100%; accent-color:#00d4ff;" />
+              </div>
+
+              <div>
+                <label
+                  style="font-size:11px; color:var(--text-muted); font-weight:600; display:flex; justify-content:space-between;">
+                  <span>💧 Humidity (%)</span>
+                  <span id="sim-humidity-val" style="color:#00e5a0;">78%</span>
+                </label>
+                <input type="range" id="sim-humidity" min="30" max="100" step="1" value="78"
+                  style="width:100%; accent-color:#00e5a0;" />
+              </div>
+
+              <div>
+                <label
+                  style="font-size:11px; color:var(--text-muted); font-weight:600; display:flex; justify-content:space-between;">
+                  <span>🌊 NDWI Water Index</span>
+                  <span id="sim-ndwi-val" style="color:#ffd666;">0.65</span>
+                </label>
+                <input type="range" id="sim-ndwi" min="0.1" max="1.0" step="0.05" value="0.65"
+                  style="width:100%; accent-color:#ffd666;" />
+              </div>
+
+              <div>
+                <label
+                  style="font-size:11px; color:var(--text-muted); font-weight:600; display:flex; justify-content:space-between;">
+                  <span>🛸 Drone Fogging (%)</span>
+                  <span id="sim-fogging-val" style="color:#ff6b6b;">20%</span>
+                </label>
+                <input type="range" id="sim-fogging" min="0" max="100" step="5" value="20"
+                  style="width:100%; accent-color:#ff6b6b;" />
+              </div>
+            </div>
+
+            <!-- Simulation Controls & Metrics -->
+            <div style="display:flex; gap:8px; margin-bottom:14px;">
+              <button onclick="window.swarmSim.start()" class="btn btn-primary"
+                style="flex:1; justify-content:center; font-size:11px; padding:8px;">
+                ▶️ Start Agent Swarm
+              </button>
+              <button onclick="window.swarmSim.stop()" class="btn btn-outline" style="font-size:11px; padding:8px;">
+                ⏸️ Pause
+              </button>
+              <button onclick="window.swarmSim.resetSimulation()" class="btn btn-outline"
+                style="font-size:11px; padding:8px;">
+                🔄 Reset
+              </button>
+            </div>
+
+            <!-- Metrics Summary -->
+            <div
+              style="display:grid; grid-template-columns: repeat(4, 1fr); gap:8px; text-align:center; background:rgba(0,229,160,0.04); border:1px solid rgba(0,229,160,0.12); border-radius:10px; padding:10px;">
+              <div>
+                <div style="font-size:10px; color:var(--text-muted);">Reproduction R0</div>
+                <div id="sim-r0-val" style="font-size:15px; font-weight:900; color:#ff3b5c;">2.8</div>
+              </div>
+              <div>
+                <div style="font-size:10px; color:var(--text-muted);">EIP (Incubation)</div>
+                <div id="sim-eip-val" style="font-size:13px; font-weight:800; color:#00d4ff;">8.4 Days</div>
+              </div>
+              <div>
+                <div style="font-size:10px; color:var(--text-muted);">14-Day Velocity</div>
+                <div id="sim-cases-val" style="font-size:13px; font-weight:800; color:#ffd666;">~420 Cases</div>
+              </div>
+              <div>
+                <div style="font-size:10px; color:var(--text-muted);">Vector Status</div>
+                <div id="sim-status-val" style="font-size:11px; font-weight:800; color:#ff3b5c;">HIGH SURVEILLANCE</div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
         <!-- ── District Ranking Table ─────────────────────────── -->
         <div class="card animate-fadeInUp">
           <div class="section-header">
@@ -696,15 +1298,18 @@
 
       <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; margin-bottom:12px;">
         <div>
-          <label style="font-size:11px; color:#8b9cc8; font-weight:600; display:block; margin-bottom:4px;">Patient Name</label>
-          <input type="text" id="sym-name" class="map-search-input" value="Santosh Mohanty" placeholder="Full Name">
+          <label style="font-size:11px; color:#8b9cc8; font-weight:600; display:block; margin-bottom:4px;">Patient
+            Name</label>
+          <input type="text" id="sym-name" class="map-search-input" value="" placeholder="Enter Patient Name">
         </div>
         <div>
-          <label style="font-size:11px; color:#8b9cc8; font-weight:600; display:block; margin-bottom:4px;">Age (Years)</label>
+          <label style="font-size:11px; color:#8b9cc8; font-weight:600; display:block; margin-bottom:4px;">Age
+            (Years)</label>
           <input type="number" id="sym-age" class="map-search-input" value="28" placeholder="Age">
         </div>
         <div>
-          <label style="font-size:11px; color:#8b9cc8; font-weight:600; display:block; margin-bottom:4px;">Gender</label>
+          <label
+            style="font-size:11px; color:#8b9cc8; font-weight:600; display:block; margin-bottom:4px;">Gender</label>
           <select id="sym-gender" class="map-search-input" style="background:#0a1628;">
             <option value="Male">Male</option>
             <option value="Female">Female</option>
@@ -715,19 +1320,23 @@
 
       <div style="display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:10px; margin-bottom:12px;">
         <div>
-          <label style="font-size:11px; color:#8b9cc8; font-weight:600; display:block; margin-bottom:4px;">Fever (°F)</label>
+          <label style="font-size:11px; color:#8b9cc8; font-weight:600; display:block; margin-bottom:4px;">Fever
+            (°F)</label>
           <input type="number" id="sym-temp" class="map-search-input" value="102.4" step="0.1" placeholder="°F">
         </div>
         <div>
-          <label style="font-size:11px; color:#8b9cc8; font-weight:600; display:block; margin-bottom:4px;">Duration (Days)</label>
+          <label style="font-size:11px; color:#8b9cc8; font-weight:600; display:block; margin-bottom:4px;">Duration
+            (Days)</label>
           <input type="number" id="sym-days" class="map-search-input" value="4" placeholder="Days">
         </div>
         <div>
-          <label style="font-size:11px; color:#8b9cc8; font-weight:600; display:block; margin-bottom:4px;">Platelets (/mm³)</label>
+          <label style="font-size:11px; color:#8b9cc8; font-weight:600; display:block; margin-bottom:4px;">Platelets
+            (/mm³)</label>
           <input type="number" id="sym-platelets" class="map-search-input" value="95000" placeholder="e.g. 95000">
         </div>
         <div>
-          <label style="font-size:11px; color:#8b9cc8; font-weight:600; display:block; margin-bottom:4px;">Blood Pressure</label>
+          <label style="font-size:11px; color:#8b9cc8; font-weight:600; display:block; margin-bottom:4px;">Blood
+            Pressure</label>
           <input type="text" id="sym-bp" class="map-search-input" value="110/70" placeholder="120/80">
         </div>
       </div>
@@ -745,7 +1354,8 @@
       </div>
 
       <div style="margin-bottom:14px; font-size:11px; color:#8b9cc8;">
-        <label style="font-weight:700; color:#f0f4ff; display:block; margin-bottom:4px;">Pre-existing Health Conditions:</label>
+        <label style="font-weight:700; color:#f0f4ff; display:block; margin-bottom:4px;">Pre-existing Health
+          Conditions:</label>
         <select id="sym-comorbidity" class="map-search-input" style="background:#0a1628;">
           <option value="None">None (Healthy)</option>
           <option value="Diabetes">Diabetes Mellitus</option>
@@ -755,10 +1365,12 @@
       </div>
 
       <div style="display:flex; gap:8px;">
-        <button class="btn btn-primary" onclick="runAISymptomChecker()" style="flex:2; padding:10px; background:var(--gradient-cyan); border:none; font-weight:800;">
+        <button class="btn btn-primary" onclick="runAISymptomChecker()"
+          style="flex:2; padding:10px; background:var(--gradient-cyan); border:none; font-weight:800;">
           🔬 Calculate AI Risk Diagnosis
         </button>
-        <button class="btn btn-outline" onclick="showSymptomHistory()" style="flex:1; padding:10px; border-color:var(--accent-purple); color:#d8b4fe; font-weight:700;">
+        <button class="btn btn-outline" onclick="showSymptomHistory()"
+          style="flex:1; padding:10px; border-color:var(--accent-purple); color:#d8b4fe; font-weight:700;">
           📜 View History
         </button>
       </div>
@@ -775,54 +1387,80 @@
         <div style="font-size:24px;">📷</div>
         <div>
           <div style="font-size:18px; font-weight:800; color:#f0f4ff;">AI Computer Vision Breeding Detector</div>
-          <div style="font-size:11px; color:#8b9cc8;">Upload or inspect site photos for AI stagnant water & larval detection</div>
+          <div style="font-size:11px; color:#8b9cc8;">Upload or inspect site photos for AI stagnant water & larval
+            detection</div>
         </div>
       </div>
 
+      <!-- Model Status Strip -->
+      <div
+        style="margin-bottom:12px; padding:10px 14px; background:rgba(255,59,92,0.08); border:1px solid rgba(255,59,92,0.25); border-radius:8px; font-size:11px; color:#ff3b5c;"
+        id="model-status-text">
+        ⚠️ <strong>Mosquito AI model not loaded.</strong> Load a trained <code>.onnx</code> or <code>.tflite</code>
+        mosquito detection model to enable camera inference. Simulated/fake detections are strictly disabled.
+      </div>
+
       <div style="margin-bottom:14px; display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
-        <button class="btn btn-primary btn-sm" onclick="startLiveCameraDetection()" id="live-cam-btn" style="background:linear-gradient(135deg,#ff4444,#ff6b6b); border:none; font-weight:800;">
-          🎥 Live Camera Scanner
+        <button class="btn btn-primary btn-sm" onclick="window.mosquitoDetector.startCamera()" id="live-cam-btn"
+          style="background:linear-gradient(135deg,#ff4444,#ff6b6b); border:none; font-weight:800;">
+          🎥 Start Camera Scanner
         </button>
-        <button class="btn btn-outline btn-sm" onclick="toggleCameraFacingMode()" id="switch-cam-btn" style="display:none; border-color:var(--accent-cyan); color:#00d4ff;">
-          🔄 Switch Camera
+
+        <input type="file" id="mosquito-model-file-input" accept=".onnx,.ort,.json" style="display:none;" />
+        <button class="btn btn-outline btn-sm" onclick="document.getElementById('mosquito-model-file-input').click()"
+          style="border-color:#00d4ff; color:#00d4ff;">
+          📦 Load Trained ONNX / TFJS Model File
         </button>
-        <input type="file" id="detector-file-input" accept="image/jpeg,image/png,image/jpg,image/webp" style="display:none;" onchange="handleImageUpload(event)">
+
+        <input type="file" id="detector-file-input" accept="image/jpeg,image/png,image/jpg,image/webp"
+          style="display:none;" onchange="handleImageUpload(event)">
         <button class="btn btn-outline btn-sm" onclick="document.getElementById('detector-file-input').click()">
           📁 Upload Image
         </button>
-        <div style="font-size:11px; color:#8b9cc8;">Samples:</div>
-        <button class="btn btn-outline btn-sm" onclick="analyzeSampleImage('waterlog')">💧 Stagnant Water</button>
-        <button class="btn btn-outline btn-sm" onclick="analyzeSampleImage('garbage')">🗑️ Open Tyres</button>
-        <button class="btn btn-outline btn-sm" onclick="analyzeSampleImage('construction')">🏗️ Drain</button>
       </div>
 
       <video id="detector-video" autoplay playsinline style="display:none;"></video>
 
-      <div style="position:relative; width:100%; height:260px; background:#050d1a; border:2px dashed rgba(0,212,255,0.3); border-radius:12px; overflow:hidden; display:flex; align-items:center; justify-content:center; margin-bottom:14px;">
+      <div
+        style="position:relative; width:100%; height:260px; background:#050d1a; border:2px dashed rgba(0,212,255,0.3); border-radius:12px; overflow:hidden; display:flex; align-items:center; justify-content:center; margin-bottom:14px;">
         <!-- Real-Time AI HUD Badges -->
-        <div id="cam-hud-bar" style="display:none; position:absolute; top:10px; left:10px; right:10px; z-index:10; display:flex; justify-content:space-between; align-items:center; font-size:10px; font-weight:800; pointer-events:none;">
-          <span style="background:rgba(0,212,255,0.25); color:#00d4ff; padding:3px 8px; border-radius:12px; border:1px solid rgba(0,212,255,0.4);" id="cam-mode-badge">
-            🤖 YOLOv8-Vision AI Active
+        <div id="cam-hud-bar"
+          style="display:none; position:absolute; top:10px; left:10px; right:10px; z-index:10; display:flex; justify-content:space-between; align-items:center; font-size:10px; font-weight:800; pointer-events:none;">
+          <span
+            style="background:rgba(255,59,92,0.25); color:#ff3b5c; padding:3px 8px; border-radius:12px; border:1px solid rgba(255,59,92,0.4);"
+            id="cam-mode-badge">
+            ⚠️ Mosquito AI model not loaded.
           </span>
           <div style="display:flex; gap:6px;">
-            <span style="background:rgba(0,229,160,0.2); color:#00e5a0; padding:3px 8px; border-radius:12px; border:1px solid rgba(0,229,160,0.4);" id="cam-fps-badge">
-              ⚡ 45 FPS
-            </span>
-            <span style="background:rgba(255,107,107,0.2); color:#ff6b6b; padding:3px 8px; border-radius:12px; border:1px solid rgba(255,107,107,0.4);" id="cam-det-count">
-              🔍 2 Hazards Detected
+            <span
+              style="background:rgba(0,229,160,0.2); color:#00e5a0; padding:3px 8px; border-radius:12px; border:1px solid rgba(0,229,160,0.4);"
+              id="cam-fps-badge">
+              ⚡ 0 FPS
             </span>
           </div>
         </div>
 
-        <canvas id="detector-canvas" width="600" height="260" style="width:100%; height:100%; object-fit:contain;"></canvas>
+        <canvas id="detector-canvas" width="600" height="260"
+          style="width:100%; height:100%; object-fit:contain;"></canvas>
 
-        <div id="detector-placeholder" style="position:absolute; text-align:center; color:#8b9cc8; font-size:12px; pointer-events:none;">
+        <div id="detector-placeholder"
+          style="position:absolute; text-align:center; color:#8b9cc8; font-size:12px; pointer-events:none; padding:20px;">
           <i class="fa-solid fa-camera-retro" style="font-size:36px; color:var(--accent-cyan); margin-bottom:8px;"></i>
-          <div>Click <strong>🎥 Live Camera Scanner</strong> to detect live mosquitoes with alert</div>
+          <div id="detector-placeholder-text">
+            <div style="color:#ff3b5c; font-weight:700; font-size:14px; margin-bottom:6px;">⚠️ Mosquito AI model not
+              loaded.</div>
+            <div style="font-size:11px; color:#8b9cc8;">Please select a trained <code>mosquito_yolo.onnx</code> model
+              file to start camera inference. Simulated/fake detections are disabled.</div>
+          </div>
         </div>
       </div>
 
-      <div id="detector-output" style="display:none;"></div>
+      <div id="detector-output" style="display:none; margin-bottom:12px;"></div>
+
+      <!-- Detection Audit Log Container -->
+      <div id="detector-log-container"
+        style="max-height:140px; overflow-y:auto; background:rgba(0,0,0,0.3); padding:10px; border-radius:8px; border:1px solid rgba(255,255,255,0.08);">
+      </div>
     </div>
   </div>
 
@@ -838,31 +1476,39 @@
             <div style="font-size:11px; color:#8b9cc8;">Timed Interactive Quiz · 5 Questions</div>
           </div>
         </div>
-        <div style="font-size:14px; font-weight:800; color:#ff6b6b; background:rgba(255,107,107,0.15); padding:6px 12px; border-radius:20px; border:1px solid rgba(255,107,107,0.3);">
+        <div
+          style="font-size:14px; font-weight:800; color:#ff6b6b; background:rgba(255,107,107,0.15); padding:6px 12px; border-radius:20px; border:1px solid rgba(255,107,107,0.3);">
           ⏱️ <span id="quiz-timer">60</span>s
         </div>
       </div>
 
-      <div style="width:100%; height:6px; background:rgba(255,255,255,0.08); border-radius:4px; overflow:hidden; margin-bottom:16px;">
-        <div id="quiz-progress-bar" style="width:20%; height:100%; background:var(--accent-cyan); transition:width 0.3s ease;"></div>
+      <div
+        style="width:100%; height:6px; background:rgba(255,255,255,0.08); border-radius:4px; overflow:hidden; margin-bottom:16px;">
+        <div id="quiz-progress-bar"
+          style="width:20%; height:100%; background:var(--accent-cyan); transition:width 0.3s ease;"></div>
       </div>
 
       <div id="quiz-container">
         <div style="background:rgba(255,255,255,0.03); padding:14px; border-radius:10px; margin-bottom:14px;">
-          <div style="font-size:14px; font-weight:700; color:#f0f4ff; margin-bottom:12px;">1. During which time of day are Aedes aegypti mosquitoes most active?</div>
+          <div style="font-size:14px; font-weight:700; color:#f0f4ff; margin-bottom:12px;">1. During which time of day
+            are Aedes aegypti mosquitoes most active?</div>
           <div style="display:flex; flex-direction:column; gap:8px; font-size:12px;">
-            <label style="padding:10px 12px; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:8px; cursor:pointer; display:flex; align-items:center; gap:8px;">
+            <label
+              style="padding:10px 12px; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:8px; cursor:pointer; display:flex; align-items:center; gap:8px;">
               <input type="radio" name="quiz-opt" value="0"> Late Midnight (12 AM - 3 AM)
             </label>
-            <label style="padding:10px 12px; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:8px; cursor:pointer; display:flex; align-items:center; gap:8px;">
+            <label
+              style="padding:10px 12px; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:8px; cursor:pointer; display:flex; align-items:center; gap:8px;">
               <input type="radio" name="quiz-opt" value="1" checked> Early Morning & Late Afternoon (Daytime)
             </label>
-            <label style="padding:10px 12px; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:8px; cursor:pointer; display:flex; align-items:center; gap:8px;">
+            <label
+              style="padding:10px 12px; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:8px; cursor:pointer; display:flex; align-items:center; gap:8px;">
               <input type="radio" name="quiz-opt" value="2"> High Noon (12 PM - 1 PM)
             </label>
           </div>
         </div>
-        <button class="btn btn-primary" onclick="submitQuizAnswer()" style="width:100%; padding:10px; background:var(--gradient-cyan); border:none; font-weight:800;">
+        <button class="btn btn-primary" onclick="submitQuizAnswer()"
+          style="width:100%; padding:10px; background:var(--gradient-cyan); border:none; font-weight:800;">
           Next Question →
         </button>
       </div>
@@ -883,52 +1529,66 @@
       </div>
 
       <!-- Passcode Auth Screen -->
-      <div id="admin-auth-screen" style="background:rgba(255,255,255,0.03); border:1px solid var(--border-glass); padding:20px; border-radius:12px; text-align:center;">
+      <div id="admin-auth-screen"
+        style="background:rgba(255,255,255,0.03); border:1px solid var(--border-glass); padding:20px; border-radius:12px; text-align:center;">
         <div style="font-size:14px; font-weight:700; color:#f0f4ff; margin-bottom:8px;">🔑 Authenticate Access</div>
-        <div style="font-size:11px; color:#8b9cc8; margin-bottom:14px;">Enter Government Official Passcode to unlock admin controls:</div>
-        <input type="password" id="admin-passcode" class="map-search-input" value="admin" style="width:200px; margin:0 auto 14px auto; text-align:center;" placeholder="Passcode (default: admin)">
-        <button class="btn btn-primary" onclick="authenticateAdmin()" style="width:200px; margin:0 auto; padding:8px; background:var(--gradient-cyan); border:none; font-weight:800;">
+        <div style="font-size:11px; color:#8b9cc8; margin-bottom:14px;">Enter Government Official Passcode to unlock
+          admin controls:</div>
+        <input type="password" id="admin-passcode" class="map-search-input" value="admin"
+          style="width:200px; margin:0 auto 14px auto; text-align:center;" placeholder="Passcode (default: admin)">
+        <button class="btn btn-primary" onclick="authenticateAdmin()"
+          style="width:200px; margin:0 auto; padding:8px; background:var(--gradient-cyan); border:none; font-weight:800;">
           Unlock Portal
         </button>
       </div>
 
       <!-- Admin Authenticated Dashboard -->
       <div id="admin-dashboard-screen" style="display:none;">
-        <div style="background:rgba(0,212,255,0.08); border:1px solid rgba(0,212,255,0.3); padding:12px; border-radius:10px; margin-bottom:14px; font-size:12px; color:#00d4ff; font-weight:700; display:flex; justify-content:space-between; align-items:center;">
+        <div
+          style="background:rgba(0,212,255,0.08); border:1px solid rgba(0,212,255,0.3); padding:12px; border-radius:10px; margin-bottom:14px; font-size:12px; color:#00d4ff; font-weight:700; display:flex; justify-content:space-between; align-items:center;">
           <span>🛡️ Official Session Active: Chief Epidemiologist (Odisha Health Dept)</span>
           <span style="font-size:10px; color:#8b9cc8;">ID: OHD-2026-992</span>
         </div>
 
-        <div style="display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:8px; text-align:center; font-size:11px; margin-bottom:14px;">
-          <div style="background:rgba(255,255,255,0.03); padding:10px; border-radius:8px; border:1px solid rgba(255,255,255,0.06);">
+        <div
+          style="display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:8px; text-align:center; font-size:11px; margin-bottom:14px;">
+          <div
+            style="background:rgba(255,255,255,0.03); padding:10px; border-radius:8px; border:1px solid rgba(255,255,255,0.06);">
             <div style="font-size:18px; font-weight:800; color:#00d4ff;">1,480</div>
             <div>Total Users</div>
           </div>
-          <div style="background:rgba(255,255,255,0.03); padding:10px; border-radius:8px; border:1px solid rgba(255,255,255,0.06);">
+          <div
+            style="background:rgba(255,255,255,0.03); padding:10px; border-radius:8px; border:1px solid rgba(255,255,255,0.06);">
             <div style="font-size:18px; font-weight:800; color:#ffd666;">312</div>
             <div>Community Reports</div>
           </div>
-          <div style="background:rgba(255,255,255,0.03); padding:10px; border-radius:8px; border:1px solid rgba(255,255,255,0.06);">
+          <div
+            style="background:rgba(255,255,255,0.03); padding:10px; border-radius:8px; border:1px solid rgba(255,255,255,0.06);">
             <div style="font-size:18px; font-weight:800; color:#d8b4fe;">840</div>
             <div>Symptom Checks</div>
           </div>
-          <div style="background:rgba(255,255,255,0.03); padding:10px; border-radius:8px; border:1px solid rgba(255,255,255,0.06);">
+          <div
+            style="background:rgba(255,255,255,0.03); padding:10px; border-radius:8px; border:1px solid rgba(255,255,255,0.06);">
             <div style="font-size:18px; font-weight:800; color:#ff6b6b;">3</div>
             <div>Critical Districts</div>
           </div>
         </div>
 
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
-          <button class="btn btn-primary" onclick="sendMassHealthAlert()" style="padding:10px; background:#ff4444; border:none; font-weight:800; font-size:11px;">
+          <button class="btn btn-primary" onclick="sendMassHealthAlert()"
+            style="padding:10px; background:#ff4444; border:none; font-weight:800; font-size:11px;">
             📢 Broadcast Mass Emergency Alert
           </button>
-          <button class="btn btn-primary" onclick="exportDataCSV()" style="padding:10px; background:var(--gradient-cyan); border:none; font-weight:800; font-size:11px;">
+          <button class="btn btn-primary" onclick="exportDataCSV()"
+            style="padding:10px; background:var(--gradient-cyan); border:none; font-weight:800; font-size:11px;">
             📥 Export Complete CSV Data
           </button>
-          <button class="btn btn-outline" onclick="window.print()" style="padding:10px; border-color:var(--accent-purple); color:#d8b4fe; font-weight:800; font-size:11px;">
+          <button class="btn btn-outline" onclick="window.print()"
+            style="padding:10px; border-color:var(--accent-purple); color:#d8b4fe; font-weight:800; font-size:11px;">
             📄 Print Official PDF Report
           </button>
-          <button class="btn btn-outline" onclick="alert('✅ All 312 community reports reviewed and validated!')" style="padding:10px; border-color:var(--accent-green); color:#00e5a0; font-weight:800; font-size:11px;">
+          <button class="btn btn-outline" onclick="alert('✅ All 312 community reports reviewed and validated!')"
+            style="padding:10px; border-color:var(--accent-green); color:#00e5a0; font-weight:800; font-size:11px;">
             ✅ Approve Pending Reports
           </button>
         </div>
@@ -977,6 +1637,10 @@
       initWeeklyTrendChart('trend-chart');
     }
   </script>
+  <script src="acoustic_analyzer.js"></script>
+  <script src="transmission_simulator.js"></script>
+  <script src="outbreak_predictor.js"></script>
+  <script src="mosquito_detector_engine.js"></script>
   <script src="assistant.js"></script>
   <script src="auth.js"></script>
 
@@ -987,7 +1651,8 @@
       <div style="margin-bottom:24px;">
         <div style="font-size:48px; margin-bottom:12px;">🦟</div>
         <div style="font-size:22px; font-weight:800; color:#f0f4ff; margin-bottom:4px;">Welcome to MosqAware</div>
-        <div style="font-size:13px; color:#8b9cc8;">Sign in to report dengue incidents, track your submissions, and help protect your community.</div>
+        <div style="font-size:13px; color:#8b9cc8;">Sign in to report dengue incidents, track your submissions, and help
+          protect your community.</div>
       </div>
       <!-- Google Sign In Button -->
       <button onclick="signInWithGoogle()" id="google-signin-btn"
@@ -995,18 +1660,25 @@
         onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 28px rgba(0,0,0,0.4)'"
         onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 20px rgba(0,0,0,0.3)'">
         <svg width="20" height="20" viewBox="0 0 48 48">
-          <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
-          <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
-          <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
-          <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+          <path fill="#EA4335"
+            d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z" />
+          <path fill="#4285F4"
+            d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z" />
+          <path fill="#FBBC05"
+            d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z" />
+          <path fill="#34A853"
+            d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z" />
         </svg>
         Continue with Google
       </button>
       <div style="font-size:11px; color:#4a5580; line-height:1.5;">
-        By signing in, you agree to help improve dengue surveillance in Odisha. Your reports are reviewed by health officials.
+        By signing in, you agree to help improve dengue surveillance in Odisha. Your reports are reviewed by health
+        officials.
       </div>
-      <div style="margin-top:16px; padding:12px; background:rgba(255,214,102,0.08); border:1px solid rgba(255,214,102,0.2); border-radius:8px; font-size:11px; color:#ffd666; text-align:left;">
-        <strong>🔧 Developer Note:</strong> Add your Firebase config in <code>auth.js</code> to enable real authentication. Without it, reports are saved locally.
+      <div
+        style="margin-top:16px; padding:12px; background:rgba(255,214,102,0.08); border:1px solid rgba(255,214,102,0.2); border-radius:8px; font-size:11px; color:#ffd666; text-align:left;">
+        <strong>🔧 Developer Note:</strong> Add your Firebase config in <code>auth.js</code> to enable real
+        authentication. Without it, reports are saved locally.
       </div>
     </div>
   </div>
@@ -1021,13 +1693,17 @@
           onerror="this.src='https://ui-avatars.com/api/?name=U&background=00d4ff&color=000&size=80'" />
         <div id="profile-name" style="font-size:18px; font-weight:800; color:#f0f4ff;">User</div>
         <div id="profile-email" style="font-size:12px; color:#8b9cc8; margin-top:2px;">user@gmail.com</div>
-        <div style="display:inline-block; margin-top:8px; padding:3px 12px; background:rgba(0,229,160,0.15); border:1px solid rgba(0,229,160,0.3); border-radius:99px; font-size:11px; color:#00e5a0; font-weight:700;">✅ Verified Community Reporter</div>
+        <div
+          style="display:inline-block; margin-top:8px; padding:3px 12px; background:rgba(0,229,160,0.15); border:1px solid rgba(0,229,160,0.3); border-radius:99px; font-size:11px; color:#00e5a0; font-weight:700;">
+          ✅ Verified Community Reporter</div>
       </div>
       <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:20px;">
-        <button onclick="openReportModal(); closeModal('user-profile-modal')" class="btn btn-primary" style="justify-content:center; gap:8px;">
+        <button onclick="openReportModal(); closeModal('user-profile-modal')" class="btn btn-primary"
+          style="justify-content:center; gap:8px;">
           📋 Submit Report
         </button>
-        <button onclick="signOut()" class="btn btn-outline" style="justify-content:center; color:#ff6b6b; border-color:rgba(255,107,107,0.4);">
+        <button onclick="signOut()" class="btn btn-outline"
+          style="justify-content:center; color:#ff6b6b; border-color:rgba(255,107,107,0.4);">
           🚪 Sign Out
         </button>
       </div>
@@ -1044,14 +1720,17 @@
       <button class="modal-close-btn" onclick="closeModal('report-modal')">✕</button>
       <div style="margin-bottom:20px;">
         <div style="font-size:22px; font-weight:800; color:#f0f4ff;">📋 Report a Dengue Incident</div>
-        <div style="font-size:12px; color:#8b9cc8; margin-top:4px;">Help health officials by reporting cases, breeding sites, or outbreak concerns in your area.</div>
+        <div style="font-size:12px; color:#8b9cc8; margin-top:4px;">Help health officials by reporting cases, breeding
+          sites, or outbreak concerns in your area.</div>
       </div>
       <form id="user-report-form" onsubmit="submitUserReport(event)">
         <!-- Type + Severity -->
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:14px;">
           <div>
-            <label style="font-size:11px; color:#8b9cc8; font-weight:600; display:block; margin-bottom:5px;">Report Type *</label>
-            <select id="report-type" required style="width:100%; padding:10px 12px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.12); border-radius:8px; color:#f0f4ff; font-size:12px;">
+            <label style="font-size:11px; color:#8b9cc8; font-weight:600; display:block; margin-bottom:5px;">Report Type
+              *</label>
+            <select id="report-type" required
+              style="width:100%; padding:10px 12px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.12); border-radius:8px; color:#f0f4ff; font-size:12px;">
               <option value="" disabled selected>Select type...</option>
               <option value="dengue_case">🦟 Dengue Case</option>
               <option value="breeding_site">💧 Breeding Site</option>
@@ -1062,8 +1741,10 @@
             </select>
           </div>
           <div>
-            <label style="font-size:11px; color:#8b9cc8; font-weight:600; display:block; margin-bottom:5px;">Severity *</label>
-            <select id="report-severity" required style="width:100%; padding:10px 12px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.12); border-radius:8px; color:#f0f4ff; font-size:12px;">
+            <label style="font-size:11px; color:#8b9cc8; font-weight:600; display:block; margin-bottom:5px;">Severity
+              *</label>
+            <select id="report-severity" required
+              style="width:100%; padding:10px 12px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.12); border-radius:8px; color:#f0f4ff; font-size:12px;">
               <option value="" disabled selected>Select severity...</option>
               <option value="low">🟢 Low</option>
               <option value="medium">🟡 Medium</option>
@@ -1075,49 +1756,93 @@
         <!-- District + Location -->
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:14px;">
           <div>
-            <label style="font-size:11px; color:#8b9cc8; font-weight:600; display:block; margin-bottom:5px;">District *</label>
-            <select id="report-district" required style="width:100%; padding:10px 12px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.12); border-radius:8px; color:#f0f4ff; font-size:12px;">
+            <label style="font-size:11px; color:#8b9cc8; font-weight:600; display:block; margin-bottom:5px;">District
+              *</label>
+            <select id="report-district" required
+              style="width:100%; padding:10px 12px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.12); border-radius:8px; color:#f0f4ff; font-size:12px;">
               <option value="" disabled selected>Select district...</option>
-              <option>Khordha</option><option>Cuttack</option><option>Puri</option><option>Ganjam</option>
-              <option>Balasore</option><option>Sundargarh</option><option>Sambalpur</option><option>Mayurbhanj</option>
-              <option>Koraput</option><option>Rayagada</option><option>Kalahandi</option><option>Bolangir</option>
-              <option>Boudh</option><option>Angul</option><option>Dhenkanal</option><option>Jajpur</option>
-              <option>Kendrapara</option><option>Jagatsinghpur</option><option>Nayagarh</option><option>Kandhamal</option>
-              <option>Gajapati</option><option>Malkangiri</option><option>Nabarangpur</option><option>Nuapada</option>
-              <option>Bargarh</option><option>Jharsuguda</option><option>Deogarh</option><option>Subarnapur</option>
-              <option>Bhadrak</option><option>Kendujhar</option>
+              <option>Khordha</option>
+              <option>Cuttack</option>
+              <option>Puri</option>
+              <option>Ganjam</option>
+              <option>Balasore</option>
+              <option>Sundargarh</option>
+              <option>Sambalpur</option>
+              <option>Mayurbhanj</option>
+              <option>Koraput</option>
+              <option>Rayagada</option>
+              <option>Kalahandi</option>
+              <option>Bolangir</option>
+              <option>Boudh</option>
+              <option>Angul</option>
+              <option>Dhenkanal</option>
+              <option>Jajpur</option>
+              <option>Kendrapara</option>
+              <option>Jagatsinghpur</option>
+              <option>Nayagarh</option>
+              <option>Kandhamal</option>
+              <option>Gajapati</option>
+              <option>Malkangiri</option>
+              <option>Nabarangpur</option>
+              <option>Nuapada</option>
+              <option>Bargarh</option>
+              <option>Jharsuguda</option>
+              <option>Deogarh</option>
+              <option>Subarnapur</option>
+              <option>Bhadrak</option>
+              <option>Kendujhar</option>
             </select>
           </div>
           <div>
-            <label style="font-size:11px; color:#8b9cc8; font-weight:600; display:block; margin-bottom:5px;">Exact Location</label>
-            <input type="text" id="report-location" placeholder="Ward / Village / Colony" style="width:100%; padding:10px 12px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.12); border-radius:8px; color:#f0f4ff; font-size:12px;" />
+            <label style="font-size:11px; color:#8b9cc8; font-weight:600; display:block; margin-bottom:5px;">Exact
+              Location</label>
+            <input type="text" id="report-location" placeholder="Ward / Village / Colony"
+              style="width:100%; padding:10px 12px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.12); border-radius:8px; color:#f0f4ff; font-size:12px;" />
           </div>
         </div>
         <!-- Symptoms -->
         <div style="margin-bottom:14px;">
-          <label style="font-size:11px; color:#8b9cc8; font-weight:600; display:block; margin-bottom:8px;">Symptoms Observed (optional)</label>
+          <label style="font-size:11px; color:#8b9cc8; font-weight:600; display:block; margin-bottom:8px;">Symptoms
+            Observed (optional)</label>
           <div style="display:flex; flex-wrap:wrap; gap:8px;">
-            <label style="display:flex; align-items:center; gap:5px; font-size:11px; color:#c0caf5; cursor:pointer;"><input type="checkbox" class="report-symptom-cb" value="fever"> 🌡️ Fever</label>
-            <label style="display:flex; align-items:center; gap:5px; font-size:11px; color:#c0caf5; cursor:pointer;"><input type="checkbox" class="report-symptom-cb" value="rash"> 🔴 Rash</label>
-            <label style="display:flex; align-items:center; gap:5px; font-size:11px; color:#c0caf5; cursor:pointer;"><input type="checkbox" class="report-symptom-cb" value="joint_pain"> 🦴 Joint Pain</label>
-            <label style="display:flex; align-items:center; gap:5px; font-size:11px; color:#c0caf5; cursor:pointer;"><input type="checkbox" class="report-symptom-cb" value="vomiting"> 🤢 Vomiting</label>
-            <label style="display:flex; align-items:center; gap:5px; font-size:11px; color:#c0caf5; cursor:pointer;"><input type="checkbox" class="report-symptom-cb" value="bleeding"> 🩸 Bleeding</label>
-            <label style="display:flex; align-items:center; gap:5px; font-size:11px; color:#c0caf5; cursor:pointer;"><input type="checkbox" class="report-symptom-cb" value="headache"> 🤕 Headache</label>
+            <label
+              style="display:flex; align-items:center; gap:5px; font-size:11px; color:#c0caf5; cursor:pointer;"><input
+                type="checkbox" class="report-symptom-cb" value="fever"> 🌡️ Fever</label>
+            <label
+              style="display:flex; align-items:center; gap:5px; font-size:11px; color:#c0caf5; cursor:pointer;"><input
+                type="checkbox" class="report-symptom-cb" value="rash"> 🔴 Rash</label>
+            <label
+              style="display:flex; align-items:center; gap:5px; font-size:11px; color:#c0caf5; cursor:pointer;"><input
+                type="checkbox" class="report-symptom-cb" value="joint_pain"> 🦴 Joint Pain</label>
+            <label
+              style="display:flex; align-items:center; gap:5px; font-size:11px; color:#c0caf5; cursor:pointer;"><input
+                type="checkbox" class="report-symptom-cb" value="vomiting"> 🤢 Vomiting</label>
+            <label
+              style="display:flex; align-items:center; gap:5px; font-size:11px; color:#c0caf5; cursor:pointer;"><input
+                type="checkbox" class="report-symptom-cb" value="bleeding"> 🩸 Bleeding</label>
+            <label
+              style="display:flex; align-items:center; gap:5px; font-size:11px; color:#c0caf5; cursor:pointer;"><input
+                type="checkbox" class="report-symptom-cb" value="headache"> 🤕 Headache</label>
           </div>
         </div>
         <!-- Description -->
         <div style="margin-bottom:18px;">
-          <label style="font-size:11px; color:#8b9cc8; font-weight:600; display:block; margin-bottom:5px;">Description *</label>
-          <textarea id="report-description" rows="3" required placeholder="Describe the incident — number of people affected, environmental conditions, any actions taken..." style="width:100%; padding:10px 12px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.12); border-radius:8px; color:#f0f4ff; font-size:12px; resize:vertical; font-family:inherit;"></textarea>
+          <label style="font-size:11px; color:#8b9cc8; font-weight:600; display:block; margin-bottom:5px;">Description
+            *</label>
+          <textarea id="report-description" rows="3" required
+            placeholder="Describe the incident — number of people affected, environmental conditions, any actions taken..."
+            style="width:100%; padding:10px 12px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.12); border-radius:8px; color:#f0f4ff; font-size:12px; resize:vertical; font-family:inherit;"></textarea>
         </div>
         <!-- Reporter Info (auto-filled) -->
         <input type="hidden" id="report-user-name" />
         <input type="hidden" id="report-user-email" />
         <!-- Submit -->
-        <button type="submit" id="report-submit-btn" class="btn btn-primary" style="width:100%; justify-content:center; font-size:14px; padding:12px;">
+        <button type="submit" id="report-submit-btn" class="btn btn-primary"
+          style="width:100%; justify-content:center; font-size:14px; padding:12px;">
           📤 Submit Report to Health Officials
         </button>
-        <div style="font-size:10px; color:#4a5580; text-align:center; margin-top:8px;">Reports are reviewed by Odisha State Health Department officials. Your identity is kept confidential.</div>
+        <div style="font-size:10px; color:#4a5580; text-align:center; margin-top:8px;">Reports are reviewed by Odisha
+          State Health Department officials. Your identity is kept confidential.</div>
       </form>
     </div>
   </div>

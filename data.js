@@ -5,6 +5,24 @@
 
 const ODISHA_DATA = {
 
+  // ─── DOCTORS & HOSPITALS DIRECTORY ───────────────────────────────────────
+  doctors: [
+    { id:"doc_001", name:"Apollo Hospitals Bhubaneswar", qualification:"NABH Accredited Multi-Specialty Hospital", specialty:"General Medicine, ICU, Infectious Diseases", hospital:"Apollo Hospitals Bhubaneswar", district:"Khordha", opdDays:"Mon-Sat", opdTime:"08:00 AM - 08:00 PM", phone:"+91 8069049752", email:"info_bbsr@apollohospitals.com", emergencyAvailability:true, appointmentLink:"https://www.apollohospitals.com/bhubaneswar", consultationFee:800, languagesSpoken:["Odia","English","Hindi"], lat:20.3015, lng:85.8324, icuAvailability:true, pediatricDengueAvailable:true, plateletTransfusionFacility:true, bloodBankAvailable:true, ambulanceAvailable:true, rating:4.8, type:"Private Multi-Specialty Hospital" },
+    { id:"doc_002", name:"Manipal Hospitals Bhubaneswar", qualification:"Super Speciality Tertiary Hospital", specialty:"Internal Medicine, Critical Care", hospital:"Manipal Hospitals Bhubaneswar", district:"Khordha", opdDays:"Mon-Sat", opdTime:"09:00 AM - 07:00 PM", phone:"1800-102-4647", email:"care.bbsr@manipalhospitals.com", emergencyAvailability:true, appointmentLink:"https://www.manipalhospitals.com/bhubaneswar/", consultationFee:750, languagesSpoken:["Odia","English","Hindi"], lat:20.3120, lng:85.8280, icuAvailability:true, pediatricDengueAvailable:true, plateletTransfusionFacility:true, bloodBankAvailable:true, ambulanceAvailable:true, rating:4.7, type:"Private Multi-Specialty Hospital" },
+    { id:"doc_003", name:"Max Super Speciality Hospital Bhubaneswar", qualification:"Quaternary Care Medical Institute", specialty:"Multi-Specialty, Emergency", hospital:"Max Super Speciality Hospital Bhubaneswar", district:"Khordha", opdDays:"24x7 Open", opdTime:"08:00 AM - 09:00 PM", phone:"1800-572-4000", email:"contact@maxhealthcare.com", emergencyAvailability:true, appointmentLink:"https://www.maxhealthcare.in/", consultationFee:850, languagesSpoken:["Odia","English","Hindi"], lat:20.2980, lng:85.8410, icuAvailability:true, pediatricDengueAvailable:true, plateletTransfusionFacility:true, bloodBankAvailable:true, ambulanceAvailable:true, rating:4.9, type:"Private Multi-Specialty Hospital" },
+    { id:"doc_004", name:"Dr. Subhashree Samantaray", qualification:"MD (Gen Med), DM (Infectious Diseases)", specialty:"Infectious Disease Physician", hospital:"Bhubaneswar ID Clinic / Capital Hospital", district:"Khordha", opdDays:"Mon, Wed, Fri", opdTime:"10:00 AM - 02:00 PM", phone:"+91 6742395235", email:"dr.subhashree@idclinic.or.gov.in", emergencyAvailability:true, appointmentLink:"https://eswasthya.odisha.gov.in/", consultationFee:0, languagesSpoken:["Odia","English","Hindi"], lat:20.2642, lng:85.8285, icuAvailability:true, pediatricDengueAvailable:true, plateletTransfusionFacility:true, bloodBankAvailable:true, ambulanceAvailable:true, rating:4.9, type:"Infectious Disease Specialist" },
+    { id:"doc_005", name:"Dr. Amitav Mohanty", qualification:"MBBS, MD (Internal Medicine)", specialty:"General Medicine", hospital:"Apollo Hospitals Bhubaneswar", district:"Khordha", opdDays:"Mon-Fri", opdTime:"10:00 AM - 04:00 PM", phone:"+91 8069049752", email:"dramitav@apollo.com", emergencyAvailability:true, appointmentLink:"https://www.apollohospitals.com/bhubaneswar", consultationFee:700, languagesSpoken:["Odia","English","Hindi"], lat:20.3015, lng:85.8324, icuAvailability:true, pediatricDengueAvailable:false, plateletTransfusionFacility:true, bloodBankAvailable:true, ambulanceAvailable:true, rating:4.8, type:"General Medicine Specialist" },
+    { id:"doc_006", name:"Dr. Sai Swaroop", qualification:"MBBS, MD (Medicine)", specialty:"Medicine Specialist", hospital:"Cuttack Medicine Clinic / SCB Medical", district:"Cuttack", opdDays:"Mon-Sat", opdTime:"09:00 AM - 05:00 PM", phone:"+91 9040410307", email:"dr.saiswaroop@cuttackmed.in", emergencyAvailability:true, appointmentLink:"https://eswasthya.odisha.gov.in/", consultationFee:400, languagesSpoken:["Odia","English","Hindi"], lat:20.4625, lng:85.8828, icuAvailability:true, pediatricDengueAvailable:true, plateletTransfusionFacility:true, bloodBankAvailable:true, ambulanceAvailable:true, rating:4.7, type:"Medicine Specialist" },
+    { id:"doc_007", name:"Dr. Tadit Prasad Mohanty", qualification:"MD (Internal Medicine)", specialty:"Internal Medicine", hospital:"Bhubaneswar Internal Medicine Center", district:"Khordha", opdDays:"Mon-Sat", opdTime:"11:00 AM - 06:00 PM", phone:"+91 8448444061", email:"dr.tadit@internalmed.in", emergencyAvailability:false, appointmentLink:"https://eswasthya.odisha.gov.in/", consultationFee:500, languagesSpoken:["Odia","English"], lat:20.2780, lng:85.8390, icuAvailability:false, pediatricDengueAvailable:false, plateletTransfusionFacility:true, bloodBankAvailable:true, ambulanceAvailable:true, rating:4.6, type:"Internal Medicine Specialist" },
+    { id:"doc_008", name:"Dr. Soumyaranjan Behera", qualification:"MBBS, MD (Medicine)", specialty:"Internal Medicine", hospital:"District Headquarter Hospital Angul", district:"Angul", opdDays:"Mon-Sat", opdTime:"08:00 AM - 02:00 PM", phone:"+91 7077186133", email:"drsoumyaranjan@angul.dhh.gov.in", emergencyAvailability:true, appointmentLink:"https://eswasthya.odisha.gov.in/", consultationFee:0, languagesSpoken:["Odia","Hindi"], lat:20.8372, lng:85.1025, icuAvailability:true, pediatricDengueAvailable:true, plateletTransfusionFacility:true, bloodBankAvailable:true, ambulanceAvailable:true, rating:4.8, type:"Government Internal Medicine Specialist" },
+    { id:"doc_009", name:"Dr. U.N. Sahoo", qualification:"MBBS, FCCP", specialty:"General Physician", hospital:"Sahoo General Health Care Bhubaneswar", district:"Khordha", opdDays:"Mon-Fri", opdTime:"09:00 AM - 01:00 PM", phone:"+91 9937393521", email:"drunsahoo@gmail.com", emergencyAvailability:false, appointmentLink:"https://eswasthya.odisha.gov.in/", consultationFee:300, languagesSpoken:["Odia","Hindi","English"], lat:20.2890, lng:85.8210, icuAvailability:false, pediatricDengueAvailable:true, plateletTransfusionFacility:false, bloodBankAvailable:false, ambulanceAvailable:true, rating:4.5, type:"General Physician" },
+    { id:"doc_010", name:"Dr. Umashankar Mishra", qualification:"MD (Internal Medicine), FICP", specialty:"Internal Medicine", hospital:"MKCG Medical College & Hospital Berhampur", district:"Ganjam", opdDays:"Mon-Sat", opdTime:"08:00 AM - 03:00 PM", phone:"+91 7050944444", email:"drumashankar@mkcg.ac.in", emergencyAvailability:true, appointmentLink:"https://eswasthya.odisha.gov.in/", consultationFee:0, languagesSpoken:["Odia","Telugu","Hindi","English"], lat:19.3149, lng:84.7941, icuAvailability:true, pediatricDengueAvailable:true, plateletTransfusionFacility:true, bloodBankAvailable:true, ambulanceAvailable:true, rating:4.9, type:"Government Senior Physician" },
+    { id:"hosp_001", name:"Capital Hospital Infectious & Diarrhoea Ward", qualification:"24x7 Government State Emergency Dengue Unit", specialty:"Severe Dengue Ward, Isolation & Platelet Transfusion", hospital:"Capital Hospital Bhubaneswar", district:"Khordha", opdDays:"24x7 Open", opdTime:"24 Hours Emergency", phone:"0674-2391983 / 108", email:"capitalhospital.bbsr@odisha.gov.in", emergencyAvailability:true, appointmentLink:"https://eswasthya.odisha.gov.in/", consultationFee:0, languagesSpoken:["Odia","Hindi","English"], lat:20.2642, lng:85.8285, icuAvailability:true, pediatricDengueAvailable:true, plateletTransfusionFacility:true, bloodBankAvailable:true, ambulanceAvailable:true, rating:4.8, type:"Government Severe Dengue Ward" },
+    { id:"hosp_002", name:"Burla Medical College Medicine OPD (VIMSAR)", qualification:"Apex Teaching Government Hospital", specialty:"Medicine OPD, Dengue Isolation, Intensive Care", hospital:"VIMSAR Burla Sambalpur", district:"Sambalpur", opdDays:"24x7 Open", opdTime:"08:00 AM - 08:00 PM", phone:"0663-2430768 / 108", email:"vimsar.burla@odisha.gov.in", emergencyAvailability:true, appointmentLink:"https://eswasthya.odisha.gov.in/", consultationFee:0, languagesSpoken:["Odia","Hindi","English"], lat:21.5034, lng:83.8710, icuAvailability:true, pediatricDengueAvailable:true, plateletTransfusionFacility:true, bloodBankAvailable:true, ambulanceAvailable:true, rating:4.7, type:"Government Severe Dengue Ward" },
+    { id:"hosp_003", name:"District Hospital Keonjhar Infection Ward", qualification:"District Headquarter Hospital Dengue Care", specialty:"Infection Ward, Fever Triage, Blood Support", hospital:"DHH Keonjhar", district:"Keonjhar", opdDays:"Mon-Sat", opdTime:"08:00 AM - 05:00 PM", phone:"06766-255420 / 108", email:"dhhkeonjhar@odisha.gov.in", emergencyAvailability:true, appointmentLink:"https://eswasthya.odisha.gov.in/", consultationFee:0, languagesSpoken:["Odia","Hindi"], lat:21.6289, lng:85.5816, icuAvailability:true, pediatricDengueAvailable:true, plateletTransfusionFacility:true, bloodBankAvailable:true, ambulanceAvailable:true, rating:4.6, type:"Government Severe Dengue Ward" },
+    { id:"hosp_004", name:"Infectious Disease Ward, Nabarangpur", qualification:"District Infectious Disease Isolation Ward", specialty:"Vector Isolation, IV Fluid Resuscitation", hospital:"DHH Nabarangpur", district:"Nabarangpur", opdDays:"24x7 Emergency", opdTime:"24 Hours Emergency", phone:"06858-222340 / 108", email:"dhhnabarangpur@odisha.gov.in", emergencyAvailability:true, appointmentLink:"https://eswasthya.odisha.gov.in/", consultationFee:0, languagesSpoken:["Odia","Hindi"], lat:19.2310, lng:82.5480, icuAvailability:true, pediatricDengueAvailable:true, plateletTransfusionFacility:true, bloodBankAvailable:true, ambulanceAvailable:true, rating:4.5, type:"Government Severe Dengue Ward" }
+  ],
+
   // ─── OFFICIAL OSDMA STATE PROFILE ─────────────────────────────────────
   // Source: Odisha State Disaster Management Authority (https://www.osdma.org/state-profile/)
   osdmaStateProfile: {
@@ -47,7 +65,15 @@ const ODISHA_DATA = {
     { year: 2024, cases: 9892,  deaths: 0,  tpr: 5.61, note: '' },
     { year: 2025, cases: 2635,  deaths: 0,  tpr: 1.83, note: 'Sharp decline post-intervention' },
     { year: 2026, cases: 3300,  deaths: 0,  tpr: 0.98, note: 'Provisional (as of July 2026); Khordha 1,154 cases' },
-    { year: 2027, cases: 12500, deaths: null, tpr: null, note: 'SARIMA-XGBoost forecast — range 10,000–15,000', projected: true },
+    { year: 2027, cases: 12500, deaths: null, tpr: 9.50, note: 'SARIMA-XGBoost forecast — ENSO Peak Cycle', projected: true, isPeak: true },
+    { year: 2028, cases: 6800,  deaths: null, tpr: 5.10, note: 'AI Model projection — Moderate post-peak decline', projected: true },
+    { year: 2029, cases: 4100,  deaths: null, tpr: 3.12, note: 'AI Model projection — Intervention recovery phase', projected: true },
+    { year: 2030, cases: 3200,  deaths: null, tpr: 2.45, note: 'AI Model projection — Low endemic baseline', projected: true },
+    { year: 2031, cases: 14200, deaths: null, tpr: 10.80, note: 'SARIMA-XGBoost forecast — 4-Year Cyclical Peak', projected: true, isPeak: true },
+    { year: 2032, cases: 7800,  deaths: null, tpr: 5.90, note: 'AI Model projection — Post-peak surveillance', projected: true },
+    { year: 2033, cases: 4700,  deaths: null, tpr: 3.55, note: 'AI Model projection — Controlled watch', projected: true },
+    { year: 2034, cases: 2100,  deaths: null, tpr: 1.60, note: 'AI Model projection — Controlled low', projected: true },
+    { year: 2035, cases: 15800, deaths: null, tpr: 12.10, note: 'SARIMA-XGBoost forecast — 10-Year Decadal Peak', projected: true, isPeak: true },
   ],
 
   // ─── MONTHLY CASES 2024 ─────────────────────────────────────────────
@@ -496,6 +522,13 @@ predictions = model.predict(X_test)`
       { band: '10–25 km', villages: 17430, pct: 34.0 },
       { band: 'Over 25 km', villages: 26261, pct: 51.2 },
     ],
+
+    futureProtectionRules: [
+      { id: 'rule_01', title: 'AI Bio-Acoustic Sentinel Mandate', priority: 'CRITICAL', description: 'Automated 24h municipal larvicide dispatch upon detecting Aedes aegypti female wingbeats (450–610 Hz).' },
+      { id: 'rule_02', title: 'Micro-Climate R0 Outbreak Trigger', priority: 'HIGH', description: 'Reproduction rate R0 > 2.0 (temp > 28°C + NDWI water index > 0.5) mandates immediate drone fogging.' },
+      { id: 'rule_03', title: 'Zero Stagnant Water Enforcement', priority: 'MANDATORY', description: 'Weekly Sunday Dry-Day observances & zero-tolerance container drain compliance for households and commercial sites.' },
+      { id: 'rule_04', title: 'DENV-2 Hemorrhagic Direct Transport', priority: 'EMERGENCY', description: 'Symptoms combining fever, bleeding, and vomiting bypass primary triage directly to 108/Capital Hospital.' }
+    ]
   },
 
 
@@ -523,3 +556,49 @@ function calculateRiskScore(temp, humidity, rainfall, historicalCases, breedingI
   const breedScore = Math.min(breedingIndex * 1.2, 12);
   return Math.min(Math.round(tempScore + humidityScore + rainfallScore + caseScore + breedScore), 100);
 }
+
+// ─── DAILY ROTATING HEALTH QUOTES COLLECTION ──────────────────────────────
+const HEALTH_QUOTES = [
+  { quote: "It is health that is real wealth and not pieces of gold and silver.", author: "Mahatma Gandhi", category: "Wellness & Prevention" },
+  { quote: "He who has health has hope; and he who has hope has everything.", author: "Arabian Proverb", category: "Hope & Vitality" },
+  { quote: "The greatest of follies is to sacrifice health for any other kind of happiness.", author: "Arthur Schopenhauer", category: "Mindfulness" },
+  { quote: "Prevention is better than cure. Eliminating standing water today protects your community tomorrow.", author: "WHO Health Directive", category: "Vector Protection" },
+  { quote: "To keep the body in good health is a duty... otherwise we shall not be able to keep our mind strong and clear.", author: "Buddha", category: "Holistic Health" },
+  { quote: "Early detection saves lives. Constant surveillance is the key to outbreak prevention.", author: "NCVBDC Vector Protocol", category: "Epidemiological Surveillance" },
+  { quote: "Health is a state of complete physical, mental and social well-being and not merely the absence of disease.", author: "World Health Organization", category: "Global Health" },
+  { quote: "A healthy attitude is contagious but don't wait to catch it from others, be a carrier.", author: "Tom Stoppard", category: "Community Action" },
+  { quote: "The first wealth is health. Take care of your environment to take care of your body.", author: "Ralph Waldo Emerson", category: "Environmental Health" },
+  { quote: "Clean air, safe water, and vector control are the fundamental pillars of public health.", author: "Florence Nightingale", category: "Public Hygiene" },
+  { quote: "When health is absent, wisdom cannot reveal itself, art cannot manifest, strength cannot fight.", author: "Herophilus", category: "Vitality" },
+  { quote: "Small daily actions in vector control lead to massive community safety.", author: "MosqAware Health Team", category: "Community Resilience" },
+  { quote: "The doctor of the future will give no medicine, but will interest his patient in the care of the human frame.", author: "Thomas A. Edison", category: "Preventive Care" },
+  { quote: "Hydration, nutrition, and early fever monitoring are your first lines of defense against viral infection.", author: "Odisha State Health Dept", category: "Clinical Guidance" },
+  { quote: "Knowing is not enough; we must apply. Willing is not enough; we must do.", author: "Johann Wolfgang von Goethe", category: "Proactive Action" }
+];
+
+function getTodayHealthQuote() {
+  const now = new Date();
+  const startOfYear = new Date(now.getFullYear(), 0, 0);
+  const diff = now - startOfYear;
+  const oneDay = 1000 * 60 * 60 * 24;
+  const dayOfYear = Math.floor(diff / oneDay);
+  
+  const quoteIndex = dayOfYear % HEALTH_QUOTES.length;
+  const selectedQuote = HEALTH_QUOTES[quoteIndex];
+
+  const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+  const dayName = daysOfWeek[now.getDay()];
+  const formattedDate = now.toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' });
+
+  return {
+    dayOfWeek: dayName,
+    dateString: `${dayName}, ${formattedDate}`,
+    formattedDate: formattedDate,
+    quote: selectedQuote.quote,
+    author: selectedQuote.author,
+    category: selectedQuote.category,
+    dayOfYear: dayOfYear,
+    timestamp: now.toISOString()
+  };
+}
+

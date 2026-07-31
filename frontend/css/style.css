@@ -1417,3 +1417,244 @@ body::before {
   font-size: 12px;
 }
 
+/* ─── Bright Light Theme AI Assistant Modal Drawer Styles ───────────────── */
+[data-theme="light"] .assistant-modal {
+  background: #ffffff !important;
+  border: 1px solid rgba(5, 150, 105, 0.25) !important;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15) !important;
+  color: #0f172a !important;
+}
+
+[data-theme="light"] .assistant-header {
+  background: #f8fafc !important;
+  border-bottom: 1px solid rgba(6, 78, 59, 0.12) !important;
+}
+
+[data-theme="light"] .assistant-header div {
+  color: #0f172a !important;
+}
+
+[data-theme="light"] .assistant-chips {
+  background: #f1f5f9 !important;
+  border-bottom: 1px solid rgba(6, 78, 59, 0.12) !important;
+}
+
+[data-theme="light"] .chip-btn {
+  background: #ffffff !important;
+  border: 1px solid rgba(6, 78, 59, 0.2) !important;
+  color: #064e3b !important;
+  font-weight: 600 !important;
+}
+
+[data-theme="light"] .chip-btn:hover {
+  background: #059669 !important;
+  color: #ffffff !important;
+  border-color: #059669 !important;
+}
+
+[data-theme="light"] .assistant-body {
+  background: #ffffff !important;
+  color: #0f172a !important;
+}
+
+[data-theme="light"] .chat-msg.bot {
+  background: #f8fafc !important;
+  border: 1px solid rgba(6, 78, 59, 0.15) !important;
+  color: #0f172a !important;
+  font-weight: 500 !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03) !important;
+}
+
+[data-theme="light"] .chat-msg.user {
+  background: linear-gradient(135deg, #059669 0%, #047857 100%) !important;
+  border: none !important;
+  color: #ffffff !important;
+  font-weight: 600 !important;
+  box-shadow: 0 4px 12px rgba(5, 150, 105, 0.25) !important;
+}
+
+[data-theme="light"] .assistant-footer {
+  background: #f8fafc !important;
+  border-top: 1px solid rgba(6, 78, 59, 0.12) !important;
+}
+
+[data-theme="light"] .assistant-footer input {
+  background: #ffffff !important;
+  border: 1px solid rgba(6, 78, 59, 0.25) !important;
+  color: #0f172a !important;
+}
+
+[data-theme="light"] .assistant-footer input::placeholder {
+  color: #64748b !important;
+}
+
+[data-theme="light"] .assistant-footer input:focus {
+  border-color: #059669 !important;
+  box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.15) !important;
+}
+
+[data-theme="light"] .assistant-footer button {
+  background: linear-gradient(135deg, #059669 0%, #047857 100%) !important;
+  color: #ffffff !important;
+}
+
+/* ─── Bright Light Theme Overrides for ALL Popups & Modals ─────────────────── */
+[data-theme="light"] .modal-overlay {
+  background: rgba(15, 23, 42, 0.55) !important;
+  backdrop-filter: blur(12px) !important;
+}
+
+[data-theme="light"] .modal-card {
+  background: #ffffff !important;
+  border: 1px solid rgba(5, 150, 105, 0.25) !important;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.18) !important;
+  color: #0f172a !important;
+}
+
+[data-theme="light"] .modal-card div,
+[data-theme="light"] .modal-card span,
+[data-theme="light"] .modal-card label,
+[data-theme="light"] .modal-card h1,
+[data-theme="light"] .modal-card h2,
+[data-theme="light"] .modal-card h3,
+[data-theme="light"] .modal-card p {
+  color: #0f172a !important;
+}
+
+[data-theme="light"] .modal-card label {
+  background: #f8fafc !important;
+  border: 1px solid rgba(6, 78, 59, 0.2) !important;
+  color: #0f172a !important;
+  font-weight: 700 !important;
+}
+
+[data-theme="light"] .modal-card label:hover {
+  background: #f1f5f9 !important;
+  border-color: #059669 !important;
+}
+
+[data-theme="light"] .modal-close-btn {
+  background: #f1f5f9 !important;
+  border: 1px solid rgba(6, 78, 59, 0.2) !important;
+  color: #334155 !important;
+}
+
+[data-theme="light"] .modal-close-btn:hover {
+  background: #fef2f2 !important;
+  color: #dc2626 !important;
+  border-color: #fecaca !important;
+}
+
+[data-theme="light"] .modal-card select,
+[data-theme="light"] .modal-card textarea,
+[data-theme="light"] .modal-card input[type="text"],
+[data-theme="light"] .modal-card input[type="email"],
+[data-theme="light"] .modal-card input[type="password"],
+[data-theme="light"] .modal-card input[type="number"] {
+  background: #ffffff !important;
+  border: 1px solid rgba(6, 78, 59, 0.25) !important;
+  color: #0f172a !important;
+}
+
+[data-theme="light"] .modal-card select option {
+  background: #ffffff !important;
+  color: #0f172a !important;
+}
+
+[data-theme="light"] .modal-card input::placeholder,
+[data-theme="light"] .modal-card textarea::placeholder {
+  color: #64748b !important;
+}
+
+/* ─── Light Mode Map & Legend Overrides ─────────────────────────────────── */
+[data-theme="light"] .map-legend {
+  background: #ffffff !important;
+  border: 1px solid rgba(5, 150, 105, 0.25) !important;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.15) !important;
+  color: #0f172a !important;
+}
+
+[data-theme="light"] .legend-title {
+  color: #064e3b !important;
+  font-weight: 800 !important;
+}
+
+[data-theme="light"] .legend-item {
+  color: #0f172a !important;
+  font-weight: 700 !important;
+}
+
+[data-theme="light"] .legend-item span {
+  color: #0f172a !important;
+  font-weight: 700 !important;
+}
+
+[data-theme="light"] #map-stats-bar {
+  background: #f8fafc !important;
+  border: 1px solid rgba(6, 78, 59, 0.15) !important;
+  color: #1e293b !important;
+  font-weight: 600 !important;
+}
+
+[data-theme="light"] .map-layer-btn {
+  background: #ffffff !important;
+  border: 1px solid rgba(6, 78, 59, 0.2) !important;
+  color: #064e3b !important;
+  font-weight: 700 !important;
+}
+
+[data-theme="light"] .map-layer-btn.active,
+[data-theme="light"] .map-layer-btn:hover {
+  background: #059669 !important;
+  color: #ffffff !important;
+  border-color: #059669 !important;
+}
+
+[data-theme="light"] .serotype-banner {
+  background: #fff7ed !important;
+  border: 1px solid #ffedd5 !important;
+  color: #9a3412 !important;
+}
+
+[data-theme="light"] .serotype-banner div {
+  color: #1e293b !important;
+}
+
+/* ─── Light Mode Overrides for Leaflet Map, Tile Pane & Popups ───────────── */
+[data-theme="light"] .leaflet-tile-pane {
+  filter: none !important;
+}
+
+[data-theme="light"] .leaflet-popup-content-wrapper {
+  background: #ffffff !important;
+  border: 1px solid rgba(5, 150, 105, 0.3) !important;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.2) !important;
+  color: #0f172a !important;
+  border-radius: 14px !important;
+}
+
+[data-theme="light"] .leaflet-popup-content {
+  color: #0f172a !important;
+}
+
+[data-theme="light"] .leaflet-popup-content div,
+[data-theme="light"] .leaflet-popup-content span,
+[data-theme="light"] .leaflet-popup-content b,
+[data-theme="light"] .leaflet-popup-content strong {
+  color: #0f172a !important;
+}
+
+[data-theme="light"] .leaflet-popup-tip {
+  background: #ffffff !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
+}
+
+[data-theme="light"] .leaflet-popup-close-button {
+  color: #334155 !important;
+  font-size: 16px !important;
+}
+
+[data-theme="light"] .leaflet-popup-close-button:hover {
+  color: #dc2626 !important;
+}
+

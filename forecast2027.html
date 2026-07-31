@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -236,6 +236,12 @@
   </style>
 </head>
 <body>
+<!-- ⚙️ Konark Chakra Rotating Sacred Wheel Watermark -->
+  <div class="konark-wheel-bg" aria-hidden="true"></div>
+
+  <!-- 🏛️ Odisha Cultural Heritage Silhouette Strip -->
+<div class="odisha-silhouette-strip" aria-hidden="true"></div>
+
 <div id="sidebar-overlay"></div>
 <div class="app-layout">
 
@@ -255,6 +261,7 @@
       <a class="nav-item" href="index.html"><span class="nav-icon"><i class="fa-solid fa-gauge-high"></i></span><span>Dashboard</span></a>
       <a class="nav-item" href="prediction.html"><span class="nav-icon"><i class="fa-solid fa-brain"></i></span><span>AI Prediction</span><span class="nav-badge">LIVE</span></a>
       <a class="nav-item" href="analytics.html"><span class="nav-icon"><i class="fa-solid fa-chart-line"></i></span><span>Analytics</span></a>
+      <a class="nav-item" href="directory.html"><span class="nav-icon"><i class="fa-solid fa-hospital-user"></i></span><span>Doctors & Hospitals</span><span class="nav-badge" style="background:var(--accent-cyan); color:#000;">14+</span></a>
       <div class="nav-section-label">Tools</div>
       <a class="nav-item" href="breeding.html"><span class="nav-icon"><i class="fa-solid fa-mosquito"></i></span><span>Breeding Index</span></a>
       <a class="nav-item" href="awareness.html"><span class="nav-icon"><i class="fa-solid fa-bullhorn"></i></span><span>Public Awareness</span></a>
@@ -293,6 +300,30 @@
     </header>
 
     <main class="page-content">
+
+      <!-- 📜 Daily Health Quotation & Live Date/Day Widget -->
+      <div id="daily-quote-widget" class="card animate-fadeInUp" style="margin-bottom:16px; border:1px solid rgba(0,212,255,0.25); background:linear-gradient(135deg, rgba(5,13,26,0.95), rgba(0,212,255,0.06)); padding:16px 20px;"></div>
+
+      <!-- ── 10-Year Decadal Forecast Multi-Year Navigation Bar ───────── -->
+      <div class="card animate-fadeInUp" style="margin-bottom:20px; padding:14px 18px; border:1px solid rgba(0,212,255,0.3); background:rgba(5,13,26,0.9);">
+        <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px;">
+          <div style="font-size:13px; font-weight:800; color:var(--accent-cyan);">
+            🗓️ Multi-Year Horizon (2026–2035+):
+          </div>
+          <div style="display:flex; gap:6px; flex-wrap:wrap;" id="year-nav-buttons">
+            <button onclick="selectForecastYear(2026)" class="btn btn-outline btn-sm year-nav-btn" data-year="2026" style="font-size:11px; padding:4px 10px; color:#8b9cc8;">2026</button>
+            <button onclick="selectForecastYear(2027)" class="btn btn-primary btn-sm year-nav-btn" data-year="2027" style="font-size:11px; padding:4px 10px;">2027 (Peak)</button>
+            <button onclick="selectForecastYear(2028)" class="btn btn-outline btn-sm year-nav-btn" data-year="2028" style="font-size:11px; padding:4px 10px; color:#8b9cc8;">2028</button>
+            <button onclick="selectForecastYear(2029)" class="btn btn-outline btn-sm year-nav-btn" data-year="2029" style="font-size:11px; padding:4px 10px; color:#8b9cc8;">2029</button>
+            <button onclick="selectForecastYear(2030)" class="btn btn-outline btn-sm year-nav-btn" data-year="2030" style="font-size:11px; padding:4px 10px; color:#8b9cc8;">2030</button>
+            <button onclick="selectForecastYear(2031)" class="btn btn-outline btn-sm year-nav-btn" data-year="2031" style="font-size:11px; padding:4px 10px; color:#ff3b5c; border-color:rgba(255,59,92,0.4);">2031 (Peak)</button>
+            <button onclick="selectForecastYear(2032)" class="btn btn-outline btn-sm year-nav-btn" data-year="2032" style="font-size:11px; padding:4px 10px; color:#8b9cc8;">2032</button>
+            <button onclick="selectForecastYear(2033)" class="btn btn-outline btn-sm year-nav-btn" data-year="2033" style="font-size:11px; padding:4px 10px; color:#8b9cc8;">2033</button>
+            <button onclick="selectForecastYear(2034)" class="btn btn-outline btn-sm year-nav-btn" data-year="2034" style="font-size:11px; padding:4px 10px; color:#8b9cc8;">2034</button>
+            <button onclick="selectForecastYear(2035)" class="btn btn-outline btn-sm year-nav-btn" data-year="2035" style="font-size:11px; padding:4px 10px; color:#ff3b5c; border-color:rgba(255,59,92,0.4);">2035 (Peak+)</button>
+          </div>
+        </div>
+      </div>
 
       <!-- ── Hero Forecast Banner ──────────────────────────────── -->
       <div class="forecast-hero animate-fadeInUp">
@@ -886,8 +917,153 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Scroll animations
   initScrollAnimations();
+
+  // Store global chart handles for dynamic switching
+  window.monthly2027ChartInstance = Chart.getChart(document.getElementById('monthly-2027-chart'));
+  window.compare2023ChartInstance = Chart.getChart(document.getElementById('compare-2023-chart'));
 });
+
+// Dynamic Multi-Year Forecast Switching Function (2026-2035+)
+async function selectForecastYear(year) {
+  const yr = parseInt(year);
+
+  // Update button active states
+  document.querySelectorAll('.year-nav-btn').forEach(btn => {
+    if (parseInt(btn.dataset.year) === yr) {
+      btn.className = 'btn btn-primary btn-sm year-nav-btn';
+      btn.style.color = '#fff';
+    } else {
+      btn.className = 'btn btn-outline btn-sm year-nav-btn';
+      btn.style.color = '#8b9cc8';
+    }
+  });
+
+  // Calculate year metrics
+  let projectedCases = 12500;
+  let lower = 10000;
+  let upper = 15000;
+  let headline = `Significant Rebound Forecast for ${yr}`;
+  let riskLevel = 'MODERATE WATCH';
+
+  if (yr === 2026) {
+    projectedCases = 3300; lower = 3100; upper = 3500; headline = `Provisional Resurgence Status for ${yr}`; riskLevel = 'MODERATE WATCH';
+  } else if (yr === 2027) {
+    projectedCases = 12500; lower = 10000; upper = 15000; headline = `Significant Rebound Peak Forecast for ${yr}`; riskLevel = 'CRITICAL OUTBREAK';
+  } else if (yr === 2028) {
+    projectedCases = 6800; lower = 5500; upper = 8700; headline = `Post-Peak Recovery & Surveillance Forecast for ${yr}`; riskLevel = 'HIGH SURVEILLANCE';
+  } else if (yr === 2029) {
+    projectedCases = 4100; lower = 3200; upper = 5400; headline = `Intervention Recovery Phase Forecast for ${yr}`; riskLevel = 'MODERATE WATCH';
+  } else if (yr === 2030) {
+    projectedCases = 3200; lower = 2500; upper = 4200; headline = `Low Endemic Baseline Forecast for ${yr}`; riskLevel = 'CONTROLLED';
+  } else if (yr === 2031) {
+    projectedCases = 14200; lower = 11500; upper = 17800; headline = `4-Year Cyclical Peak Outbreak Forecast for ${yr}`; riskLevel = 'CRITICAL OUTBREAK';
+  } else if (yr === 2032) {
+    projectedCases = 7800; lower = 6100; upper = 9800; headline = `Post-Peak Surveillance Watch Forecast for ${yr}`; riskLevel = 'HIGH SURVEILLANCE';
+  } else if (yr === 2033) {
+    projectedCases = 4700; lower = 3700; upper = 6000; headline = `Controlled Watch Phase Forecast for ${yr}`; riskLevel = 'MODERATE WATCH';
+  } else if (yr === 2034) {
+    projectedCases = 2100; lower = 1700; upper = 2700; headline = `Controlled Low Baseline Forecast for ${yr}`; riskLevel = 'CONTROLLED';
+  } else if (yr === 2035) {
+    projectedCases = 15800; lower = 12800; upper = 19500; headline = `10-Year Decadal Peak Outbreak Forecast for ${yr}`; riskLevel = 'CRITICAL OUTBREAK';
+  }
+
+  // Update Page Elements
+  const elCounter = document.getElementById('forecast-counter');
+  if (elCounter) animateCounter(elCounter, projectedCases, 1200, '', '');
+
+  const rangeSub = document.querySelector('.range-sub');
+  if (rangeSub) rangeSub.textContent = `Range: ${lower.toLocaleString()} – ${upper.toLocaleString()}`;
+
+  const titleEl = document.querySelector('.page-title');
+  if (titleEl) titleEl.textContent = `${yr} Dengue Outbreak Forecast`;
+
+  // Monthly breakdown curve
+  const monthlyRatios = [0.015, 0.018, 0.030, 0.058, 0.088, 0.132, 0.224, 0.236, 0.192, 0.096, 0.042, 0.016];
+  const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  const newMonthlyCases = monthlyRatios.map(r => Math.ceil(projectedCases * r));
+
+  // Re-render Monthly Chart
+  const mCanvas = document.getElementById('monthly-2027-chart');
+  if (mCanvas) {
+    if (window.monthly2027ChartInstance) window.monthly2027ChartInstance.destroy();
+    window.monthly2027ChartInstance = new Chart(mCanvas, {
+      type: 'bar',
+      data: {
+        labels: months,
+        datasets: [{
+          label: `${yr} Projected Cases`,
+          data: newMonthlyCases,
+          backgroundColor: newMonthlyCases.map(c => c >= 2500 ? 'rgba(255,68,68,0.45)' : (c >= 1200 ? 'rgba(255,159,67,0.45)' : 'rgba(0,212,255,0.3)')),
+          borderColor: newMonthlyCases.map(c => c >= 2500 ? '#ff4444' : (c >= 1200 ? '#ff9f43' : '#00d4ff')),
+          borderWidth: 2, borderRadius: 6
+        }]
+      },
+      options: { ...CHART_DEFAULTS }
+    });
+  }
+
+  // Re-render Compare Chart vs 2023
+  const cCanvas = document.getElementById('compare-2023-chart');
+  if (cCanvas) {
+    if (window.compare2023ChartInstance) window.compare2023ChartInstance.destroy();
+    window.compare2023ChartInstance = new Chart(cCanvas, {
+      type: 'line',
+      data: {
+        labels: months,
+        datasets: [
+          {
+            label: '2023 (Actual Peak Baseline)',
+            data: [350, 290, 480, 890, 1340, 2420, 3180, 3320, 2760, 1450, 740, 290],
+            borderColor: '#ff6b6b',
+            backgroundColor: 'rgba(255,107,107,0.07)',
+            fill: true, tension: 0.4, borderWidth: 2, pointRadius: 3
+          },
+          {
+            label: `${yr} (Projected Curve)`,
+            data: newMonthlyCases,
+            borderColor: '#ff9f43',
+            backgroundColor: 'rgba(255,159,67,0.07)',
+            fill: true, tension: 0.4, borderWidth: 2, borderDash: [6,3], pointRadius: 3
+          }
+        ]
+      },
+      options: { ...CHART_DEFAULTS }
+    });
+  }
+
+  // Update District Projections
+  const dRows = document.getElementById('district-risk-rows');
+  if (dRows && ODISHA_DATA.forecast2027.districtRisk) {
+    const mult = projectedCases / 12500.0;
+    dRows.innerHTML = ODISHA_DATA.forecast2027.districtRisk.map(d => {
+      const pCases = Math.ceil(d.projectedCases * mult);
+      return `
+        <div class="district-risk-row" style="background:${getRiskBg(d.riskLevel)}; border-color:${getRiskBorder(d.riskLevel)};">
+          <div>
+            <div style="font-size:14px; font-weight:700; color:var(--text-primary); margin-bottom:4px;">${d.district}</div>
+            <div style="font-size:11px; color:var(--text-muted); margin-bottom:6px;">${d.keyDrivers}</div>
+            ${d.hotspots.length ? '<div>' + d.hotspots.map(h => `<span class="hotspot-tag">📍${h}</span>`).join('') + '</div>' : ''}
+          </div>
+          <div style="text-align:center;">
+            <div style="font-family:Rajdhani,sans-serif; font-size:28px; font-weight:700; color:${getRiskColorByLevel(d.riskLevel)};">${pCases.toLocaleString()}</div>
+            <div style="font-size:10px; color:var(--text-muted);">projected cases (${yr})</div>
+          </div>
+          <div style="text-align:center;">
+            <span class="risk-badge ${d.riskLevel}">${d.riskLevel}</span>
+            <div style="font-size:11px; color:var(--text-muted); margin-top:6px;">${d.projectedCaseShare} of state</div>
+          </div>
+          <div>
+            <div class="progress-bar">
+              <div class="progress-fill" style="width:${Math.min(pCases/50,100)}%; background:${getRiskColorByLevel(d.riskLevel)};"></div>
+            </div>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+}
 </script>
 <script src="assistant.js"></script>
+<script src="auth.js"></script>
 </body>
 </html>

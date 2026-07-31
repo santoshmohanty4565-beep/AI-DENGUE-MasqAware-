@@ -182,13 +182,54 @@ async function loadLiveWeather() {
   }
 }
 
-// Update timestamp
+// Update timestamp & Daily Health Quote
 function updateTimestamp() {
   const el = document.getElementById('last-updated');
   if (el) {
     const now = new Date();
     el.textContent = now.toLocaleString('en-IN', { hour: '2-digit', minute: '2-digit', day: 'numeric', month: 'short', year: 'numeric' });
   }
+  renderDailyHealthQuoteWidget();
+}
+
+function renderDailyHealthQuoteWidget() {
+  const container = document.getElementById('daily-quote-widget');
+  if (!container) return;
+
+  const data = typeof getTodayHealthQuote === 'function' ? getTodayHealthQuote() : null;
+  if (!data) return;
+
+  container.innerHTML = `
+    <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px; margin-bottom:8px;">
+      <div style="display:flex; align-items:center; gap:8px;">
+        <span style="padding:3px 10px; background:var(--bg-glass-hover); border:1px solid var(--border-glass); border-radius:99px; font-size:11px; font-weight:800; color:var(--text-accent);">
+          🗓️ ${data.dayOfWeek}
+        </span>
+        <span style="font-size:13px; font-weight:800; color:var(--text-primary);">
+          ${data.formattedDate}
+        </span>
+      </div>
+      <div style="font-size:11px; color:var(--text-secondary); background:var(--bg-glass); padding:3px 10px; border-radius:6px; font-weight:600;">
+        💡 Health Thought of the Day
+      </div>
+    </div>
+    <div style="font-size:13px; font-style:italic; color:var(--text-primary); line-height:1.5; margin-bottom:6px; font-family:'Inter', sans-serif; font-weight:500;">
+      "${data.quote}"
+    </div>
+    <div style="display:flex; justify-content:space-between; align-items:center; font-size:11px; color:var(--text-accent); font-weight:700;">
+      <span>— ${data.author} (${data.category})</span>
+      <button onclick="copyTodayQuote('${data.quote.replace(/'/g, "\\'")}', '${data.author}')" style="background:none; border:none; color:var(--text-accent); font-size:11px; cursor:pointer; font-weight:700;">
+        📋 Copy Quote
+      </button>
+    </div>
+  `;
+}
+
+function copyTodayQuote(quote, author) {
+  const text = `"${quote}" — ${author} (MosqAware Daily Health Quote)`;
+  navigator.clipboard.writeText(text).then(() => {
+    showToast ? showToast('📋 Daily Health Quote copied to clipboard!', 'success') : alert(text);
+  });
 }
 
 // ─── CHART: WEEKLY TREND ──────────────────────────────────────────────────
@@ -1638,9 +1679,15 @@ document.addEventListener('DOMContentLoaded', () => {
   startAutoUpdate();
   registerServiceWorker();
 
-  // Restore Theme
-  const savedTheme = localStorage.getItem('theme') || 'dark';
+  // Restore Theme — Default to Official Government Light Theme
+  const savedTheme = localStorage.getItem('theme') || 'light';
   document.documentElement.setAttribute('data-theme', savedTheme);
   const btn = document.getElementById('theme-toggle-btn');
   if (btn) btn.innerHTML = savedTheme === 'light' ? '☀️ Light' : '🌙 Theme';
+
+  // Initialize Innovative AI Dengue Suites
+  if (window.acousticAI) window.acousticAI.initUI();
+  if (window.swarmSim) window.swarmSim.initUI();
+  if (window.outbreakPredictor) window.outbreakPredictor.initUI();
+  if (window.mosquitoDetector) window.mosquitoDetector.initUI();
 });

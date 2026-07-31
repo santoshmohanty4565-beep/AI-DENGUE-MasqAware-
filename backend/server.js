@@ -216,7 +216,9 @@ app.post('/api/assistant/chat', (req, res) => {
   const text = message.toLowerCase();
   let reply = "";
 
-  if (text.includes("2027") || text.includes("forecast") || text.includes("future")) {
+  if (text.includes("golden") || text.includes("rule") || text.includes("stay safe") || text.includes("prevention") || text.includes("protect") || text.includes("standing water")) {
+    reply = `🛡️ **Golden Rules to Stay Safe**: 1. Remove standing water weekly (empty buckets, coolers, tyres). 2. Protect from bites (full sleeves, DEET/Picaridin repellent, nets). 3. Mosquito-proof home (screens, clean surroundings). 4. Aedes bite during daytime (6-9 AM & 3-6 PM). 5. Maintain community cleanliness.`;
+  } else if (text.includes("2027") || text.includes("forecast") || text.includes("future")) {
     reply = `🔮 **2027 Outbreak Forecast**: 10,000–15,000 cases projected (SARIMA-XGBoost hybrid model) with peak outbreak in July–October 2027.`;
   } else if (text.includes("district") || text.includes("khordha") || text.includes("bhubaneswar")) {
     reply = `🔴 **Khordha (Bhubaneswar)** is at CRITICAL risk (30–35% state case share). Key micro-hotspots: Patia, Sikharchandi, Prasanti Vihar, Salia Sahi.`;

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -113,6 +113,12 @@
   </style>
 </head>
 <body>
+<!-- ⚙️ Konark Chakra Rotating Sacred Wheel Watermark -->
+  <div class="konark-wheel-bg" aria-hidden="true"></div>
+
+  <!-- 🏛️ Odisha Cultural Heritage Silhouette Strip -->
+<div class="odisha-silhouette-strip" aria-hidden="true"></div>
+
 <div id="sidebar-overlay"></div>
 <div class="app-layout">
 
@@ -132,6 +138,7 @@
       <a class="nav-item" href="index.html"><span class="nav-icon"><i class="fa-solid fa-gauge-high"></i></span><span>Dashboard</span></a>
       <a class="nav-item" href="prediction.html"><span class="nav-icon"><i class="fa-solid fa-brain"></i></span><span>AI Prediction</span></a>
       <a class="nav-item" href="analytics.html"><span class="nav-icon"><i class="fa-solid fa-chart-line"></i></span><span>Analytics</span></a>
+      <a class="nav-item" href="directory.html"><span class="nav-icon"><i class="fa-solid fa-hospital-user"></i></span><span>Doctors & Hospitals</span><span class="nav-badge" style="background:var(--accent-cyan); color:#000;">14+</span></a>
       <div class="nav-section-label">Tools</div>
       <a class="nav-item" href="breeding.html"><span class="nav-icon"><i class="fa-solid fa-mosquito"></i></span><span>Breeding Index</span></a>
       <a class="nav-item" href="awareness.html"><span class="nav-icon"><i class="fa-solid fa-bullhorn"></i></span><span>Public Awareness</span></a>
@@ -221,11 +228,37 @@
             <div style="margin-bottom:12px;">
               <label style="font-size:12px; color:var(--text-muted); display:block; margin-bottom:6px; font-weight:600;">District Filter</label>
               <select class="select-input w-full" id="report-district">
-                <option value="all">All Districts</option>
-                <option value="Khordha">Khordha</option>
+                <option value="all">All Districts (30)</option>
+                <option value="Angul">Angul</option>
                 <option value="Balasore">Balasore</option>
+                <option value="Bargarh">Bargarh</option>
+                <option value="Bhadrak">Bhadrak</option>
+                <option value="Bolangir">Bolangir</option>
+                <option value="Boudh">Boudh</option>
                 <option value="Cuttack">Cuttack</option>
+                <option value="Deogarh">Deogarh</option>
+                <option value="Dhenkanal">Dhenkanal</option>
+                <option value="Gajapati">Gajapati</option>
+                <option value="Ganjam">Ganjam</option>
+                <option value="Jagatsinghpur">Jagatsinghpur</option>
+                <option value="Jajpur">Jajpur</option>
+                <option value="Jharsuguda">Jharsuguda</option>
+                <option value="Kalahandi">Kalahandi</option>
+                <option value="Kandhamal">Kandhamal</option>
+                <option value="Kendrapara">Kendrapara</option>
+                <option value="Keonjhar">Keonjhar</option>
+                <option value="Khordha">Khordha (Bhubaneswar)</option>
+                <option value="Koraput">Koraput</option>
+                <option value="Malkangiri">Malkangiri</option>
                 <option value="Mayurbhanj">Mayurbhanj</option>
+                <option value="Nabarangpur">Nabarangpur</option>
+                <option value="Nayagarh">Nayagarh</option>
+                <option value="Nuapada">Nuapada</option>
+                <option value="Puri">Puri</option>
+                <option value="Rayagada">Rayagada</option>
+                <option value="Sambalpur">Sambalpur</option>
+                <option value="Subarnapur">Subarnapur (Sonepur)</option>
+                <option value="Sundargarh">Sundargarh</option>
               </select>
             </div>
             <div style="margin-bottom:12px;">
@@ -457,5 +490,6 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 </script>
 <script src="assistant.js"></script>
+<script src="auth.js"></script>
 </body>
 </html>
