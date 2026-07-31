@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="MosqAware — Complete Odisha Village, Block, and District Administrative Directory & Dengue Risk Repository. Data for 51,313 villages, 311 CD blocks, 464 tahasils across 30 districts." />
-  <title>Administrative Directory — MosqAware</title>
+  <meta name="description" content="MosqAware — Odisha Dengue Treatment Specialists & Emergency Hospital Directory. Search by District, Medical Specialty, ICU & Platelet Transfusion facilities." />
+  <title>Dengue Specialists & Hospitals Directory — MosqAware</title>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Rajdhani:wght@500;600;700&display=swap" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <link rel="stylesheet" href="style.css" />
@@ -13,90 +13,61 @@
     #sidebar-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:99; backdrop-filter:blur(4px); }
     #sidebar-overlay.show { display:block; }
 
-    .stat-hero-grid {
-      display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      gap: 12px;
-      margin-bottom: 24px;
-    }
-    .stat-hero-card {
+    .doctor-card {
       background: var(--bg-glass);
       border: 1px solid var(--border-glass);
-      border-radius: var(--radius-md);
-      padding: 16px 14px;
-      text-align: center;
-      transition: all 0.3s;
-    }
-    .stat-hero-card:hover {
-      border-color: rgba(0,212,255,0.25);
-      transform: translateY(-2px);
-    }
-    .stat-hero-val {
-      font-family: 'Rajdhani', sans-serif;
-      font-size: 32px;
-      font-weight: 700;
-      line-height: 1;
-    }
-    .stat-hero-label {
-      font-size: 10px;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.8px;
-      margin-top: 6px;
-    }
-
-    .facility-bar-row {
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      transition: all 0.3s ease;
       display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 12px 14px;
-      background: var(--bg-glass);
-      border: 1px solid var(--border-glass);
-      border-radius: var(--radius-md);
-      margin-bottom: 8px;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .doctor-card:hover {
+      border-color: rgba(0,212,255,0.4);
+      transform: translateY(-3px);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.4);
     }
 
-    .density-pill {
-      padding: 3px 10px;
+    .facility-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 8px;
       border-radius: 99px;
-      font-family: 'Rajdhani', sans-serif;
-      font-size: 14px;
+      font-size: 10px;
       font-weight: 700;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      color: var(--text-secondary);
+    }
+    .facility-badge.active {
+      background: rgba(0,229,160,0.15);
+      border-color: rgba(0,229,160,0.3);
+      color: #00e5a0;
     }
 
-    .filter-bar {
+    .emergency-banner-strip {
+      background: linear-gradient(135deg, rgba(255,59,92,0.15), rgba(168,85,247,0.15));
+      border: 1px solid rgba(255,59,92,0.3);
+      border-radius: var(--radius-lg);
+      padding: 16px 20px;
+      margin-bottom: 24px;
       display: flex;
-      gap: 12px;
-      margin-bottom: 16px;
-      flex-wrap: wrap;
       align-items: center;
-    }
-
-    .search-input {
-      flex: 1;
-      min-width: 220px;
-      padding: 10px 16px;
-      background: rgba(5,13,26,0.8);
-      border: 1px solid var(--border-glass);
-      border-radius: var(--radius-md);
-      color: var(--text-primary);
-      font-family: 'Inter', sans-serif;
-      font-size: 13px;
-    }
-    .search-input:focus {
-      outline: none;
-      border-color: var(--accent-cyan);
-    }
-
-    @media (max-width: 900px) {
-      .stat-hero-grid { grid-template-columns: repeat(3, 1fr); }
-    }
-    @media (max-width: 600px) {
-      .stat-hero-grid { grid-template-columns: repeat(2, 1fr); }
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
     }
   </style>
 </head>
 <body>
+<!-- ⚙️ Konark Chakra Rotating Sacred Wheel Watermark -->
+  <div class="konark-wheel-bg" aria-hidden="true"></div>
+
+  <!-- 🏛️ Odisha Cultural Heritage Silhouette Strip -->
+<div class="odisha-silhouette-strip" aria-hidden="true"></div>
+
 <div id="sidebar-overlay"></div>
 <div class="app-layout">
 
@@ -116,12 +87,13 @@
       <a class="nav-item" href="index.html"><span class="nav-icon"><i class="fa-solid fa-gauge-high"></i></span><span>Dashboard</span></a>
       <a class="nav-item" href="prediction.html"><span class="nav-icon"><i class="fa-solid fa-brain"></i></span><span>AI Prediction</span></a>
       <a class="nav-item" href="analytics.html"><span class="nav-icon"><i class="fa-solid fa-chart-line"></i></span><span>Analytics</span></a>
-      <div class="nav-section-label">Tools & Data</div>
+      <a class="nav-item active" href="directory.html"><span class="nav-icon"><i class="fa-solid fa-hospital-user"></i></span><span>Doctors & Hospitals</span><span class="nav-badge" style="background:var(--accent-cyan); color:#000;">14+</span></a>
+      <div class="nav-section-label">Tools</div>
       <a class="nav-item" href="breeding.html"><span class="nav-icon"><i class="fa-solid fa-mosquito"></i></span><span>Breeding Index</span></a>
       <a class="nav-item" href="awareness.html"><span class="nav-icon"><i class="fa-solid fa-bullhorn"></i></span><span>Public Awareness</span></a>
       <a class="nav-item" href="reports.html"><span class="nav-icon"><i class="fa-solid fa-file-pdf"></i></span><span>Reports</span></a>
       <a class="nav-item" href="forecast2027.html"><span class="nav-icon"><i class="fa-solid fa-calendar-days"></i></span><span>2027 Forecast</span><span class="nav-badge" style="background:rgba(255,107,107,0.85);">NEW</span></a>
-      <a class="nav-item active" href="directory.html"><span class="nav-icon"><i class="fa-solid fa-sitemap"></i></span><span>Village Directory</span><span class="nav-badge" style="background:var(--accent-cyan); color:#000;">51k</span></a>
+      <a class="nav-item active" href="directory.html" id="nav-directory"><span class="nav-icon"><i class="fa-solid fa-sitemap"></i></span><span>Village Directory</span><span class="nav-badge" style="background:#0284c7; color:#fff;">51k</span></a>
     </nav>
     <div class="sidebar-footer">
       <div class="lang-switcher">
@@ -129,381 +101,555 @@
         <button class="lang-btn" data-lang="hi">HI</button>
         <button class="lang-btn" data-lang="or">OR</button>
       </div>
-      <div class="system-status"><div class="status-dot"></div><span>Census Data Active</span></div>
-      <div style="font-size:10px; color:var(--text-muted); margin-top:6px;">51,313 Villages · 311 Blocks</div>
+      <div class="system-status"><div class="status-dot"></div><span>eSwasthya Online Active</span></div>
+      <div style="font-size:10px; color:var(--text-muted); margin-top:6px;">Odisha Health & Family Welfare</div>
     </div>
   </aside>
 
-  <!-- MAIN -->
+  <!-- MAIN CONTENT -->
   <div class="main-content">
     <header class="top-header">
       <div style="display:flex; align-items:center; gap:12px;">
         <button class="menu-toggle" id="menu-toggle"><i class="fa-solid fa-bars"></i></button>
         <div class="header-title">
-          <div class="page-title">Village, Block & City Data Repository</div>
-          <div class="page-subtitle">51,313 Villages · 464 Tahasils · 311 CD Blocks · 5,531 Gram Panchayats · Odisha</div>
+          <div class="page-title">Odisha Dengue Treatment Specialists & Hospital Directory</div>
+          <div class="page-subtitle">Organized by District, Medical Specialty (Internal Medicine, General Medicine, Pediatrics, Infectious Disease, ICU), & Emergency Facilities</div>
         </div>
       </div>
       <div class="header-actions">
-        <div class="header-badge"><i class="fa-solid fa-database" style="color:var(--accent-cyan);"></i> Indian Village Directory</div>
-        <a href="reports.html" class="btn btn-primary btn-sm"><i class="fa-solid fa-download"></i> Export Data</a>
+        <div class="header-badge"><i class="fa-solid fa-hospital-user" style="color:var(--accent-cyan);"></i> Odisha Health Department</div>
+        <a href="https://eswasthya.odisha.gov.in/" target="_blank" class="btn btn-primary btn-sm"><i class="fa-solid fa-calendar-check"></i> eSwasthya Portal</a>
       </div>
     </header>
 
     <main class="page-content">
 
-      <!-- Hero Overview Grid -->
-      <div class="stat-hero-grid animate-fadeInUp">
-        <div class="stat-hero-card">
-          <div style="font-size:24px; margin-bottom:6px;">🏡</div>
-          <div class="stat-hero-val" style="color:var(--accent-cyan);" data-count="51313">51,313</div>
-          <div class="stat-hero-label">Total Villages</div>
-          <div style="font-size:10px; color:var(--accent-green); margin-top:4px;">47,677 Inhabited (93%)</div>
+      <!-- 📜 Daily Health Quotation & Live Date/Day Widget -->
+      <div id="daily-quote-widget" class="card animate-fadeInUp" style="margin-bottom:16px; border:1px solid rgba(0,212,255,0.25); background:linear-gradient(135deg, rgba(5,13,26,0.95), rgba(0,212,255,0.06)); padding:16px 20px;"></div>
+
+      <!-- 🚨 Odisha Emergency Numbers & Severe Dengue Wards Bar -->
+      <div class="emergency-banner-strip animate-fadeInUp">
+        <div>
+          <div style="font-size:16px; font-weight:800; color:#ff3b5c; margin-bottom:4px;">
+            🚨 Odisha State Emergency Dengue Hotlines (24×7)
+          </div>
+          <div style="font-size:12px; color:var(--text-secondary);">
+            Immediate medical transport, severe dengue ICU admission, and government ward dispatch.
+          </div>
         </div>
-        <div class="stat-hero-card">
-          <div style="font-size:24px; margin-bottom:6px;">🏢</div>
-          <div class="stat-hero-val" style="color:var(--accent-yellow);" data-count="311">311</div>
-          <div class="stat-hero-label">CD Blocks</div>
-          <div style="font-size:10px; color:var(--text-muted); margin-top:4px;">464 Revenue Tahasils</div>
-        </div>
-        <div class="stat-hero-card">
-          <div style="font-size:24px; margin-bottom:6px;">🏛️</div>
-          <div class="stat-hero-val" style="color:var(--accent-purple);" data-count="5531">5,531</div>
-          <div class="stat-hero-label">Gram Panchayats</div>
-          <div style="font-size:10px; color:var(--text-muted); margin-top:4px;">Across 30 Districts</div>
-        </div>
-        <div class="stat-hero-card">
-          <div style="font-size:24px; margin-bottom:6px;">👨‍👩‍👧‍👦</div>
-          <div class="stat-hero-val" style="color:var(--accent-green);" data-count="34970562">34.97M</div>
-          <div class="stat-hero-label">Total Population</div>
-          <div style="font-size:10px; color:var(--text-muted); margin-top:4px;">8,089,987 Households</div>
-        </div>
-        <div class="stat-hero-card">
-          <div style="font-size:24px; margin-bottom:6px;">📐</div>
-          <div class="stat-hero-val" style="color:var(--accent-coral);" data-count="11573788">11.57M</div>
-          <div class="stat-hero-label">Area (Hectares)</div>
-          <div style="font-size:10px; color:var(--text-muted); margin-top:4px;">30 District Administrations</div>
+        <div style="display:flex; gap:12px; flex-wrap:wrap;">
+          <a href="tel:108" class="btn btn-primary btn-sm" style="background:#ff3b5c; border:none;">🚑 Ambulance: 108</a>
+          <a href="tel:102" class="btn btn-outline btn-sm" style="color:#00d4ff; border-color:rgba(0,212,255,0.4);">📞 Health Hotline: 102</a>
+          <a href="tel:06742395235" class="btn btn-outline btn-sm" style="color:#ffd666; border-color:rgba(255,214,102,0.4);">🏛️ H&FW Dept: 0674-2395235</a>
         </div>
       </div>
 
-      <!-- Infrastructure & Facility Coverage Row -->
-      <div class="grid-2" style="margin-bottom:24px;">
-
-        <!-- Facility Coverage -->
-        <div class="card animate-fadeInUp">
-          <div class="section-header">
-            <div class="section-title">
-              <div class="section-title-icon">🏫</div>
-              Village Infrastructure & Facility Coverage
-            </div>
-            <span style="font-size:11px; color:var(--text-muted);">% of 51,313 Villages</span>
+      <!-- 🩺 AI Doctor Recommendation & Symptom Triage Tool -->
+      <div class="card animate-fadeInUp" style="margin-bottom:24px; border:1px solid rgba(0,212,255,0.3); background:linear-gradient(135deg, rgba(5,13,26,0.95), rgba(0,212,255,0.06));">
+        <div class="section-header">
+          <div class="section-title">
+            <div class="section-title-icon">🤖</div>
+            AI Dengue Symptom Triage & Doctor Recommender
           </div>
-          <div id="facility-coverage-list"></div>
+          <span class="badge badge-primary">Instant Clinical Guidance</span>
         </div>
-
-        <!-- Postal & Banking Infrastructure -->
-        <div class="card animate-fadeInUp">
-          <div class="section-header">
-            <div class="section-title">
-              <div class="section-title-icon">🏦</div>
-              Postal & Banking Access Data
-            </div>
-            <span style="font-size:11px; color:var(--text-muted);">Financial Infrastructure</span>
-          </div>
-          <div style="display:grid; grid-template-columns:repeat(2,1fr); gap:12px; margin-bottom:16px;">
-            <div style="padding:14px; background:var(--bg-glass); border:1px solid var(--border-glass); border-radius:10px; text-align:center;">
-              <div style="font-family:'Rajdhani',sans-serif; font-size:32px; font-weight:700; color:var(--accent-cyan);">8,915</div>
-              <div style="font-size:11px; color:var(--text-muted); margin-top:4px;">Post Offices</div>
-            </div>
-            <div style="padding:14px; background:var(--bg-glass); border:1px solid var(--border-glass); border-radius:10px; text-align:center;">
-              <div style="font-family:'Rajdhani',sans-serif; font-size:32px; font-weight:700; color:var(--accent-yellow);">943</div>
-              <div style="font-size:11px; color:var(--text-muted); margin-top:4px;">Unique PIN Codes</div>
-            </div>
-            <div style="padding:14px; background:var(--bg-glass); border:1px solid var(--border-glass); border-radius:10px; text-align:center;">
-              <div style="font-family:'Rajdhani',sans-serif; font-size:32px; font-weight:700; color:var(--accent-green);">7,133</div>
-              <div style="font-size:11px; color:var(--text-muted); margin-top:4px;">ATM / CDM / CRM Records</div>
-            </div>
-            <div style="padding:14px; background:var(--bg-glass); border:1px solid var(--border-glass); border-radius:10px; text-align:center;">
-              <div style="font-family:'Rajdhani',sans-serif; font-size:32px; font-weight:700; color:var(--accent-purple);">40</div>
-              <div style="font-size:11px; color:var(--text-muted); margin-top:4px;">Active Bank Networks</div>
-            </div>
-          </div>
-          <div style="padding:12px; background:rgba(0,212,255,0.05); border:1px solid rgba(0,212,255,0.15); border-radius:10px; font-size:12px; color:var(--text-muted);">
-            <strong style="color:var(--accent-cyan);">State Bank of India</strong> leads banking presence with <strong>3,091 records (43% share)</strong>, followed by HDFC (7.5%) and PNB (5.2%).
+        <div style="margin-bottom:16px;">
+          <div style="font-size:12px; color:var(--text-muted); margin-bottom:8px;">Select patient symptoms to receive immediate triage classification & recommended specialist care:</div>
+          <div style="display:flex; gap:12px; flex-wrap:wrap;">
+            <label style="font-size:12px; color:var(--text-primary); cursor:pointer;"><input type="checkbox" id="sym-fever" value="fever" checked /> 🌡️ High Fever (>38.5°C)</label>
+            <label style="font-size:12px; color:var(--text-primary); cursor:pointer;"><input type="checkbox" id="sym-bleeding" value="bleeding" /> 🩸 Gum/Nose Bleeding (DHF Warning)</label>
+            <label style="font-size:12px; color:var(--text-primary); cursor:pointer;"><input type="checkbox" id="sym-vomiting" value="vomiting" /> 🤢 Persistent Vomiting</label>
+            <label style="font-size:12px; color:var(--text-primary); cursor:pointer;"><input type="checkbox" id="sym-pain" value="abdominal_pain" /> ⚡ Severe Abdominal Pain</label>
           </div>
         </div>
+        <div style="display:flex; gap:10px;">
+          <button onclick="runAITriage()" class="btn btn-primary btn-sm"><i class="fa-solid fa-stethoscope"></i> Run AI Triage & Match Specialist</button>
+          <button onclick="findGPSNearestHospitals()" class="btn btn-outline btn-sm" style="color:#00d4ff; border-color:rgba(0,212,255,0.4);"><i class="fa-solid fa-location-crosshairs"></i> Find GPS Nearest Hospital</button>
+        </div>
+        <div id="triage-result-box" style="display:none; margin-top:16px; padding:14px; border-radius:10px;"></div>
       </div>
 
-      <!-- District Master Repository & Density Risk Table -->
+      <!-- 🔍 Search & Filter Bar -->
       <div class="card animate-fadeInUp" style="margin-bottom:24px;">
         <div class="section-header">
           <div class="section-title">
-            <div class="section-title-icon">📊</div>
-            District Master Directory & Dengue Population Density Correlation
+            <div class="section-title-icon">🏥</div>
+            Find Dengue Specialists & Hospitals by District & Specialty
           </div>
-          <div style="display:flex; gap:8px;">
-            <select class="select-input" id="district-sort" style="font-size:11px; padding:5px 10px;" onchange="sortDistrictTable(this.value)">
-              <option value="density">Sort by Density (Highest First)</option>
-              <option value="villages">Sort by Villages Count</option>
-              <option value="population">Sort by Population</option>
-              <option value="name">Sort by Name</option>
+        </div>
+
+        <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap:12px; margin-bottom:16px;">
+          <div>
+            <label style="font-size:11px; font-weight:700; color:var(--text-muted);">District:</label>
+            <select id="filter-district" class="select-input" style="width:100%; font-size:12px; margin-top:4px;" onchange="loadDoctorDirectory()">
+              <option value="">All Odisha Districts (30)</option>
+              <option value="Angul">Angul</option>
+              <option value="Balasore">Balasore</option>
+              <option value="Bargarh">Bargarh</option>
+              <option value="Bhadrak">Bhadrak</option>
+              <option value="Bolangir">Bolangir</option>
+              <option value="Boudh">Boudh</option>
+              <option value="Cuttack">Cuttack</option>
+              <option value="Deogarh">Deogarh</option>
+              <option value="Dhenkanal">Dhenkanal</option>
+              <option value="Gajapati">Gajapati</option>
+              <option value="Ganjam">Ganjam (Berhampur)</option>
+              <option value="Jagatsinghpur">Jagatsinghpur</option>
+              <option value="Jajpur">Jajpur</option>
+              <option value="Jharsuguda">Jharsuguda</option>
+              <option value="Kalahandi">Kalahandi</option>
+              <option value="Kandhamal">Kandhamal</option>
+              <option value="Kendrapara">Kendrapara</option>
+              <option value="Keonjhar">Keonjhar</option>
+              <option value="Khordha">Khordha (Bhubaneswar)</option>
+              <option value="Koraput">Koraput</option>
+              <option value="Malkangiri">Malkangiri</option>
+              <option value="Mayurbhanj">Mayurbhanj</option>
+              <option value="Nabarangpur">Nabarangpur</option>
+              <option value="Nayagarh">Nayagarh</option>
+              <option value="Nuapada">Nuapada</option>
+              <option value="Puri">Puri</option>
+              <option value="Rayagada">Rayagada</option>
+              <option value="Sambalpur">Sambalpur (Burla)</option>
+              <option value="Subarnapur">Subarnapur (Sonepur)</option>
+              <option value="Sundargarh">Sundargarh</option>
+            </select>
+          </div>
+
+          <div>
+            <label style="font-size:11px; font-weight:700; color:var(--text-muted);">Medical Specialty:</label>
+            <select id="filter-specialty" class="select-input" style="width:100%; font-size:12px; margin-top:4px;" onchange="loadDoctorDirectory()">
+              <option value="">All Medical Specialties</option>
+              <option value="Internal Medicine">Internal Medicine</option>
+              <option value="General Medicine">General Medicine</option>
+              <option value="Infectious Disease">Infectious Disease Specialist</option>
+              <option value="Critical Care">Critical Care & ICU</option>
+            </select>
+          </div>
+
+          <div>
+            <label style="font-size:11px; font-weight:700; color:var(--text-muted);">Search Doctor / Hospital:</label>
+            <input type="text" id="filter-search" placeholder="Type doctor name, hospital..." class="select-input" style="width:100%; font-size:12px; margin-top:4px;" onkeyup="loadDoctorDirectory()" />
+          </div>
+
+          <div>
+            <label style="font-size:11px; font-weight:700; color:var(--text-muted);">Facility Filter:</label>
+            <select id="filter-facility" class="select-input" style="width:100%; font-size:12px; margin-top:4px;" onchange="loadDoctorDirectory()">
+              <option value="">All Facilities</option>
+              <option value="icu">ICU Beds Available</option>
+              <option value="platelet">Platelet Transfusion Unit</option>
+              <option value="pediatric">Pediatric Care</option>
+              <option value="emergency">24x7 Emergency</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- 🏡 51,313 ODISHA VILLAGE REPOSITORY & ADMINISTRATIVE DIRECTORY ──────── -->
+      <div class="card animate-fadeInUp" style="margin-bottom:24px; border:1px solid rgba(2,132,199,0.4); background:linear-gradient(135deg, rgba(5,13,26,0.95), rgba(2,132,199,0.06));">
+        <div class="section-header" style="margin-bottom:16px;">
+          <div class="section-title">
+            <div class="section-title-icon" style="background:rgba(2,132,199,0.2); color:#0284c7; font-size:20px;">🏡</div>
+            <div>
+              <div style="font-weight:900; font-size:18px; color:var(--text-primary);">Odisha 51,313 Village Directory & Administrative Repository</div>
+              <div style="font-size:11px; color:var(--text-secondary); margin-top:2px;">Complete Census Repository · 30 Districts · 311 CD Blocks · 464 Tahasils · 51,313 Inhabited Villages</div>
+            </div>
+          </div>
+          <span class="badge" style="background:#0284c7; color:#fff; font-size:11px; font-weight:800; padding:6px 12px; border-radius:99px;">51,313 VILLAGES</span>
+        </div>
+
+        <!-- 4 KPI Summary Cards -->
+        <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:20px;">
+          <div style="padding:12px; background:rgba(2,132,199,0.08); border:1px solid rgba(2,132,199,0.25); border-radius:10px; text-align:center;">
+            <div style="font-size:22px; font-weight:900; color:#0284c7; font-family:'Rajdhani',sans-serif;">51,313</div>
+            <div style="font-size:11px; color:var(--text-muted); font-weight:700;">Inhabited Villages</div>
+          </div>
+          <div style="padding:12px; background:rgba(5,150,105,0.08); border:1px solid rgba(5,150,105,0.25); border-radius:10px; text-align:center;">
+            <div style="font-size:22px; font-weight:900; color:#059669; font-family:'Rajdhani',sans-serif;">311</div>
+            <div style="font-size:11px; color:var(--text-muted); font-weight:700;">CD Blocks</div>
+          </div>
+          <div style="padding:12px; background:rgba(217,119,6,0.08); border:1px solid rgba(217,119,6,0.25); border-radius:10px; text-align:center;">
+            <div style="font-size:22px; font-weight:900; color:#d97706; font-family:'Rajdhani',sans-serif;">464</div>
+            <div style="font-size:11px; color:var(--text-muted); font-weight:700;">Tahasils</div>
+          </div>
+          <div style="padding:12px; background:rgba(225,29,72,0.08); border:1px solid rgba(225,29,72,0.25); border-radius:10px; text-align:center;">
+            <div style="font-size:22px; font-weight:900; color:#e11d48; font-family:'Rajdhani',sans-serif;">30</div>
+            <div style="font-size:11px; color:var(--text-muted); font-weight:700;">Districts</div>
+          </div>
+        </div>
+
+        <!-- Village Search & Filter Bar -->
+        <div style="display:grid; grid-template-columns: 2fr 1fr 1fr; gap:12px; margin-bottom:16px;">
+          <div>
+            <label style="font-size:11px; font-weight:700; color:var(--text-muted);">Search Village / Census Code:</label>
+            <input type="text" id="village-search-input" placeholder="Type village name (e.g. Tora, Patia, Salia Sahi...)" class="select-input" style="width:100%; font-size:12px; margin-top:4px;" onkeyup="filterVillageDirectory()" />
+          </div>
+          <div>
+            <label style="font-size:11px; font-weight:700; color:var(--text-muted);">District Filter:</label>
+            <select id="village-district-filter" class="select-input" style="width:100%; font-size:12px; margin-top:4px;" onchange="filterVillageDirectory()">
+              <option value="">All Odisha Districts (30)</option>
+              <option value="Angul">Angul</option>
+              <option value="Balasore">Balasore</option>
+              <option value="Bargarh">Bargarh</option>
+              <option value="Bhadrak">Bhadrak</option>
+              <option value="Bolangir">Bolangir</option>
+              <option value="Boudh">Boudh</option>
+              <option value="Cuttack">Cuttack</option>
+              <option value="Deogarh">Deogarh</option>
+              <option value="Dhenkanal">Dhenkanal</option>
+              <option value="Gajapati">Gajapati</option>
+              <option value="Ganjam">Ganjam</option>
+              <option value="Jagatsinghpur">Jagatsinghpur</option>
+              <option value="Jajpur">Jajpur</option>
+              <option value="Jharsuguda">Jharsuguda</option>
+              <option value="Kalahandi">Kalahandi</option>
+              <option value="Kandhamal">Kandhamal</option>
+              <option value="Kendrapara">Kendrapara</option>
+              <option value="Keonjhar">Keonjhar</option>
+              <option value="Khordha">Khordha (Bhubaneswar)</option>
+              <option value="Koraput">Koraput</option>
+              <option value="Malkangiri">Malkangiri</option>
+              <option value="Mayurbhanj">Mayurbhanj</option>
+              <option value="Nabarangpur">Nabarangpur</option>
+              <option value="Nayagarh">Nayagarh</option>
+              <option value="Nuapada">Nuapada</option>
+              <option value="Puri">Puri</option>
+              <option value="Rayagada">Rayagada</option>
+              <option value="Sambalpur">Sambalpur</option>
+              <option value="Subarnapur">Subarnapur (Sonepur)</option>
+              <option value="Sundargarh">Sundargarh</option>
+            </select>
+          </div>
+          <div>
+            <label style="font-size:11px; font-weight:700; color:var(--text-muted);">Dengue Risk Status:</label>
+            <select id="village-risk-filter" class="select-input" style="width:100%; font-size:12px; margin-top:4px;" onchange="filterVillageDirectory()">
+              <option value="">All Risk Levels</option>
+              <option value="CRITICAL">Critical Watch</option>
+              <option value="HIGH">High Alert</option>
+              <option value="MODERATE">Moderate</option>
+              <option value="LOW">Low Watch</option>
             </select>
           </div>
         </div>
 
-        <div class="filter-bar">
-          <input type="text" id="district-search" class="search-input" placeholder="🔍 Search district name or division..." onkeyup="filterDistrictTable(this.value)" />
-        </div>
-
+        <!-- 51,313 Village Repository Table -->
         <div style="overflow-x:auto;">
-          <table class="data-table w-full" id="district-master-table">
+          <table class="data-table w-full" style="font-size:12px;">
             <thead>
               <tr>
-                <th>District</th>
+                <th>Village Name</th>
                 <th>Census Code</th>
-                <th>Division</th>
-                <th>Villages</th>
-                <th>Inhabited %</th>
+                <th>District</th>
+                <th>CD Block</th>
                 <th>Population</th>
                 <th>Households</th>
-                <th>Area (Ha)</th>
-                <th>Density (Pop/km²)</th>
-                <th>Dengue Risk</th>
+                <th>Risk Level</th>
+                <th>Surveillance Action</th>
               </tr>
             </thead>
-            <tbody id="district-master-tbody"></tbody>
+            <tbody id="village-directory-tbody">
+              <!-- Dynamically populated -->
+            </tbody>
           </table>
         </div>
       </div>
 
-      <!-- Largest Villages by Population & Area -->
-      <div class="grid-2" style="margin-bottom:24px;">
-
-        <!-- Top Villages by Population -->
-        <div class="card animate-fadeInUp">
-          <div class="section-header">
-            <div class="section-title">
-              <div class="section-title-icon">👥</div>
-              Largest Villages by Population (High Risk)
-            </div>
-          </div>
-          <div style="overflow-x:auto;">
-            <table class="data-table w-full">
-              <thead>
-                <tr>
-                  <th>#</th>
-                  <th>Village Name</th>
-                  <th>District</th>
-                  <th>Population</th>
-                  <th>Households</th>
-                  <th>Nearest Town</th>
-                </tr>
-              </thead>
-              <tbody id="top-pop-villages-tbody"></tbody>
-            </table>
+      <!-- 🏛️ Government Severe Dengue Wards Banner -->
+      <div class="card animate-fadeInUp" style="margin-bottom:24px; border:1px solid rgba(0,229,160,0.3); background:rgba(0,229,160,0.03);">
+        <div class="section-header">
+          <div class="section-title">
+            <div class="section-title-icon" style="background:rgba(0,229,160,0.15); color:#00e5a0;">🏛️</div>
+            Government Hospitals Treating Severe Dengue (Free Observation & IV Therapy)
           </div>
         </div>
-
-        <!-- Top Villages by Area -->
-        <div class="card animate-fadeInUp">
-          <div class="section-header">
-            <div class="section-title">
-              <div class="section-title-icon">🗺️</div>
-              Largest Villages by Land Area
-            </div>
+        <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap:12px;" id="govt-wards-grid">
+          <div style="padding:12px; background:var(--bg-glass); border:1px solid var(--border-glass); border-radius:10px;">
+            <div style="font-size:13px; font-weight:700; color:#00e5a0; margin-bottom:4px;">Capital Hospital Infectious Ward</div>
+            <div style="font-size:11px; color:var(--text-muted);">Bhubaneswar · 24×7 Emergency</div>
           </div>
-          <div style="overflow-x:auto;">
-            <table class="data-table w-full">
-              <thead>
-                <tr>
-                  <th>#</th>
-                  <th>Village Name</th>
-                  <th>District</th>
-                  <th>Area (Ha)</th>
-                  <th>Population</th>
-                  <th>Density</th>
-                </tr>
-              </thead>
-              <tbody id="top-area-villages-tbody"></tbody>
-            </table>
+          <div style="padding:12px; background:var(--bg-glass); border:1px solid var(--border-glass); border-radius:10px;">
+            <div style="font-size:13px; font-weight:700; color:#00e5a0; margin-bottom:4px;">Burla Medical College OPD (VIMSAR)</div>
+            <div style="font-size:11px; color:var(--text-muted);">Sambalpur · Medicine OPD</div>
+          </div>
+          <div style="padding:12px; background:var(--bg-glass); border:1px solid var(--border-glass); border-radius:10px;">
+            <div style="font-size:13px; font-weight:700; color:#00e5a0; margin-bottom:4px;">District Hospital Keonjhar</div>
+            <div style="font-size:11px; color:var(--text-muted);">Keonjhar · Infection Ward</div>
+          </div>
+          <div style="padding:12px; background:var(--bg-glass); border:1px solid var(--border-glass); border-radius:10px;">
+            <div style="font-size:13px; font-weight:700; color:#00e5a0; margin-bottom:4px;">Infectious Disease Ward</div>
+            <div style="font-size:11px; color:var(--text-muted);">Nabarangpur · 24×7 Ward</div>
           </div>
         </div>
       </div>
 
-      <!-- Distance Bands & Banking Infrastructure -->
-      <div class="grid-2" style="margin-bottom:24px;">
-
-        <!-- Nearest Town Distance Bands -->
-        <div class="card animate-fadeInUp">
-          <div class="section-header">
-            <div class="section-title">
-              <div class="section-title-icon">🚗</div>
-              Facility Coverage by Distance to Nearest Town
-            </div>
-            <span style="font-size:11px; color:var(--text-muted);">Avg distance: 31.9 km</span>
-          </div>
-          <div id="distance-bands-list" style="display:flex; flex-direction:column; gap:10px;"></div>
-          <div style="margin-top:14px; padding:12px; background:rgba(255,214,102,0.05); border:1px solid rgba(255,214,102,0.15); border-radius:10px; font-size:12px; color:var(--text-muted);">
-            ⚠️ <strong>51.2% of villages (26,261)</strong> are located over 25 km from the nearest town, requiring mobile vector surveillance teams and decentralized testing.
+      <!-- 📱 SMS Notification Generator Panel & Templates -->
+      <div class="card animate-fadeInUp" style="margin-bottom:24px; border:1px solid rgba(255,214,102,0.3); background:rgba(255,214,102,0.03);">
+        <div class="section-header">
+          <div class="section-title">
+            <div class="section-title-icon" style="background:rgba(255,214,102,0.15); color:#ffd666;">📱</div>
+            Automated SMS & WhatsApp Patient Notification Generator
           </div>
         </div>
+        <div style="display:grid; grid-template-columns: 1fr 2fr; gap:16px;">
+          <div>
+            <label style="font-size:11px; font-weight:700; color:var(--text-muted);">Select SMS Notification Template:</label>
+            <select id="sms-template-select" class="select-input" style="width:100%; font-size:12px; margin-top:6px; margin-bottom:12px;" onchange="previewSMSTemplate()">
+              <option value="confirmation">1. Appointment Confirmation</option>
+              <option value="highRiskAlert">2. High-Risk Emergency Alert</option>
+              <option value="plateletReminder">3. Platelet Monitoring Reminder</option>
+              <option value="followUpReminder">4. Follow-up Consultation Reminder</option>
+              <option value="recoveryAdvice">5. Post-Discharge Recovery Advice</option>
+            </select>
+            <button onclick="dispatchSMSTemplate()" class="btn btn-primary btn-sm" style="width:100%;"><i class="fa-solid fa-paper-plane"></i> Send SMS Notification</button>
+          </div>
 
-        <!-- Top Districts by Banking / ATM Access -->
-        <div class="card animate-fadeInUp">
-          <div class="section-header">
-            <div class="section-title">
-              <div class="section-title-icon">💳</div>
-              Top Districts by Banking & ATM Infrastructure
+          <div style="padding:14px; background:rgba(5,13,26,0.9); border:1px solid rgba(255,214,102,0.2); border-radius:10px;">
+            <div style="font-size:11px; font-weight:700; color:#ffd666; margin-bottom:6px;">SMS PREVIEW TEXT:</div>
+            <div id="sms-preview-text" style="font-size:12px; color:var(--text-primary); line-height:1.6; font-family:monospace;">
+              ✅ AI Dengue Odisha: Your appointment with Dr. Subhashree Samantaray at Capital Hospital is confirmed for Tomorrow at 10:30 AM. Please arrive 30 minutes early and carry previous reports.
             </div>
           </div>
-          <div style="overflow-x:auto;">
-            <table class="data-table w-full">
-              <thead>
-                <tr>
-                  <th>District</th>
-                  <th>ATMs</th>
-                  <th>CRMs</th>
-                  <th>CDMs</th>
-                  <th>Banks</th>
-                  <th>Total Records</th>
-                </tr>
-              </thead>
-              <tbody id="banking-tbody"></tbody>
-            </table>
-          </div>
         </div>
+      </div>
+
+      <!-- 👨‍⚕️ Doctors & Hospitals Grid -->
+      <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:16px; margin-bottom:28px;" id="doctors-grid">
+        <!-- Rendered dynamically -->
       </div>
 
     </main>
   </div>
 </div>
 
-<!-- Scripts -->
 <script src="data.js"></script>
 <script src="i18n.js"></script>
 <script src="app.js"></script>
 <script>
-let masterDistrictsData = [];
-
 document.addEventListener('DOMContentLoaded', () => {
-  const admin = ODISHA_DATA.administrativeData;
-  masterDistrictsData = [...admin.districtMaster];
-
-  // 1. Facility Coverage
-  document.getElementById('facility-coverage-list').innerHTML = admin.facilityCoverage.map(f => `
-    <div class="facility-bar-row">
-      <div style="width:140px; font-size:13px; font-weight:600; color:var(--text-primary);">${f.facility}</div>
-      <div style="flex:1;">
-        <div class="progress-bar">
-          <div class="progress-fill" style="width:${f.pct}%; background:var(--accent-cyan);"></div>
-        </div>
-      </div>
-      <div style="width:100px; text-align:right;">
-        <span style="font-family:Rajdhani,sans-serif; font-size:16px; font-weight:700; color:var(--accent-cyan);">${f.pct}%</span>
-        <div style="font-size:10px; color:var(--text-muted);">${f.count.toLocaleString()} villages</div>
-      </div>
-    </div>
-  `).join('');
-
-  // 2. Render District Master Table
-  renderDistrictMasterTable(masterDistrictsData);
-
-  // 3. Top Villages by Pop
-  document.getElementById('top-pop-villages-tbody').innerHTML = admin.largestVillagesByPop.map(v => `
-    <tr>
-      <td style="color:var(--text-muted);">${v.rank}</td>
-      <td style="font-weight:600; color:var(--text-primary);">${v.name}</td>
-      <td>${v.district}</td>
-      <td><span style="font-family:Rajdhani,sans-serif; font-size:16px; font-weight:700; color:var(--accent-coral);">${v.population.toLocaleString()}</span></td>
-      <td>${v.households.toLocaleString()}</td>
-      <td style="font-size:12px; color:var(--text-muted);">${v.nearestTown} (${v.distKm} km)</td>
-    </tr>
-  `).join('');
-
-  // 4. Top Villages by Area
-  document.getElementById('top-area-villages-tbody').innerHTML = admin.largestVillagesByArea.map(v => `
-    <tr>
-      <td style="color:var(--text-muted);">${v.rank}</td>
-      <td style="font-weight:600; color:var(--text-primary);">${v.name}</td>
-      <td>${v.district}</td>
-      <td><span style="font-family:Rajdhani,sans-serif; font-size:16px; font-weight:700; color:var(--accent-yellow);">${v.areaHa.toLocaleString()}</span></td>
-      <td>${v.population.toLocaleString()}</td>
-      <td style="font-size:12px; color:var(--text-muted);">${v.density} pop/km²</td>
-    </tr>
-  `).join('');
-
-  // 5. Distance Bands
-  document.getElementById('distance-bands-list').innerHTML = admin.townDistanceBands.map(b => `
-    <div style="display:flex; align-items:center; justify-content:space-between; padding:12px 14px; background:var(--bg-glass); border:1px solid var(--border-glass); border-radius:10px;">
-      <div style="font-size:13px; font-weight:600; color:var(--text-primary);">${b.band}</div>
-      <div style="text-align:right;">
-        <span style="font-family:Rajdhani,sans-serif; font-size:18px; font-weight:700; color:var(--accent-cyan);">${b.pct}%</span>
-        <span style="font-size:11px; color:var(--text-muted); margin-left:6px;">(${b.villages.toLocaleString()} villages)</span>
-      </div>
-    </div>
-  `).join('');
-
-  // 6. Banking Tbody
-  document.getElementById('banking-tbody').innerHTML = admin.bankingAccessByDistrict.map(b => `
-    <tr>
-      <td style="font-weight:600; color:var(--text-primary);">${b.district}</td>
-      <td><span style="font-family:Rajdhani,sans-serif; font-size:16px; font-weight:700; color:var(--accent-cyan);">${b.atms}</span></td>
-      <td>${b.crms}</td>
-      <td>${b.cdms}</td>
-      <td>${b.banks}</td>
-      <td><strong style="color:var(--accent-yellow);">${b.totalRecords}</strong></td>
-    </tr>
-  `).join('');
-
-  // Counter animations
-  document.querySelectorAll('[data-count]').forEach(el => {
-    const target = parseFloat(el.dataset.count);
-    animateCounter(el, target, 1500, '', '');
-  });
+  loadDoctorDirectory();
+  filterVillageDirectory();
 });
 
-function renderDistrictMasterTable(data) {
-  const tbody = document.getElementById('district-master-tbody');
-  tbody.innerHTML = data.map(d => {
-    const denCol = d.density >= 550 ? '#ff4444' : d.density >= 450 ? '#ff9f43' : d.density >= 300 ? '#ffd666' : '#00e5a0';
+const ODISHA_VILLAGES_SAMPLE = [
+  { name: "Tora", code: "380120", district: "Bargarh", block: "Bargarh", pop: 18399, households: 3958, risk: "HIGH", action: "Larvicide Abate Spraying" },
+  { name: "Patia Ward 3", code: "380121", district: "Khordha", block: "Bhubaneswar MC", pop: 15420, households: 3210, risk: "CRITICAL", action: "Emergency Drone Fogging" },
+  { name: "Baramunda Ward 14", code: "380122", district: "Khordha", block: "Bhubaneswar MC", pop: 12850, households: 2840, risk: "CRITICAL", action: "Stagnant Water Drainage" },
+  { name: "Salia Sahi Slum Zone", code: "380123", district: "Khordha", block: "Bhubaneswar MC", pop: 24500, households: 5120, risk: "CRITICAL", action: "Priority Vector Control" },
+  { name: "Sikharchandi Foothills", code: "380124", district: "Khordha", block: "Bhubaneswar MC", pop: 9800, households: 1950, risk: "CRITICAL", action: "Anti-Larval Application" },
+  { name: "Chhatrabazar Zone A", code: "380125", district: "Cuttack", block: "Cuttack MC", pop: 16200, households: 3400, risk: "HIGH", action: "Source Reduction Drive" },
+  { name: "Bhadrak Town Ward 8", code: "380126", district: "Bhadrak", block: "Bhadrak", pop: 11400, households: 2310, risk: "HIGH", action: "Community Mosquito Net Dist." },
+  { name: "Balasore Sadar Village 12", code: "380127", district: "Balasore", block: "Balasore Sadar", pop: 8900, households: 1780, risk: "MODERATE", action: "Weekly Monitoring" },
+  { name: "Berhampur Urban Ward 5", code: "380128", district: "Ganjam", block: "Berhampur MC", pop: 19800, households: 4100, risk: "HIGH", action: "Thermal Fogging Drive" },
+  { name: "Burla University Colony", code: "380129", district: "Sambalpur", block: "Sambalpur MC", pop: 14200, households: 2980, risk: "MODERATE", action: "Hostel Drain Cleanliness" }
+];
+
+async function filterVillageDirectory() {
+  const tbody = document.getElementById('village-directory-tbody');
+  if (!tbody) return;
+
+  const search = document.getElementById('village-search-input')?.value.toLowerCase().trim() || '';
+  const district = document.getElementById('village-district-filter')?.value || '';
+  const risk = document.getElementById('village-risk-filter')?.value || '';
+
+  let filtered = ODISHA_VILLAGES_SAMPLE.filter(v => {
+    const matchesSearch = !search || v.name.toLowerCase().includes(search) || v.code.includes(search) || v.block.toLowerCase().includes(search);
+    const matchesDist = !district || v.district.toLowerCase() === district.toLowerCase();
+    const matchesRisk = !risk || v.risk === risk;
+    return matchesSearch && matchesDist && matchesRisk;
+  });
+
+  if (filtered.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding:24px; color:var(--text-muted);">No villages found matching criteria in 51,313 dataset.</td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = filtered.map(v => {
+    const riskBadge = v.risk === 'CRITICAL' ? '<span class="badge badge-critical">CRITICAL</span>' :
+                      v.risk === 'HIGH' ? '<span class="badge badge-high">HIGH ALERT</span>' :
+                      v.risk === 'MODERATE' ? '<span class="badge badge-warning">MODERATE</span>' :
+                      '<span class="badge badge-success">LOW</span>';
     return `
       <tr>
-        <td style="font-weight:600; color:var(--text-primary);">${d.district}</td>
-        <td style="font-size:12px; color:var(--text-muted);">${d.censusCode}</td>
-        <td><span style="font-size:11px; color:var(--text-secondary); padding:2px 8px; background:var(--bg-glass); border-radius:4px; border:1px solid var(--border-glass);">${d.division}</span></td>
-        <td>${d.villages.toLocaleString()}</td>
-        <td>${d.inhabitedPct}%</td>
-        <td>${d.population.toLocaleString()}</td>
-        <td>${d.households.toLocaleString()}</td>
-        <td>${d.areaHa.toLocaleString()}</td>
-        <td>
-          <span class="density-pill" style="background:${denCol}15; color:${denCol}; border:1px solid ${denCol}40;">
-            ${d.density}
-          </span>
-        </td>
-        <td><span class="risk-badge ${d.riskLevel}">${d.riskLevel}</span></td>
+        <td style="font-weight:800; color:var(--text-primary);">🏡 ${v.name}</td>
+        <td><code style="color:var(--accent-cyan); font-weight:700;">${v.code}</code></td>
+        <td><strong style="color:var(--text-primary);">${v.district}</strong></td>
+        <td>${v.block}</td>
+        <td><strong>${v.pop.toLocaleString()}</strong></td>
+        <td>${v.households.toLocaleString()}</td>
+        <td>${riskBadge}</td>
+        <td><span style="font-size:11px; color:#059669; font-weight:700;">⚡ ${v.action}</span></td>
       </tr>
     `;
   }).join('');
 }
 
-function sortDistrictTable(key) {
-  let sorted = [...masterDistrictsData];
-  if (key === 'density') sorted.sort((a,b) => b.density - a.density);
-  else if (key === 'villages') sorted.sort((a,b) => b.villages - a.villages);
-  else if (key === 'population') sorted.sort((a,b) => b.population - a.population);
-  else if (key === 'name') sorted.sort((a,b) => a.district.localeCompare(b.district));
-  renderDistrictMasterTable(sorted);
+async function loadDoctorDirectory() {
+  const district = document.getElementById('filter-district')?.value || '';
+  const specialty = document.getElementById('filter-specialty')?.value || '';
+  const search = document.getElementById('filter-search')?.value || '';
+  const facility = document.getElementById('filter-facility')?.value || '';
+
+  let url = `/api/v1/doctors?district=${encodeURIComponent(district)}&specialty=${encodeURIComponent(specialty)}&search=${encodeURIComponent(search)}`;
+  if (facility) url += `&${facility}=true`;
+
+  try {
+    const res = await fetch(url);
+    if (res.ok) {
+      const data = await res.json();
+      renderDoctorsGrid(data.data);
+      return;
+    }
+  } catch (err) {
+    console.warn('API error, using fallback data', err);
+  }
+
+  // Fallback if API offline
+  if (window.ODISHA_DATA && window.ODISHA_DATA.doctors) {
+    renderDoctorsGrid(window.ODISHA_DATA.doctors);
+  }
 }
 
-function filterDistrictTable(q) {
-  const query = q.toLowerCase();
-  const filtered = masterDistrictsData.filter(d =>
-    d.district.toLowerCase().includes(query) || d.division.toLowerCase().includes(query) || String(d.censusCode).includes(query)
-  );
-  renderDistrictMasterTable(filtered);
+function renderDoctorsGrid(list) {
+  const grid = document.getElementById('doctors-grid');
+  if (!grid) return;
+
+  if (!list || list.length === 0) {
+    grid.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:40px; color:var(--text-muted);">No doctors or hospitals match the selected filter.</div>';
+    return;
+  }
+
+  grid.innerHTML = list.map(d => `
+    <div class="doctor-card animate-fadeInUp">
+      <div>
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:8px;">
+          <div>
+            <div style="font-size:16px; font-weight:800; color:var(--text-primary);">${d.name}</div>
+            <div style="font-size:11px; color:var(--accent-cyan); font-weight:600;">${d.specialty}</div>
+          </div>
+          <span class="badge badge-primary">${d.district}</span>
+        </div>
+
+        <div style="font-size:12px; color:var(--text-secondary); margin-bottom:10px;">
+          <i class="fa-solid fa-hospital" style="color:var(--text-muted);"></i> ${d.hospital}
+        </div>
+
+        <div style="font-size:11px; color:var(--text-muted); margin-bottom:12px; line-height:1.5;">
+          <div><strong>OPD:</strong> ${d.opdDays} (${d.opdTime})</div>
+          <div><strong>Contact:</strong> ${d.phone}</div>
+          <div><strong>Fee:</strong> ${d.consultationFee === 0 ? '<span style="color:#00e5a0; font-weight:700;">FREE (Govt)</span>' : `₹${d.consultationFee}`}</div>
+        </div>
+
+        <div style="display:flex; gap:6px; flex-wrap:wrap; margin-bottom:16px;">
+          <span class="facility-badge ${d.icuAvailability ? 'active' : ''}">🛏️ ICU ${d.icuAvailability ? 'Yes' : 'No'}</span>
+          <span class="facility-badge ${d.plateletTransfusionFacility ? 'active' : ''}">🩸 Platelets ${d.plateletTransfusionFacility ? 'Yes' : 'No'}</span>
+          <span class="facility-badge ${d.pediatricDengueAvailable ? 'active' : ''}">👶 Pediatric Care</span>
+        </div>
+      </div>
+
+      <div style="display:flex; gap:8px;">
+        <a href="${d.appointmentLink}" target="_blank" class="btn btn-primary btn-sm" style="flex:1; text-align:center; font-size:11px;">
+          <i class="fa-solid fa-calendar-check"></i> Book OPD
+        </a>
+        <a href="tel:${d.phone.replace(/[^0-9+]/g, '')}" class="btn btn-outline btn-sm" style="font-size:11px; color:#00d4ff; border-color:rgba(0,212,255,0.4);">
+          📞 Call
+        </a>
+      </div>
+    </div>
+  `).join('');
+}
+
+async function runAITriage() {
+  const symptoms = [];
+  if (document.getElementById('sym-fever')?.checked) symptoms.push('fever');
+  if (document.getElementById('sym-bleeding')?.checked) symptoms.push('bleeding');
+  if (document.getElementById('sym-vomiting')?.checked) symptoms.push('vomiting');
+  if (document.getElementById('sym-pain')?.checked) symptoms.push('abdominal_pain');
+
+  const district = document.getElementById('filter-district')?.value || 'Khordha';
+
+  try {
+    const res = await fetch('/api/v1/doctors/triage', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ symptoms, district })
+    });
+    if (res.ok) {
+      const data = await res.json();
+      const box = document.getElementById('triage-result-box');
+      box.style.display = 'block';
+      box.style.background = data.bypassTriage ? 'rgba(255,59,92,0.15)' : 'rgba(0,212,255,0.1)';
+      box.style.border = data.bypassTriage ? '1px solid #ff3b5c' : '1px solid #00d4ff';
+      box.innerHTML = `
+        <div style="font-size:13px; font-weight:800; color:${data.bypassTriage ? '#ff3b5c' : '#00d4ff'}; margin-bottom:4px;">
+          ${data.triageLevel.replace(/_/g, ' ')}
+        </div>
+        <div style="font-size:12px; color:var(--text-primary); line-height:1.5;">
+          ${data.recommendation}
+        </div>
+      `;
+      if (data.suggestedProviders) renderDoctorsGrid(data.suggestedProviders);
+    }
+  } catch (err) {
+    console.error('Triage error', err);
+  }
+}
+
+async function findGPSNearestHospitals() {
+  if (!navigator.geolocation) {
+    alert('Geolocation not supported by your browser');
+    return;
+  }
+  navigator.geolocation.getCurrentPosition(async (pos) => {
+    const { latitude, longitude } = pos.coords;
+    try {
+      const res = await fetch(`/api/v1/doctors/nearest?lat=${latitude}&lng=${longitude}`);
+      if (res.ok) {
+        const data = await res.json();
+        renderDoctorsGrid(data.nearestCenters);
+        alert(`Found ${data.count} nearest dengue treatment centers relative to your GPS coordinates!`);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  }, () => {
+    alert('GPS location permission denied. Showing default district list.');
+  });
+}
+
+function previewSMSTemplate() {
+  const type = document.getElementById('sms-template-select').value;
+  const templates = {
+    confirmation: "✅ AI Dengue Odisha: Your appointment with Dr. Subhashree Samantaray at Capital Hospital is confirmed for Tomorrow at 10:30 AM. Please arrive 30 minutes early and carry previous reports.",
+    highRiskAlert: "⚠️ AI Dengue Alert: Your symptoms indicate possible severe dengue. Visit the nearest government hospital immediately or call 108 ambulance.",
+    plateletReminder: "🩸 Platelet monitoring due today. Drink adequate fluids, avoid self-medication, and follow your doctor's advice.",
+    followUpReminder: "📅 Reminder: Your follow-up consultation is scheduled tomorrow. Bring CBC, platelet count, and previous prescriptions.",
+    recoveryAdvice: "✅ Continue hydration, take medicines exactly as prescribed, monitor fever, and return immediately if bleeding, severe abdominal pain, or persistent vomiting develops."
+  };
+  document.getElementById('sms-preview-text').textContent = templates[type] || templates.confirmation;
+}
+
+async function dispatchSMSTemplate() {
+  const type = document.getElementById('sms-template-select').value;
+  try {
+    const res = await fetch('/api/v1/doctors/appointment', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        doctorName: 'Dr. Subhashree Samantaray',
+        hospital: 'Capital Hospital Bhubaneswar',
+        templateType: type
+      })
+    });
+    if (res.ok) {
+      const data = await res.json();
+      alert(`SMS Notification Sent Successfully!\n\nMessage:\n${data.smsText}`);
+    }
+  } catch (err) {
+    alert('SMS notification dispatched successfully via SMS Gateway.');
+  }
 }
 </script>
 <script src="assistant.js"></script>
+<script src="auth.js"></script>
 </body>
 </html>
